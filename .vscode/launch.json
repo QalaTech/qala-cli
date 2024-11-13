@@ -1,0 +1,52 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Create Topic",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Cli/bin/Debug/net8.0/Cli.dll",
+            "args": [
+                "createTopic",
+                "topicName",
+                "-d",
+                "This is a description",
+                "-e",
+                "17c88a5d-f9ba-47f4-814e-24be263d4403",
+                "-e",
+                "17c88a5d-f9ba-47f4-814e-24be263d4402"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Create Subscription",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Cli/bin/Debug/net8.0/Cli.dll",
+            "args": [
+                "createSubscription",
+                "subscriptionName",
+                "-t",
+                "topic_name",
+                "-d",
+                "This is a description for the subscription",
+                "-e",
+                "17c88a5d-f9ba-47f4-814e-24be263d4403",
+                "-e",
+                "17c88a5d-f9ba-47f4-814e-24be263d4402",
+                "-w",
+                "https://www.google.com",
+                "-r",
+                "3"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        }
+    ]
+}
+
