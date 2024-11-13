@@ -1,6 +1,6 @@
 using Spectre.Console.Cli;
 
-namespace Cli.DependencyInjection;
+namespace Cli.Configurations;
 
 public sealed class TypeResolver(IServiceProvider provider) : ITypeResolver, IDisposable
 {
