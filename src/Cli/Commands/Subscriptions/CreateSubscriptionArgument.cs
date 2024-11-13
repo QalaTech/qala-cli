@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using Cli.Utils;
 using Spectre.Console.Cli;
 
 namespace Cli.Commands.Subscriptions;
@@ -14,6 +16,7 @@ public class CreateSubscriptionArgument : CommandSettings
     public string Description { get; set; } = string.Empty;
 
     [CommandOption("-e|--events <EVENT_TYPE_IDS>")]
+    [TypeConverter(typeof(CommaSeparatedGuidArrayConverter))]
     public Guid[] EventTypeIds { get; set; } = [];
 
     [CommandOption("-w|--webhook-url <WEBHOOK_URL>")]

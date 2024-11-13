@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using Cli.Utils;
 using Spectre.Console.Cli;
 
 namespace Cli.Commands.Topics;
@@ -11,5 +13,7 @@ public class CreateTopicArgument : CommandSettings
     public string Description { get; set; } = string.Empty;
 
     [CommandOption("-e|--events <EVENTS>")]
+    [TypeConverter(typeof(CommaSeparatedGuidArrayConverter))]
     public Guid[] Events { get; set; } = [];
 }
+

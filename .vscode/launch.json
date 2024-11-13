@@ -2,6 +2,33 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Help",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Cli/bin/Debug/net8.0/Cli.dll",
+            "args": [
+                "--help"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Create Config File",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Cli/bin/Debug/net8.0/Cli.dll",
+            "args": [
+                "createConfigFile",
+                "-k",
+                "${input:apiKey}",
+                "-e",
+                "${input:environmentId}"
+            ],
+        },
+        {
             "name": "Create Topic",
             "type": "coreclr",
             "request": "launch",
@@ -9,13 +36,11 @@
             "program": "${workspaceFolder}/src/Cli/bin/Debug/net8.0/Cli.dll",
             "args": [
                 "createTopic",
-                "topicName",
+                "${input:topicName}",
                 "-d",
-                "This is a description",
+                "${input:topicDescription}",
                 "-e",
-                "17c88a5d-f9ba-47f4-814e-24be263d4403",
-                "-e",
-                "17c88a5d-f9ba-47f4-814e-24be263d4402"
+                "${input:topicEventTypeId}"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -29,23 +54,68 @@
             "program": "${workspaceFolder}/src/Cli/bin/Debug/net8.0/Cli.dll",
             "args": [
                 "createSubscription",
-                "subscriptionName",
+                "${input:subscriptionName}",
                 "-t",
-                "topic_name",
+                "${input:topicName}",
                 "-d",
-                "This is a description for the subscription",
+                "${input:subscriptionDescription}",
                 "-e",
-                "17c88a5d-f9ba-47f4-814e-24be263d4403",
-                "-e",
-                "17c88a5d-f9ba-47f4-814e-24be263d4402",
+                "${input:topicEventTypeId}",
                 "-w",
-                "https://www.google.com",
+                "${input:webhookUrl}",
                 "-r",
-                "3"
+                "${input:maxDeliveryAttempts}"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "stopAtEntry": false
+        }
+    ],
+    "inputs": [
+        {
+            "id": "topicName",
+            "type": "promptString",
+            "description": "Enter the topic name"
+        },
+        {
+            "id": "topicDescription",
+            "type": "promptString",
+            "description": "Enter the topic description"
+        },
+        {
+            "id": "topicEventTypeId",
+            "type": "promptString",
+            "description": "Enter the event type IDs (comma-separated)"
+        },
+        {
+            "id": "subscriptionName",
+            "type": "promptString",
+            "description": "Enter the subscription name"
+        },
+        {
+            "id": "subscriptionDescription",
+            "type": "promptString",
+            "description": "Enter the subscription description"
+        },
+        {
+            "id": "webhookUrl",
+            "type": "promptString",
+            "description": "Enter the webhook URL"
+        },
+        {
+            "id": "maxDeliveryAttempts",
+            "type": "promptString",
+            "description": "Enter the maximum delivery attempts"
+        },
+        {
+            "id": "apiKey",
+            "type": "promptString",
+            "description": "Enter the API key"
+        },
+        {
+            "id": "environmentId",
+            "type": "promptString",
+            "description": "Enter the environment ID"
         }
     ]
 }

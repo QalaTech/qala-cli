@@ -55,10 +55,10 @@ app.Configure(config =>
         .WithExample(["createConfig -k 'API_KEY' -e 'ENVIRONMENT_ID'"]);
     config.AddCommand<CreateTopicCommand>("createTopic")
         .WithDescription("this comand creates a new topic")
-        .WithExample(["createTopic topic_name -d 'This is a description for the topic' -e 'event1' -e 'event2'"]);
+        .WithExample(["createTopic topic_name -d 'This is a description for the topic' -e 'event1, event2'"]);
     config.AddCommand<CreateSubscriptionCommand>("createSubscription")
         .WithDescription("this command creates a new subscription")
-        .WithExample(["createSubscription subscription_name -t 'topic_name' -d 'This is a description for the subscription' -e 'event1' -e 'event2' -w 'https://webhook.url' -r 3"]);
+        .WithExample(["createSubscription subscription_name -t 'topic_name' -d 'This is a description for the subscription' -e 'event1', 'event2' -w 'https://webhook.url' -r 3"]);
 });
 
 await app.RunAsync(args);
