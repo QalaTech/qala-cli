@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using Spectre.Console.Cli;
 
-namespace Cli.Commands.Config;
+namespace Qala.Cli.Commands.Config;
 
 public class ConfigArgument : CommandSettings
 {

@@ -3,7 +3,7 @@ using Cli.Models;
 using Cli.Services.Interfaces;
 using LanguageExt;
 
-namespace Cli.Services;
+namespace Qala.Cli.Services;
 
 internal class ConfigService(string settingsFilePath) : IConfigService
 {

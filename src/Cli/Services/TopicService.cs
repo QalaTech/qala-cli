@@ -5,7 +5,7 @@ using Cli.Services.Interfaces;
 using LanguageExt;
 using Cli.Commands.Create.Topics;
 
-namespace Cli.Services;
+namespace Qala.Cli.Services;
 
 internal class TopicService(HttpClient publishingApiClient) : ITopicService
 {

@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.Globalization;
 
-namespace Cli.Utils;
+namespace Qala.Cli.Utils;
 
 public class CommaSeparatedGuidArrayConverter : TypeConverter
 {

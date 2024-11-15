@@ -3,7 +3,7 @@ using MediatR;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace Cli.Commands.Create.Subscriptions;
+namespace Qala.Cli.Commands.Create.Subscriptions;
 
 public class SubscriptionsCommand(IMediator mediator) : AsyncCommand<SubscriptionsArgument>
 {

@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console.Cli;
 
-namespace Cli.Configurations;
+namespace Qala.Cli.Configurations;
 
 public sealed class TypeRegistrar(IServiceCollection builder) : ITypeRegistrar
 {

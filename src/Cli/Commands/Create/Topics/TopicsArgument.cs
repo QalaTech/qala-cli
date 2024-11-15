@@ -2,7 +2,7 @@ using System.ComponentModel;
 using Cli.Utils;
 using Spectre.Console.Cli;
 
-namespace Cli.Commands.Create.Topics;
+namespace Qala.Cli.Commands.Create.Topics;
 
 public class TopicsArgument : CreateArgument
 {

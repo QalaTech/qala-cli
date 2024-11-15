@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 
-namespace Cli.Configurations;
+namespace Qala.Cli.Configurations;
 
 public class Configurations
 {

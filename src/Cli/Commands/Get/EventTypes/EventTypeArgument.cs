@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using Spectre.Console.Cli;
 
-namespace Cli.Commands.Get.EventTypes;
+namespace Qala.Cli.Commands.Get.EventTypes;
 
 public class EventTypesArgument : GetArgument
 {

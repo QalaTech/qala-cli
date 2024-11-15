@@ -1,4 +1,4 @@
-namespace Cli.Utils;
+namespace Qala.Cli.Utils;
 
 public class Enums 
 {

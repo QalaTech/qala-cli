@@ -1,7 +1,7 @@
 using Cli.Commands.Get.EventTypes;
 using LanguageExt;
 
-namespace Cli.Services.Interfaces;
+namespace Qala.Cli.Services.Interfaces;
 
 internal interface IEventTypeService
 {

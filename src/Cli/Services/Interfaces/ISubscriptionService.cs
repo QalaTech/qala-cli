@@ -1,7 +1,7 @@
 using Cli.Commands.Create.Subscriptions;
 using LanguageExt;
 
-namespace Cli.Services.Interfaces;
+namespace Qala.Cli.Services.Interfaces;
 
 internal interface ISubscriptionService
 {

@@ -3,7 +3,7 @@ using Cli.Services.Interfaces;
 using LanguageExt;
 using Cli.Commands.Get.EventTypes;
 
-namespace Cli.Services;
+namespace Qala.Cli.Services;
 
 internal class EventTypeService(HttpClient publishingApiClient) : IEventTypeService
 {

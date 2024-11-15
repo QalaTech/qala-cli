@@ -3,7 +3,7 @@ using MediatR;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace Cli.Commands.Config;
+namespace Qala.Cli.Commands.Config;
 
 public class ConfigCommand(IMediator mediator) : AsyncCommand<ConfigArgument>
 {

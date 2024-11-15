@@ -1,6 +1,6 @@
 using static Cli.Utils.Enums;
 
-namespace Cli.Models;
+namespace Qala.Cli.Models;
 
 public class Topic(
     Guid id,

@@ -1,6 +1,6 @@
 using Spectre.Console.Cli;
 
-namespace Cli.Commands.Create;
+namespace Qala.Cli.Commands.Create;
 
 public class CreateArgument : CommandSettings
 {

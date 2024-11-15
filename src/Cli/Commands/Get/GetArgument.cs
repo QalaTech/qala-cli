@@ -1,6 +1,6 @@
 using Spectre.Console.Cli;
 
-namespace Cli.Commands.Get;
+namespace Qala.Cli.Commands.Get;
 
 public class GetArgument : CommandSettings
 {

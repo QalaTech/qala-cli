@@ -1,6 +1,6 @@
 using Spectre.Console;
 
-namespace Cli.Utils;
+namespace Qala.Cli.Utils;
 
 public static class BaseCommands
 {

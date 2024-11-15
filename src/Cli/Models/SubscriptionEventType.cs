@@ -1,4 +1,4 @@
-namespace Cli.Models;
+namespace Qala.Cli.Models;
 
 public class SubscriptionEventType(
     Guid id,

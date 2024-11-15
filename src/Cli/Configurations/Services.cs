@@ -4,7 +4,7 @@ using Cli.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Cli.Configurations;
+namespace Qala.Cli.Configurations;
 
 public class Services
 {

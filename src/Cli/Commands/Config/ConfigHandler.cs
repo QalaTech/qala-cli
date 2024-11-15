@@ -2,7 +2,7 @@ using Cli.Services.Interfaces;
 using LanguageExt;
 using MediatR;
 
-namespace Cli.Commands.Config;
+namespace Qala.Cli.Commands.Config;
 
 public record ConfigSuccessResponse(string Key);
 public record ConfigErrorResponse(string Message);

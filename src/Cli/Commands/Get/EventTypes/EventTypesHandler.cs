@@ -2,7 +2,7 @@ using Cli.Services.Interfaces;
 using LanguageExt;
 using MediatR;
 
-namespace Cli.Commands.Get.EventTypes;
+namespace Qala.Cli.Commands.Get.EventTypes;
 
 public record EventTypesResponse(Models.EventType[] EventTypes);
 public record EventTypesErrorResponse(string Message);

@@ -3,7 +3,7 @@ using MediatR;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace Cli.Commands.Create.Topics;
+namespace Qala.Cli.Commands.Create.Topics;
 
 public class TopicsCommand(IMediator mediator) : AsyncCommand<TopicsArgument>
 {

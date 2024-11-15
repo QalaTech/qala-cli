@@ -2,7 +2,7 @@ using System.ComponentModel;
 using Cli.Utils;
 using Spectre.Console.Cli;
 
-namespace Cli.Commands.Create.Subscriptions;
+namespace Qala.Cli.Commands.Create.Subscriptions;
 
 public class SubscriptionsArgument : CreateArgument
 {
