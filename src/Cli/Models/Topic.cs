@@ -7,11 +7,11 @@ public class Topic(
     string name,
     string description,
     string provisioningState,
-    List<TopicEventType> eventTypes)
+    List<EventType> eventTypes)
 {
     public Guid Id { get; set; } = id;
     public string Name { get; set; } = name;
     public string Description { get; set; } = description;
     public string ProvisioningState { get; set; } = provisioningState;
-    public List<TopicEventType> EventTypes { get; set; } = eventTypes;
+    public List<EventType> EventTypes { get; set; } = eventTypes;
 }

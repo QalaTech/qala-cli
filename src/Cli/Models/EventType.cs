@@ -1,6 +1,6 @@
 namespace Cli.Models;
 
-public class TopicEventType(
+public class EventType(
     Guid id,
     string type)
 {

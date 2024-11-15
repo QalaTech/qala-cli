@@ -2,7 +2,7 @@ using Cli.Services.Interfaces;
 using LanguageExt;
 using MediatR;
 
-namespace Cli.Commands.Subscriptions;
+namespace Cli.Commands.Create.Subscriptions;
 
 public record CreateSubscriptionSuccessResponse(string Name, string TopicName, string Description, Guid[] EventTypeIds, string WebhookUrl, int MaxDeliveryAttempts);
 public record CreateSubscriptionErrorResponse(string Message);

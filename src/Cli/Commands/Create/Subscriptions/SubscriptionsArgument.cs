@@ -2,9 +2,9 @@ using System.ComponentModel;
 using Cli.Utils;
 using Spectre.Console.Cli;
 
-namespace Cli.Commands.Subscriptions;
+namespace Cli.Commands.Create.Subscriptions;
 
-public class CreateSubscriptionArgument : CommandSettings
+public class SubscriptionsArgument : CreateArgument
 {
     [CommandArgument(0, "<NAME>")]
     public string Name { get; set; } = string.Empty;

@@ -1,4 +1,4 @@
-using Cli.Commands.Subscriptions;
+using Cli.Commands.Create.Subscriptions;
 using LanguageExt;
 
 namespace Cli.Services.Interfaces;

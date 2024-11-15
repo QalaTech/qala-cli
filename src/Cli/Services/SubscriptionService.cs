@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
-using Cli.Commands.Subscriptions;
+using Cli.Commands.Create.Subscriptions;
 using Cli.Models;
 using Cli.Services.Interfaces;
 using LanguageExt;

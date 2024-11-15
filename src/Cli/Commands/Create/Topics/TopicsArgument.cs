@@ -2,9 +2,9 @@ using System.ComponentModel;
 using Cli.Utils;
 using Spectre.Console.Cli;
 
-namespace Cli.Commands.Topics;
+namespace Cli.Commands.Create.Topics;
 
-public class CreateTopicArgument : CommandSettings
+public class TopicsArgument : CreateArgument
 {
     [CommandArgument(0, "<NAME>")]
     public string Name { get; set; } = string.Empty;

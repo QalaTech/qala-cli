@@ -1,4 +1,4 @@
-using Cli.Commands.Topics;
+using Cli.Commands.Create.Topics;
 using LanguageExt;
 
 namespace Cli.Services.Interfaces;

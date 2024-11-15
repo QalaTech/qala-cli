@@ -1,22 +1,19 @@
+using Cli.Utils;
 using MediatR;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace Cli.Commands.Config;
 
-public class CreateConfigCommand(IMediator mediator) : AsyncCommand<CreateConfigArgument>
+public class ConfigCommand(IMediator mediator) : AsyncCommand<ConfigArgument>
 {
-    public override async Task<int> ExecuteAsync(CommandContext context, CreateConfigArgument config)
+    public override async Task<int> ExecuteAsync(CommandContext context, ConfigArgument config)
         => await mediator.Send(new CreateConfigRequest(config.Key, config.EnvironmentId))
             .ToAsync()
             .Match(
                 success =>
                 {
-                    AnsiConsole.Write(
-                        new FigletText("Qala CLI")
-                            .LeftJustified()
-                            .Color(Color.Yellow1));
-                    AnsiConsole.MarkupLine($"[yellow bold]Config file[/]");
+                    BaseCommands.DisplayStart("Create Config");
 
                     AnsiConsole.Write(new Grid()
                         .AddColumns(2)
@@ -40,4 +37,18 @@ public class CreateConfigCommand(IMediator mediator) : AsyncCommand<CreateConfig
                     return -1;
                 }
             );
+    public override ValidationResult Validate(CommandContext context, ConfigArgument config)
+    {
+        if (string.IsNullOrWhiteSpace(config.Key))
+        {
+            return ValidationResult.Error("API Key is required");
+        }
+
+        if (string.IsNullOrWhiteSpace(config.EnvironmentId))
+        {
+            return ValidationResult.Error("Environment Id is required");
+        }
+
+        return ValidationResult.Success();
+    }
 }

@@ -2,7 +2,7 @@ using Cli.Services.Interfaces;
 using LanguageExt;
 using MediatR;
 
-namespace Cli.Commands.Topics;
+namespace Cli.Commands.Create.Topics;
 
 public record CreateTopicSuccessResponse(string Name, string Description, Guid[] Events);
 public record CreateTopicErrorResponse(string Message);

@@ -1,22 +1,19 @@
+using Cli.Utils;
 using MediatR;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace Cli.Commands.Topics;
+namespace Cli.Commands.Create.Topics;
 
-public class CreateTopicCommand(IMediator mediator) : AsyncCommand<CreateTopicArgument>
+public class TopicsCommand(IMediator mediator) : AsyncCommand<TopicsArgument>
 {
-    public override async Task<int> ExecuteAsync(CommandContext context, CreateTopicArgument settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, TopicsArgument settings)
         => await mediator.Send(new CreateTopicRequest(settings.Name, settings.Description, settings.Events))
             .ToAsync()
             .Match(
                 success => {
                     
-                    AnsiConsole.Write(
-                        new FigletText("Qala CLI")
-                            .LeftJustified()
-                            .Color(Color.Yellow1));
-                    AnsiConsole.MarkupLine($"[yellow bold]Creating topics[/]");
+                    BaseCommands.DisplayStart("Create Topic");
 
                     AnsiConsole.Write(new Grid()
                         .AddColumns(3)
@@ -40,7 +37,7 @@ public class CreateTopicCommand(IMediator mediator) : AsyncCommand<CreateTopicAr
                 }
             );
     
-    public override ValidationResult Validate(CommandContext context, CreateTopicArgument settings)
+    public override ValidationResult Validate(CommandContext context, TopicsArgument settings)
     {
         if (string.IsNullOrWhiteSpace(settings.Name))
         {

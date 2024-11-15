@@ -2,7 +2,7 @@ using Spectre.Console.Cli;
 
 namespace Cli.Commands.Config;
 
-public class CreateConfigArgument : CommandSettings
+public class ConfigArgument : CommandSettings
 {
     [CommandOption("-k|--api-key <API_KEY>")]
     public string Key { get; set; } = string.Empty;

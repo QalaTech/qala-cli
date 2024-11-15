@@ -1,22 +1,19 @@
+using Cli.Utils;
 using MediatR;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace Cli.Commands.Subscriptions;
+namespace Cli.Commands.Create.Subscriptions;
 
-public class CreateSubscriptionCommand(IMediator mediator) : AsyncCommand<CreateSubscriptionArgument>
+public class SubscriptionsCommand(IMediator mediator) : AsyncCommand<SubscriptionsArgument>
 {
-    public override async Task<int> ExecuteAsync(CommandContext context, CreateSubscriptionArgument settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, SubscriptionsArgument settings)
         => await mediator.Send(new CreateSubscriptionRequest(settings.Name, settings.TopicName, settings.Description, settings.EventTypeIds, settings.WebhookUrl, settings.MaxDeliveryAttempts))
             .ToAsync()
             .Match(
                 success =>
                 {
-                    AnsiConsole.Write(
-                        new FigletText("Qala CLI")
-                            .LeftJustified()
-                            .Color(Color.Yellow1));
-                    AnsiConsole.MarkupLine($"[yellow bold]Creating subscription[/]");
+                    BaseCommands.DisplayStart("Create Subscription");
 
                     AnsiConsole.Write(new Grid()
                         .AddColumns(6)
@@ -47,4 +44,38 @@ public class CreateSubscriptionCommand(IMediator mediator) : AsyncCommand<Create
                     return -1;
                 }
             );
+    public override ValidationResult Validate(CommandContext context, SubscriptionsArgument settings)
+    {
+        if (string.IsNullOrWhiteSpace(settings.Name))
+        {
+            return ValidationResult.Error("Name is required");
+        }
+
+        if (string.IsNullOrWhiteSpace(settings.TopicName))
+        {
+            return ValidationResult.Error("Topic is required");
+        }
+
+        if (string.IsNullOrWhiteSpace(settings.Description))
+        {
+            return ValidationResult.Error("Description is required");
+        }
+
+        if (settings.EventTypeIds is null || settings.EventTypeIds.Length == 0)
+        {
+            return ValidationResult.Error("Events are required");
+        }
+
+        if (string.IsNullOrWhiteSpace(settings.WebhookUrl))
+        {
+            return ValidationResult.Error("Webhook URL is required");
+        }
+
+        if (settings.MaxDeliveryAttempts < 0 && settings.MaxDeliveryAttempts > 10)
+        {
+            return ValidationResult.Error("Max Retries must be between 0 and 10");
+        }
+
+        return ValidationResult.Success();
+    }
 }

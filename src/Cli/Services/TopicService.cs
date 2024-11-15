@@ -1,10 +1,9 @@
 using System.Net.Http.Json;
 using System.Net;
-using Cli.Commands.Topics;
 using Cli.Models;
 using Cli.Services.Interfaces;
 using LanguageExt;
-using Microsoft.Extensions.Configuration;
+using Cli.Commands.Create.Topics;
 
 namespace Cli.Services;
 

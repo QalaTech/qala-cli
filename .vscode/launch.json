@@ -21,12 +21,44 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/Cli/bin/Debug/net8.0/Cli.dll",
             "args": [
-                "createConfigFile",
+                "config",
                 "-k",
                 "${input:apiKey}",
                 "-e",
                 "${input:environmentId}"
             ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Get All Event Types",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Cli/bin/Debug/net8.0/Cli.dll",
+            "args": [
+                "get",
+                "eventTypes"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Get Event Type",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Cli/bin/Debug/net8.0/Cli.dll",
+            "args": [
+                "get",
+                "eventTypes",
+                "${input:eventTypeId}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
         },
         {
             "name": "Create Topic",
@@ -35,12 +67,13 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/Cli/bin/Debug/net8.0/Cli.dll",
             "args": [
-                "createTopic",
+                "create",
+                "topic",
                 "${input:topicName}",
                 "-d",
                 "${input:topicDescription}",
                 "-e",
-                "${input:topicEventTypeId}"
+                "${input:eventTypeId}"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -53,14 +86,15 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/Cli/bin/Debug/net8.0/Cli.dll",
             "args": [
-                "createSubscription",
+                "create",
+                "subscription",
                 "${input:subscriptionName}",
                 "-t",
                 "${input:topicName}",
                 "-d",
                 "${input:subscriptionDescription}",
                 "-e",
-                "${input:topicEventTypeId}",
+                "${input:eventTypeId}",
                 "-w",
                 "${input:webhookUrl}",
                 "-r",
@@ -83,7 +117,7 @@
             "description": "Enter the topic description"
         },
         {
-            "id": "topicEventTypeId",
+            "id": "eventTypeId",
             "type": "promptString",
             "description": "Enter the event type IDs (comma-separated)"
         },
