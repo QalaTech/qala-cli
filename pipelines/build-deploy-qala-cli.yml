@@ -1,0 +1,113 @@
+# Docker
+# Build and push an image to Azure Container Registry
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+name: $(Date:yyyy.MMdd).$(Rev:r)
+
+resources:
+  repositories:
+    - repository: self
+    - repository: templates
+      type: github
+      name: QalaTech/pipeline-templates
+      endpoint: QalaTech
+
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - src/Cli
+
+pr:
+  autoCancel: false
+  branches:
+    include:
+      - master
+
+variables:
+  buildConfiguration: 'Release'
+  runtimeIdentifiers: 'win-x64 linux-x64 osx-x64'
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+# Stage 1: Build and Deploy Beta
+- stage: Beta
+  displayName: "Deploy to Beta"
+  jobs:
+  - job: BuildAndPublishBeta
+    displayName: "Build and Publish Beta Executables"
+    steps:
+    # 1. Checkout the repository
+    - task: Checkout@1
+
+    # 2. Install .NET Core SDK
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '8.0.x'
+        installationPath: $(Agent.ToolsDirectory)/dotnet
+
+    # 3. Restore dependencies
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+
+    # 4. Build and publish for each runtime
+    - script: |
+        for rid in $(runtimeIdentifiers); do
+          echo "Publishing Beta version for runtime: $rid"
+          dotnet publish -c $(buildConfiguration) -r $rid --self-contained -p:PublishSingleFile=true -o $(Build.ArtifactStagingDirectory)/beta/$rid
+        done
+      displayName: 'Build and publish Beta executables'
+
+    # 5. Publish Beta artifacts
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/beta'
+        ArtifactName: 'beta-binaries'
+        publishLocation: 'Container'
+
+# Stage 2: Build and Deploy Final Release
+- stage: Release
+  displayName: "Deploy to Final Release"
+  dependsOn: Beta
+  condition: succeeded() # Only run this stage if the Beta stage succeeds
+  environment: Release 
+  jobs:
+  - job: BuildAndPublishRelease
+    displayName: "Build and Publish Final Release Executables"
+    steps:
+    # 1. Checkout the repository
+    - task: Checkout@1
+
+    # 2. Install .NET Core SDK
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '8.0.x'
+        installationPath: $(Agent.ToolsDirectory)/dotnet
+
+    # 3. Restore dependencies
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+
+    # 4. Build and publish for each runtime
+    - script: |
+        for rid in $(runtimeIdentifiers); do
+          echo "Publishing Final Release version for runtime: $rid"
+          dotnet publish -c $(buildConfiguration) -r $rid --self-contained -p:PublishSingleFile=true -o $(Build.ArtifactStagingDirectory)/release/$rid
+        done
+      displayName: 'Build and publish Final Release executables'
+
+    # 5. Publish Final Release artifacts
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)/release'
+        ArtifactName: 'release-binaries'
+        publishLocation: 'Container'
