@@ -8,6 +8,7 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/src/Cli/bin/Debug/net8.0/Cli.dll",
             "args": [
+                "${input:command}",
                 "--help"
             ],
             "cwd": "${workspaceFolder}",
@@ -150,6 +151,29 @@
             "id": "environmentId",
             "type": "promptString",
             "description": "Enter the environment ID"
+        },
+        {
+            "id": "command",
+            "type": "pickString",
+            "description": "Select the command",
+            "options": [
+                {
+                    "label": "help",
+                    "value": ""
+                },
+                {
+                    "label": "config",
+                    "value": "config"
+                },
+                {
+                    "label": "get",
+                    "value": "get"
+                },
+                {
+                    "label": "create",
+                    "value": "create"
+                }
+            ]
         }
     ]
 }
