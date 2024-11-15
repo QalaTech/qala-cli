@@ -36,6 +36,6 @@ public class Services
 
         client.BaseAddress = new Uri(baseUrl);
         client.DefaultRequestHeaders.Add("x-auth-token", config.ApiKey);
-        client.DefaultRequestHeaders.Add("x-environment-id", config.EnvironmentId);
+        //client.DefaultRequestHeaders.Add("x-environment-id", config.EnvironmentId);
     }
 }

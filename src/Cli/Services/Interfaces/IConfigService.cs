@@ -6,6 +6,6 @@ namespace Cli.Services.Interfaces;
 
 internal interface IConfigService
 {
-    Task<Either<CreateConfigErrorResponse, CreateConfigSuccessResponse>> CreateConfigAsync(string key, string environmentId);
+    Task<Either<ConfigErrorResponse, ConfigSuccessResponse>> CreateConfigAsync(string key);
     Task<Config> GetAsync();
 }

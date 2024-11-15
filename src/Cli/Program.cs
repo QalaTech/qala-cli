@@ -27,22 +27,23 @@ app.Configure(config =>
     config.SetApplicationName("qala");
     config.AddCommand<ConfigCommand>("config")
         .WithDescription("this command creates a new config file")
-        .WithExample(["config -k 'API_KEY' -e 'ENVIRONMENT_ID'"]);
+        .WithAlias("c");
     config.AddBranch<GetArgument>("get", get =>
     {
+        get.SetDescription("this command gets all or one specific resource");
         get.AddCommand<EventTypesCommand>("eventTypes")
             .WithDescription("this command gets all or one specific event type")
-            .WithExample(["get eventTypes"])
-            .WithExample(["get eventTypes 'event_type_id'"]);
-    });
+            .WithAlias("e");
+    }).WithAlias("g");
     config.AddBranch<CreateArgument>("create", create =>
     {
-        create.AddCommand<TopicsCommand>("topic")
+        create.SetDescription("this command creates a new resource");
+        create.AddCommand<TopicsCommand>("topics")
             .WithDescription("this comand creates a new topic")
-            .WithExample(["create topic topic_name -d 'This is a description for the topic' -e 'event1, event2'"]);
-        create.AddCommand<SubscriptionsCommand>("subscription")
+            .WithAlias("t");
+        create.AddCommand<SubscriptionsCommand>("subscriptions")
             .WithDescription("this command creates a new subscription")
-            .WithExample(["create subscription subscription_name -t 'topic_name' -d 'This is a description for the subscription' -e 'event1', 'event2' -w 'https://webhook.url' -r 3"]);
+            .WithAlias("s");
     });
 });
 

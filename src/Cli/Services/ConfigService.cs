@@ -7,12 +7,12 @@ namespace Cli.Services;
 
 internal class ConfigService(string settingsFilePath) : IConfigService
 {
-    public async Task<Either<CreateConfigErrorResponse, CreateConfigSuccessResponse>> CreateConfigAsync(string key, string environmentId)
+    public async Task<Either<ConfigErrorResponse, ConfigSuccessResponse>> CreateConfigAsync(string key)
     {
-        var configFile = $"API_KEY={key}\nENVIRONMENT_ID={environmentId}";
+        var configFile = $"API_KEY={key}";
         await File.WriteAllTextAsync(settingsFilePath, configFile);
 
-        return await Task.FromResult<Either<CreateConfigErrorResponse, CreateConfigSuccessResponse>>(new CreateConfigSuccessResponse(key, environmentId));
+        return await Task.FromResult<Either<ConfigErrorResponse, ConfigSuccessResponse>>(new ConfigSuccessResponse(key));
     }
 
     public async Task<Config> GetAsync()

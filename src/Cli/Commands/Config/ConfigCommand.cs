@@ -8,7 +8,7 @@ namespace Cli.Commands.Config;
 public class ConfigCommand(IMediator mediator) : AsyncCommand<ConfigArgument>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, ConfigArgument config)
-        => await mediator.Send(new CreateConfigRequest(config.Key, config.EnvironmentId))
+        => await mediator.Send(new ConfigRequest(config.Key))
             .ToAsync()
             .Match(
                 success =>
@@ -16,14 +16,12 @@ public class ConfigCommand(IMediator mediator) : AsyncCommand<ConfigArgument>
                     BaseCommands.DisplayStart("Create Config");
 
                     AnsiConsole.Write(new Grid()
-                        .AddColumns(2)
+                        .AddColumns(1)
                         .AddRow(
-                            new Text("Api Key", new Style(decoration: Decoration.Bold)),
-                            new Text("Environment Id", new Style(decoration: Decoration.Bold))
+                            new Text("Api Key", new Style(decoration: Decoration.Bold))
                         )
                         .AddRow(
-                            new Text(config.Key),
-                            new Text(config.EnvironmentId)
+                            new Text(config.Key)
                         )
                     );
 
@@ -42,11 +40,6 @@ public class ConfigCommand(IMediator mediator) : AsyncCommand<ConfigArgument>
         if (string.IsNullOrWhiteSpace(config.Key))
         {
             return ValidationResult.Error("API Key is required");
-        }
-
-        if (string.IsNullOrWhiteSpace(config.EnvironmentId))
-        {
-            return ValidationResult.Error("Environment Id is required");
         }
 
         return ValidationResult.Success();
