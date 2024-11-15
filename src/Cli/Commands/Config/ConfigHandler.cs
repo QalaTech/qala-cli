@@ -1,4 +1,4 @@
-using Cli.Services.Interfaces;
+using Qala.Cli.Services.Interfaces;
 using LanguageExt;
 using MediatR;
 

@@ -1,6 +1,6 @@
-using Cli.Models;
-using Cli.Services;
-using Cli.Services.Interfaces;
+using Qala.Cli.Models;
+using Qala.Cli.Services;
+using Qala.Cli.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

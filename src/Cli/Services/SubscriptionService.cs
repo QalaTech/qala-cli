@@ -1,8 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
-using Cli.Commands.Create.Subscriptions;
-using Cli.Models;
-using Cli.Services.Interfaces;
+using Qala.Cli.Commands.Create.Subscriptions;
+using Qala.Cli.Models;
+using Qala.Cli.Services.Interfaces;
 using LanguageExt;
 
 namespace Qala.Cli.Services;

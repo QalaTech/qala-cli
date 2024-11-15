@@ -1,4 +1,4 @@
-using Cli.Commands.Create.Subscriptions;
+using Qala.Cli.Commands.Create.Subscriptions;
 using LanguageExt;
 
 namespace Qala.Cli.Services.Interfaces;

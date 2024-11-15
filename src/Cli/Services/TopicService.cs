@@ -1,9 +1,9 @@
 using System.Net.Http.Json;
 using System.Net;
-using Cli.Models;
-using Cli.Services.Interfaces;
+using Qala.Cli.Models;
+using Qala.Cli.Services.Interfaces;
 using LanguageExt;
-using Cli.Commands.Create.Topics;
+using Qala.Cli.Commands.Create.Topics;
 
 namespace Qala.Cli.Services;
 

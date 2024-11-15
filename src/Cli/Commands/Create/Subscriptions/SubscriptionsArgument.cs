@@ -1,5 +1,5 @@
 using System.ComponentModel;
-using Cli.Utils;
+using Qala.Cli.Utils;
 using Spectre.Console.Cli;
 
 namespace Qala.Cli.Commands.Create.Subscriptions;

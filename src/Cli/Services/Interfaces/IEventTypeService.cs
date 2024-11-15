@@ -1,4 +1,4 @@
-using Cli.Commands.Get.EventTypes;
+using Qala.Cli.Commands.Get.EventTypes;
 using LanguageExt;
 
 namespace Qala.Cli.Services.Interfaces;

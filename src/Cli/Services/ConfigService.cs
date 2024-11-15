@@ -1,6 +1,6 @@
-using Cli.Commands.Config;
-using Cli.Models;
-using Cli.Services.Interfaces;
+using Qala.Cli.Commands.Config;
+using Qala.Cli.Models;
+using Qala.Cli.Services.Interfaces;
 using LanguageExt;
 
 namespace Qala.Cli.Services;

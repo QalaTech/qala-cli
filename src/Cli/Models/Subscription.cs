@@ -1,5 +1,3 @@
-using static Cli.Utils.Enums;
-
 namespace Qala.Cli.Models;
 
 public class Subscription(

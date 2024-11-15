@@ -1,11 +1,11 @@
-﻿using Cli.Commands.Config;
-using Cli.Commands.Create;
-using Cli.Commands.Create.Subscriptions;
-using Cli.Commands.Create.Topics;
-using Cli.Commands.Get;
-using Cli.Commands.Get.EventTypes;
-using Cli.Configurations;
-using Cli.Services;
+﻿using Qala.Cli.Commands.Config;
+using Qala.Cli.Commands.Create;
+using Qala.Cli.Commands.Create.Subscriptions;
+using Qala.Cli.Commands.Create.Topics;
+using Qala.Cli.Commands.Get;
+using Qala.Cli.Commands.Get.EventTypes;
+using Qala.Cli.Configurations;
+using Qala.Cli.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console.Cli;
 

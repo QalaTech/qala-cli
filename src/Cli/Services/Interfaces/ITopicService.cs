@@ -1,4 +1,4 @@
-using Cli.Commands.Create.Topics;
+using Qala.Cli.Commands.Create.Topics;
 using LanguageExt;
 
 namespace Qala.Cli.Services.Interfaces;
