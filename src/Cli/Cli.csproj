@@ -13,6 +13,19 @@
     <PublishSingleFile>true</PublishSingleFile>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageId>qala</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Qala Technologies</Authors>
+    <Owners>Qala Technologies Development Team</Owners>
+    <Description>Qala CLI - A powerful tool to automate your Qala experience</Description>
+    <Summary>Qala CLI</Summary>
+    <PackageTags>cli tool qala</PackageTags>
+    <RepositoryUrl>https://github.com/QalaTech/qala-cli</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <LicenseUrl>https://github.com/QalaTech/qala-cli/LICENSE</LicenseUrl>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(RuntimeIdentifier)' == 'win-x64'">
     <PublishDir>..\..\.releases\windows\</PublishDir>
   </PropertyGroup>

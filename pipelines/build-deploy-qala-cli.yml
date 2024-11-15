@@ -71,6 +71,19 @@ stages:
         ArtifactName: 'beta-binaries'
         publishLocation: 'Container'
 
+  - job: packAndPublishBetaWindows
+    displayName: "Pack and Publish Beta Windows in Chocolatey"
+    steps:
+    - script: |
+        sed -i 's/<version>.*<\/version>/<version>$(Build.BuildId)-beta<\/version>/' choco/qala.nuspec
+      displayName: "Update the nuspec package version"
+    - script: |
+        choco pack choco/qala.nuspec
+      displayName: "Pack Chocolatey package"
+    - script: |
+        choco push qala.$(Build.BuildId)-beta.nupkg --source https://push.chocolatey.org/ --api-key $(chocoApiKey)
+      displayName: "Push Chocolatey package"
+
 # Stage 2: Build and Deploy Final Release
 - stage: Release
   displayName: "Deploy to Final Release"
