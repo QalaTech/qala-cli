@@ -6,10 +6,23 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Cli/bin/Debug/net8.0/Cli.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/Qala.Cli.dll",
             "args": [
                 "${input:command}",
                 "--help"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Login",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/Qala.Cli.dll",
+            "args": [
+                "login"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -20,7 +33,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Cli/bin/Debug/net8.0/Cli.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/Qala.Cli.dll",
             "args": [
                 "config",
                 "-k",
@@ -32,116 +45,8 @@
             "console": "integratedTerminal",
             "stopAtEntry": false
         },
-        {
-            "name": "Get All Event Types",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Cli/bin/Debug/net8.0/Cli.dll",
-            "args": [
-                "get",
-                "eventTypes"
-            ],
-            "cwd": "${workspaceFolder}",
-            "console": "integratedTerminal",
-            "stopAtEntry": false
-        },
-        {
-            "name": "Get Event Type",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Cli/bin/Debug/net8.0/Cli.dll",
-            "args": [
-                "get",
-                "eventTypes",
-                "${input:eventTypeId}"
-            ],
-            "cwd": "${workspaceFolder}",
-            "console": "integratedTerminal",
-            "stopAtEntry": false
-        },
-        {
-            "name": "Create Topic",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Cli/bin/Debug/net8.0/Cli.dll",
-            "args": [
-                "create",
-                "topic",
-                "${input:topicName}",
-                "-d",
-                "${input:topicDescription}",
-                "-e",
-                "${input:eventTypeId}"
-            ],
-            "cwd": "${workspaceFolder}",
-            "console": "integratedTerminal",
-            "stopAtEntry": false
-        },
-        {
-            "name": "Create Subscription",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Cli/bin/Debug/net8.0/Cli.dll",
-            "args": [
-                "create",
-                "subscription",
-                "${input:subscriptionName}",
-                "-t",
-                "${input:topicName}",
-                "-d",
-                "${input:subscriptionDescription}",
-                "-e",
-                "${input:eventTypeId}",
-                "-w",
-                "${input:webhookUrl}",
-                "-r",
-                "${input:maxDeliveryAttempts}"
-            ],
-            "cwd": "${workspaceFolder}",
-            "console": "integratedTerminal",
-            "stopAtEntry": false
-        }
     ],
     "inputs": [
-        {
-            "id": "topicName",
-            "type": "promptString",
-            "description": "Enter the topic name"
-        },
-        {
-            "id": "topicDescription",
-            "type": "promptString",
-            "description": "Enter the topic description"
-        },
-        {
-            "id": "eventTypeId",
-            "type": "promptString",
-            "description": "Enter the event type IDs (comma-separated)"
-        },
-        {
-            "id": "subscriptionName",
-            "type": "promptString",
-            "description": "Enter the subscription name"
-        },
-        {
-            "id": "subscriptionDescription",
-            "type": "promptString",
-            "description": "Enter the subscription description"
-        },
-        {
-            "id": "webhookUrl",
-            "type": "promptString",
-            "description": "Enter the webhook URL"
-        },
-        {
-            "id": "maxDeliveryAttempts",
-            "type": "promptString",
-            "description": "Enter the maximum delivery attempts"
-        },
         {
             "id": "apiKey",
             "type": "promptString",
@@ -162,16 +67,12 @@
                     "value": ""
                 },
                 {
+                    "label": "login",
+                    "value": "login"
+                },
+                {
                     "label": "config",
                     "value": "config"
-                },
-                {
-                    "label": "get",
-                    "value": "get"
-                },
-                {
-                    "label": "create",
-                    "value": "create"
                 }
             ]
         }
