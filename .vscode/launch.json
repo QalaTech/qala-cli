@@ -45,6 +45,22 @@
             "console": "integratedTerminal",
             "stopAtEntry": false
         },
+        {
+            "name": "Set Environment",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/Qala.Cli.dll",
+            "args": [
+                "environment",
+                "set",
+                "-e",
+                "${input:environmentId}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        }
     ],
     "inputs": [
         {
@@ -73,6 +89,10 @@
                 {
                     "label": "config",
                     "value": "config"
+                },
+                {
+                    "label": "environment",
+                    "value": "environment"
                 }
             ]
         }

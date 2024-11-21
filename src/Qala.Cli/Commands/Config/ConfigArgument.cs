@@ -10,5 +10,5 @@ public class ConfigArgument : CommandSettings
     public string Key { get; set; } = string.Empty;
     [CommandOption("-e|--env <ENVIRONMENT_ID>")]
     [Description("The environment ID to use for the request.")]
-    public string EnvironmentId { get; set; } = string.Empty;
+    public Guid EnvironmentId { get; set; }
 }

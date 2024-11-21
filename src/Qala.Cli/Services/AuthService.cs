@@ -11,7 +11,7 @@ using Spectre.Console;
 
 namespace Qala.Cli.Services;
 
-internal class AuthService : IAuthService
+public class AuthService : IAuthService
 {
     private static readonly HttpClient client = new();
 

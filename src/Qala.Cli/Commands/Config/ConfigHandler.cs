@@ -4,11 +4,11 @@ using MediatR;
 
 namespace Qala.Cli.Commands.Config;
 
-public record ConfigSuccessResponse(string Key);
+public record ConfigSuccessResponse(Models.Config Config);
 public record ConfigErrorResponse(string Message);
-public record ConfigRequest(string Key, string EnvironmentId) : IRequest<Either<ConfigErrorResponse, ConfigSuccessResponse>>;
+public record ConfigRequest(string Key, Guid EnvironmentId) : IRequest<Either<ConfigErrorResponse, ConfigSuccessResponse>>;
 
-internal class CreateConfigHandler(IConfigService configService)
+public class ConfigHandler(IConfigService configService)
     : IRequestHandler<ConfigRequest, Either<ConfigErrorResponse, ConfigSuccessResponse>>
 {
     public async Task<Either<ConfigErrorResponse, ConfigSuccessResponse>> Handle(ConfigRequest request, CancellationToken cancellationToken)

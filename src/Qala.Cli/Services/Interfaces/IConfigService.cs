@@ -1,11 +1,10 @@
 using Qala.Cli.Commands.Config;
-using Qala.Cli.Models;
 using LanguageExt;
 
 namespace Qala.Cli.Services.Interfaces;
 
-internal interface IConfigService
+public interface IConfigService
 {
-    Task<Either<ConfigErrorResponse, ConfigSuccessResponse>> CreateConfigAsync(string key, string environmentId);
-    Task<Config> GetAsync();
+    Task<Either<ConfigErrorResponse, ConfigSuccessResponse>> CreateConfigAsync(string key, Guid environmentId);
+    Task<Either<ConfigErrorResponse, ConfigSuccessResponse>> GetAsync();
 }

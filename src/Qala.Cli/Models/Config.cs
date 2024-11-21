@@ -1,9 +1,9 @@
 namespace Qala.Cli.Models;
 
 public class Config(
-    string apiKey,
-    string environmentId)
+    string key,
+    Guid environmentId)
 {
-    public string ApiKey { get; set; } = apiKey;
-    public string EnvironmentId { get; set; } = environmentId;
+    public string Key { get; set; } = key;
+    public Guid EnvironmentId { get; set; } = environmentId;
 }

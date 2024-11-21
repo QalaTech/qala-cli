@@ -7,7 +7,7 @@ namespace Qala.Cli.Commands.Login;
 
 public class LoginCommand(IMediator mediator) : AsyncCommand<LoginArgument>
 {
-    public override async Task<int> ExecuteAsync(CommandContext context, LoginArgument login)
+    public override async Task<int> ExecuteAsync(CommandContext context, LoginArgument argument)
     {
         BaseCommands.DisplayStart("Login");
         return await mediator.Send(new LoginRequest())

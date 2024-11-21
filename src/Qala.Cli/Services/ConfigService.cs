@@ -1,27 +1,27 @@
 using Qala.Cli.Commands.Config;
-using Qala.Cli.Models;
 using Qala.Cli.Services.Interfaces;
 using LanguageExt;
 using Qala.Cli.Utils;
+using Qala.Cli.Models;
 
 namespace Qala.Cli.Services;
 
-internal class ConfigService() : IConfigService
+public class ConfigService() : IConfigService
 {
-    public async Task<Either<ConfigErrorResponse, ConfigSuccessResponse>> CreateConfigAsync(string key, string environmentId)
+    public async Task<Either<ConfigErrorResponse, ConfigSuccessResponse>> CreateConfigAsync(string key, Guid environmentId)
     {
-        Environment.SetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_API_KEY], key, EnvironmentVariableTarget.User);
-        Environment.SetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_ENVIRONMENT_ID], environmentId, EnvironmentVariableTarget.User);
+        System.Environment.SetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_API_KEY], key, EnvironmentVariableTarget.User);
+        System.Environment.SetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_ENVIRONMENT_ID], environmentId.ToString(), EnvironmentVariableTarget.User);
 
-        return await Task.FromResult<Either<ConfigErrorResponse, ConfigSuccessResponse>>(new ConfigSuccessResponse(key));
+        return await Task.FromResult<Either<ConfigErrorResponse, ConfigSuccessResponse>>(new ConfigSuccessResponse(new Config(key, environmentId)));
     }
 
-    public async Task<Config> GetAsync()
+    public async Task<Either<ConfigErrorResponse, ConfigSuccessResponse>> GetAsync()
     {
-        var apiKey = Environment.GetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_API_KEY], EnvironmentVariableTarget.User);
-        var environmentId = Environment.GetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_ENVIRONMENT_ID], EnvironmentVariableTarget.User);
+        var key = System.Environment.GetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_API_KEY], EnvironmentVariableTarget.User);
+        var environmentId = System.Environment.GetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_ENVIRONMENT_ID], EnvironmentVariableTarget.User);
 
-        if(string.IsNullOrEmpty(apiKey))
+        if(string.IsNullOrEmpty(key))
         {
             throw new Exception("No API key found");
         }
@@ -31,6 +31,6 @@ internal class ConfigService() : IConfigService
             throw new Exception("No environment ID found");
         }
 
-        return await Task.FromResult(new Config(apiKey, environmentId));
+        return await Task.FromResult<Either<ConfigErrorResponse, ConfigSuccessResponse>>(new ConfigSuccessResponse(new Config(key, new Guid(environmentId))));
     }
 }

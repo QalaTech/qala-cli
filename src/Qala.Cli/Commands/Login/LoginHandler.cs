@@ -8,7 +8,7 @@ public record LoginSuccessResponse(string Token);
 public record LoginErrorResponse(string Message);
 public record LoginRequest() : IRequest<Either<LoginErrorResponse, LoginSuccessResponse>>;
 
-internal class LoginHandler(IAuthService authService)
+public class LoginHandler(IAuthService authService)
     : IRequestHandler<LoginRequest, Either<LoginErrorResponse, LoginSuccessResponse>>
 {
     public async Task<Either<LoginErrorResponse, LoginSuccessResponse>> Handle(LoginRequest request, CancellationToken cancellationToken)

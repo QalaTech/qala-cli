@@ -7,10 +7,9 @@ namespace Qala.Cli.Commands.Config;
 
 public class ConfigCommand(IMediator mediator) : AsyncCommand<ConfigArgument>
 {
-    public override async Task<int> ExecuteAsync(CommandContext context, ConfigArgument config)
+    public override async Task<int> ExecuteAsync(CommandContext context, ConfigArgument argument)
     {
-        BaseCommands.DisplayStart("Configuring your Qala CLI");
-        return await mediator.Send(new ConfigRequest(config.Key, config.EnvironmentId))
+        return await mediator.Send(new ConfigRequest(argument.Key, argument.EnvironmentId))
             .ToAsync()
             .Match(
                 success =>
@@ -22,8 +21,8 @@ public class ConfigCommand(IMediator mediator) : AsyncCommand<ConfigArgument>
                             new Text("Environment Id", new Style(decoration: Decoration.Bold))
                         )
                         .AddRow(
-                            new Text(config.Key),
-                            new Text(config.EnvironmentId)
+                            new Text(success.Config.Key),
+                            new Text(success.Config.EnvironmentId.ToString())
                         )
                     );
 
