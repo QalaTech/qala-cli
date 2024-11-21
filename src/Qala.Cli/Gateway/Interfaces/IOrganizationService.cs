@@ -1,6 +1,6 @@
 using Qala.Cli.Models;
 
-namespace Qala.Cli.Services.Interfaces;
+namespace Qala.Cli.Gateway.Interfaces;
 
 public interface IOrganizationService
 {

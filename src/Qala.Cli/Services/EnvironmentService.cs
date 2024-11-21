@@ -1,5 +1,6 @@
 using LanguageExt;
 using Qala.Cli.Commands.Environment;
+using Qala.Cli.Gateway.Interfaces;
 using Qala.Cli.Services.Interfaces;
 using Qala.Cli.Utils;
 
@@ -12,9 +13,34 @@ public class EnvironmentService(IOrganizationService organizationService) : IEnv
         throw new NotImplementedException();
     }
 
-    public Task<Either<GetEnvironmentErrorResponse, GetEnvironemntSuccessResponse>> GetEnvironmentAsync()
+    public async Task<Either<GetEnvironmentErrorResponse, GetEnvironemntSuccessResponse>> GetEnvironmentAsync()
     {
-        throw new NotImplementedException();
+        var environmentId = System.Environment.GetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_ENVIRONMENT_ID], EnvironmentVariableTarget.User);
+        if(string.IsNullOrEmpty(environmentId))
+        {
+            return await Task.FromResult<Either<GetEnvironmentErrorResponse, GetEnvironemntSuccessResponse>>(new GetEnvironmentErrorResponse("No environment was set found"));
+        }
+
+        try
+        {
+            var organization = await organizationService.GetOrganizationAsync();
+            if (organization is null)
+            {
+                return await Task.FromResult<Either<GetEnvironmentErrorResponse, GetEnvironemntSuccessResponse>>(new GetEnvironmentErrorResponse("Organization not found"));
+            }
+
+            var environment = organization.Environments.FirstOrDefault(e => e.Id == new Guid(environmentId));
+            if(environment is null)
+            {
+                return await Task.FromResult<Either<GetEnvironmentErrorResponse, GetEnvironemntSuccessResponse>>(new GetEnvironmentErrorResponse("Environment not found"));
+            }
+
+            return await Task.FromResult<Either<GetEnvironmentErrorResponse, GetEnvironemntSuccessResponse>>(new GetEnvironemntSuccessResponse(environment));
+        }
+        catch (Exception ex)
+        {
+            return await Task.FromResult<Either<GetEnvironmentErrorResponse, GetEnvironemntSuccessResponse>>(new GetEnvironmentErrorResponse(ex.Message));
+        }
     }
 
     public async Task<Either<SetEnvironmentErrorResponse, SetEnvironmentSuccessResponse>> SetEnvironmentAsync(Guid environmentId)

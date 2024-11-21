@@ -1,9 +1,9 @@
-using Qala.Cli.Models;
 using Qala.Cli.Services;
 using Qala.Cli.Services.Interfaces;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Qala.Cli.Utils;
+using Qala.Cli.Gateway.Interfaces;
+using Qala.Cli.Gateway;
 
 namespace Qala.Cli.Configurations;
 

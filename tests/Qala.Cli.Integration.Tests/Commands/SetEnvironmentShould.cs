@@ -4,7 +4,7 @@ using Qala.Cli.Commands.Environment;
 using Spectre.Console;
 using Qala.Cli.Integration.Tests.Fixtures;
 
-namespace Qala.Cli.Integration.Tests.Commads;
+namespace Qala.Cli.Integration.Tests.Commands;
 
 public class SetEnvironmentShould(QalaCliBaseFixture fixture) : IClassFixture<QalaCliBaseFixture>
 {

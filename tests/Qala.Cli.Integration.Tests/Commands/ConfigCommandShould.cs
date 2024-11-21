@@ -5,7 +5,7 @@ using Qala.Cli.Utils;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace Qala.Cli.Integration.Tests.Commads;
+namespace Qala.Cli.Integration.Tests.Commands;
 
 public class ConfigCommandShould(QalaCliBaseFixture fixture) : IClassFixture<QalaCliBaseFixture>
 {

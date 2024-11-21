@@ -1,8 +1,8 @@
 using System.Net.Http.Json;
 using Qala.Cli.Models;
-using Qala.Cli.Services.Interfaces;
+using Qala.Cli.Gateway.Interfaces;
 
-namespace Qala.Cli.Services;
+namespace Qala.Cli.Gateway;
 
 public class OrganizationService(HttpClient client) : IOrganizationService
 {
