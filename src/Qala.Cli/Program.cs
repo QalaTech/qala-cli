@@ -7,6 +7,7 @@ using Qala.Cli.Commands.Environment;
 using Qala.Cli.Utils;
 using Qala.Cli.Commands.EventTypes;
 using LanguageExt;
+using Qala.Cli.Commands.Topics;
 
 Environment.SetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_MANAGEMENT_API_URL], "https://localhost:7143/v1/", EnvironmentVariableTarget.User);
 
@@ -22,12 +23,15 @@ var app = new CommandApp(registrar);
 app.Configure(config =>
 {
     config.SetApplicationName("qala");
+
     config.AddCommand<LoginCommand>("login")
         .WithDescription("this commands initiates the process for the user to login.")
         .WithExample("login");
+
     config.AddCommand<ConfigCommand>("config")
         .WithDescription("this command creates enables the configuration of the Qala CLI (for automation purposes).")
         .WithExample("config -k <API_KEY> -e <ENV_ID>");
+
     config.AddBranch("environment", env =>
     {
         env.AddCommand<CreateEnvironmentCommand>("create")
@@ -41,6 +45,7 @@ app.Configure(config =>
             .WithExample("environment set -e <ENVIRONMENT_ID>");
     })
     .WithAlias("env");
+
     config.AddBranch("events", et =>
     {
         et.AddCommand<ListEventTypesCommand>("list")
@@ -52,7 +57,16 @@ app.Configure(config =>
             .WithExample("events inspect <EVENT_TYPE_ID>")
             .WithAlias("i");
     }) 
-    .WithAlias("ev");   
+    .WithAlias("ev");  
+
+     config.AddBranch("topics", t =>
+    {
+        t.AddCommand<ListTopicsCommand>("list")
+            .WithDescription("this command lists all the topics available in your environment.")
+            .WithExample("topics ls")
+            .WithAlias("ls");
+    })
+    .WithAlias("tp");
 });
 
 await app.RunAsync(args);

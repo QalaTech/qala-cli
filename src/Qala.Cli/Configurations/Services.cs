@@ -19,6 +19,7 @@ public class Services
         services.AddSingleton<IConfigService, ConfigService>();
         services.AddSingleton<IEnvironmentService, EnvironmentService>();
         services.AddSingleton<IEventTypeService, EventTypeService>();
+        services.AddSingleton<ITopicService, TopicService>();
     }
 
     public static void RegisterDataServices(IServiceCollection services)
@@ -27,6 +28,7 @@ public class Services
         services.AddHttpClient<IOrganizationGateway, OrganizationGateway>(BuildHttpClient);
         services.AddHttpClient<IEnvironmentGateway, EnvironmentGateway>(BuildHttpClient);
         services.AddHttpClient<IEventTypeGateway, EventTypeGateway>(BuildHttpClient);
+        services.AddHttpClient<ITopicGateway, TopicGateway>(BuildHttpClient);
     }
 
     private static void BuildHttpClient(HttpClient client)

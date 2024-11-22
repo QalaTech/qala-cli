@@ -21,6 +21,6 @@ public class EventTypeService(IEventTypeGateway eventTypeGateway) : IEventTypeSe
     public async Task<Either<ListEventTypesErrorResponse, ListEventTypesSuccessResponse>> ListEventTypesAsync()
     {
         var eventTypes = await eventTypeGateway.ListEventTypesAsync();
-        return await Task.FromResult<Either<ListEventTypesErrorResponse, ListEventTypesSuccessResponse>>(new ListEventTypesSuccessResponse(eventTypes.ToArray()));
+        return await Task.FromResult<Either<ListEventTypesErrorResponse, ListEventTypesSuccessResponse>>(new ListEventTypesSuccessResponse(eventTypes));
     }
 }

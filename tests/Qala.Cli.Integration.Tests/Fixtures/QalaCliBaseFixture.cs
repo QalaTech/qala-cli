@@ -12,6 +12,7 @@ using Qala.Cli.Data.Repository.Interfaces;
 using Qala.Cli.Services;
 using Qala.Cli.Services.Interfaces;
 using Qala.Cli.Commands.EventTypes;
+using Qala.Cli.Commands.Topics;
 
 namespace Qala.Cli.Integration.Tests.Fixtures;
 
@@ -24,11 +25,18 @@ public class QalaCliBaseFixture : IDisposable
         new() { Id = Guid.NewGuid(), Name = "TestEnv3", Region = "us-east-3", EnvironmentType = "prod" }
     };
 
-    public readonly List<Data.Models.EventType> AvailableEventTypes = new()
+    public readonly List<EventType> AvailableEventTypes = new()
     {
         new() { Id = Guid.NewGuid(), Type = "Type 1", Description = "Test Event Description", Schema="{\"name\":\"Test\"}", ContentType="application/json", Encoding="utf-8", Categories = new List<string> { "cat1", "cat2" } },
         new() { Id = Guid.NewGuid(), Type = "Type 2", Description = "Test Event Description 2", Schema="{\"name\":\"Test2\"}", ContentType="application/json", Encoding="utf-8", Categories = new List<string> { "cat3", "cat4" } },
         new() { Id = Guid.NewGuid(), Type = "Type 3", Description = "Test Event Description 3", Schema="{\"name\":\"Test3\"}", ContentType="application/json", Encoding="utf-8", Categories = new List<string> { "cat5", "cat6" } }
+    };
+
+    public List<Topic> AvailableTopics = new()
+    {
+        new() { Id = Guid.NewGuid(), Name = "TestTopic", Description = "Test Topic Description", ProvisioningState = "Provisioning" },
+        new() { Id = Guid.NewGuid(), Name = "TestTopic2", Description = "Test Topic Description 2", ProvisioningState = "Provisioned" },
+        new() { Id = Guid.NewGuid(), Name = "TestTopic3", Description = "Test Topic Description 3", ProvisioningState = "Provisioned" }
     };
 
     public readonly string ApiKey = Guid.NewGuid().ToString();
@@ -37,6 +45,7 @@ public class QalaCliBaseFixture : IDisposable
     public Mock<ILocalEnvironments> LocalEnvironmentsMock = new();
     public Mock<IEnvironmentGateway> EnvironmentGatewayMock = new();
     public Mock<IEventTypeGateway> EventTypeGatewayMock = new();
+    public Mock<ITopicGateway> TopicGatewayMock = new();
 
     public required IMediator Mediator { get; init; }
 
@@ -46,6 +55,7 @@ public class QalaCliBaseFixture : IDisposable
         InitializeOrganizationGatewayMock();
         InitializeEnvironmentGatewayMock();
         InitializeEventTypeGatewayMock();
+        InitializeTopicGatewayMock();
 
         var services = new ServiceCollection();
         InitializeDataServices(services);
@@ -114,6 +124,15 @@ public class QalaCliBaseFixture : IDisposable
                     .ReturnsAsync((Guid id) => AvailableEventTypes.FirstOrDefault(et => et.Id == id));
     }
 
+    private void InitializeTopicGatewayMock()
+    {
+        AvailableTopics.ForEach(t => t.EventTypes = AvailableEventTypes);
+
+        TopicGatewayMock.Setup(
+            t => t.ListTopicsAsync())
+                    .ReturnsAsync(AvailableTopics);
+    }
+
     private static void InitializeCommandHandlers(IServiceCollection services)
     {
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
@@ -123,6 +142,7 @@ public class QalaCliBaseFixture : IDisposable
         services.AddTransient<IRequestHandler<CreateEnvironmentRequest, Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>>, CreateEnvironmentHandler>();
         services.AddTransient<IRequestHandler<ListEventTypesRequest, Either<ListEventTypesErrorResponse, ListEventTypesSuccessResponse>>, ListEventTypesHandler>();
         services.AddTransient<IRequestHandler<GetEventTypeRequest, Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>>, GetEventTypeHandler>();
+        services.AddTransient<IRequestHandler<ListTopicRequest, Either<ListTopicsErrorResponse, ListTopicsSuccessResponse>>, ListTopicsHandler>();
     }
 
     private static void InitializeServices(IServiceCollection services)
@@ -131,6 +151,7 @@ public class QalaCliBaseFixture : IDisposable
         services.AddTransient<IRequestHandler<ConfigRequest, Either<ConfigErrorResponse, ConfigSuccessResponse>>, ConfigHandler>();
         services.AddTransient<IConfigService, ConfigService>();
         services.AddTransient<IEventTypeService, EventTypeService>();
+        services.AddTransient<ITopicService, TopicService>();
     }
 
     private void InitializeDataServices(IServiceCollection services)
@@ -139,5 +160,6 @@ public class QalaCliBaseFixture : IDisposable
         services.AddSingleton<IOrganizationGateway>(OrganizationServiceMock.Object);
         services.AddSingleton<IEnvironmentGateway>(EnvironmentGatewayMock.Object);
         services.AddSingleton<IEventTypeGateway>(EventTypeGatewayMock.Object);
+        services.AddSingleton<ITopicGateway>(TopicGatewayMock.Object);
     }
 }

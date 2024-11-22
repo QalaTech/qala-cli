@@ -123,6 +123,20 @@
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "stopAtEntry": false
+        },
+        {
+            "name": "List Topics",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/Qala.Cli.dll",
+            "args": [
+                "topics",
+                "ls"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
         }
     ],
     "inputs": [
@@ -190,6 +204,10 @@
                 {
                     "label": "events",
                     "value": "events"
+                },
+                {
+                    "label": "topics",
+                    "value": "topics"
                 }
             ]
         }
