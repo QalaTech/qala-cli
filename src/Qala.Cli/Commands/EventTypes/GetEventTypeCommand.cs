@@ -1,6 +1,7 @@
 using MediatR;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using Spectre.Console.Json;
 
 namespace Qala.Cli.Commands.EventTypes;
 
@@ -35,10 +36,11 @@ public class GetEventTypeCommand(IMediator mediator) : AsyncCommand<GetEventType
                     if(!string.IsNullOrEmpty(success.EventType.Schema))
                     {
                         AnsiConsole.Write(
-                            new Panel(success.EventType.Schema)
-                                .Header("[bold]Schema[/]")
+                            new Panel(new JsonText(success.EventType.Schema))
+                                .Header("Schema")
+                                .Collapse()
                                 .RoundedBorder()
-                                .BorderColor(Color.Blue)
+                                .BorderColor(Color.Yellow)
                         );    
                     }                        
 
