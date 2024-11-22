@@ -1,7 +1,6 @@
 using Moq;
 using Qala.Cli.Commands.Config;
 using Qala.Cli.Integration.Tests.Fixtures;
-using Qala.Cli.Utils;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -30,9 +29,5 @@ public class ConfigCommandShould(QalaCliBaseFixture fixture) : IClassFixture<Qal
         Assert.Contains("Environment Id", output);
         Assert.Contains(fixture.ApiKey, output);
         Assert.Contains(fixture.AvailableEnvironments.First().Id.ToString(), output);
-        var key = System.Environment.GetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_API_KEY], EnvironmentVariableTarget.User);
-        var environmentId = System.Environment.GetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_ENVIRONMENT_ID], EnvironmentVariableTarget.User);
-        Assert.Equal(fixture.ApiKey, key);
-        Assert.Equal(fixture.AvailableEnvironments.First().Id.ToString(), environmentId);
     }
 }

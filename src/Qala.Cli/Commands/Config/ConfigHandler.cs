@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Qala.Cli.Commands.Config;
 
-public record ConfigSuccessResponse(Models.Config Config);
+public record ConfigSuccessResponse(Data.Models.Config Config);
 public record ConfigErrorResponse(string Message);
 public record ConfigRequest(string Key, Guid EnvironmentId) : IRequest<Either<ConfigErrorResponse, ConfigSuccessResponse>>;
 

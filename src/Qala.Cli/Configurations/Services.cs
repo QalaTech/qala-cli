@@ -1,9 +1,11 @@
 using Qala.Cli.Services;
 using Qala.Cli.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using Qala.Cli.Utils;
-using Qala.Cli.Gateway.Interfaces;
 using Qala.Cli.Gateway;
+using Qala.Cli.Data.Repository.Interfaces;
+using Qala.Cli.Data.Repository;
+using Qala.Cli.Data.Gateway.Interfaces;
+using Qala.Cli.Utils;
 
 namespace Qala.Cli.Configurations;
 
@@ -14,13 +16,18 @@ public class Services
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
         services.AddSingleton<IAuthService, AuthService>();
         services.AddSingleton<IConfigService, ConfigService>();
-        services.AddHttpClient<IOrganizationService, OrganizationService>(BuildHttpClient);
         services.AddSingleton<IEnvironmentService, EnvironmentService>();
+    }
+
+    public static void RegisterDataServices(IServiceCollection services)
+    {
+        services.AddSingleton<ILocalEnvironments, LocalEnvironments>();
+        services.AddHttpClient<IOrganizationService, OrganizationService>(BuildHttpClient);
     }
 
     private static void BuildHttpClient(HttpClient client)
     {
-        var baseUrl = System.Environment.GetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_MANAGEMENT_API_URL], EnvironmentVariableTarget.User);
+        var baseUrl = System.Environment.GetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_MANAGEMENT_API_URL], EnvironmentVariableTarget.User);
 
         if (string.IsNullOrEmpty(baseUrl))
         {
@@ -29,11 +36,11 @@ public class Services
 
         client.BaseAddress = new Uri(baseUrl);
 
-        var key = System.Environment.GetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_API_KEY], EnvironmentVariableTarget.User);
+        var key = System.Environment.GetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_API_KEY], EnvironmentVariableTarget.User);
 
         if (string.IsNullOrEmpty(key))
         {
-            var token = System.Environment.GetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_AUTH_TOKEN], EnvironmentVariableTarget.User);
+            var token = System.Environment.GetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_AUTH_TOKEN], EnvironmentVariableTarget.User);
             if (string.IsNullOrEmpty(token))
             {
                 throw new InvalidOperationException("No authentication was provided.");

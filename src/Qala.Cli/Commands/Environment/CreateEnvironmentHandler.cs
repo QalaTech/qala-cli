@@ -4,7 +4,7 @@ using Qala.Cli.Services.Interfaces;
 
 namespace Qala.Cli.Commands.Environment;
 
-public record CreateEnvironmentSuccessResponse(Models.Environment Environment);
+public record CreateEnvironmentSuccessResponse(Data.Models.Environment Environment);
 public record CreateEnvironmentErrorResponse(string Message);
 public record CreateEnvironmentRequest(string Name, string Region, string Type) : IRequest<Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>>;
 

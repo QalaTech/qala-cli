@@ -4,14 +4,15 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using LanguageExt;
 using Qala.Cli.Commands.Login;
-using Qala.Cli.Models.Auth;
-using Qala.Cli.Services.Interfaces;
 using Qala.Cli.Utils;
+using Qala.Cli.Data.Models.Auth;
+using Qala.Cli.Data.Repository.Interfaces;
+using Qala.Cli.Services.Interfaces;
 using Spectre.Console;
 
 namespace Qala.Cli.Services;
 
-public class AuthService : IAuthService
+public class AuthService(ILocalEnvironments localEnvironments) : IAuthService
 {
     private static readonly HttpClient client = new();
 
@@ -104,7 +105,8 @@ public class AuthService : IAuthService
                 return new LoginErrorResponse("Failed to retrieve token.");
             }
 
-            Environment.SetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_AUTH_TOKEN], token, EnvironmentVariableTarget.User);
+            localEnvironments.SetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_AUTH_TOKEN], token);
+            
             return new LoginSuccessResponse(token);
         }
         catch (Exception ex)

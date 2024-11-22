@@ -1,4 +1,4 @@
-namespace Qala.Cli.Models;
+namespace Qala.Cli.Data.Models;
 
 public class ProblemDetails(
     string type,

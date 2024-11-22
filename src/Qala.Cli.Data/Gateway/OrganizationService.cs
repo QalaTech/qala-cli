@@ -1,6 +1,6 @@
 using System.Net.Http.Json;
-using Qala.Cli.Models;
-using Qala.Cli.Gateway.Interfaces;
+using Qala.Cli.Data.Models;
+using Qala.Cli.Data.Gateway.Interfaces;
 
 namespace Qala.Cli.Gateway;
 

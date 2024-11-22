@@ -1,12 +1,13 @@
 using LanguageExt;
 using Qala.Cli.Commands.Environment;
-using Qala.Cli.Gateway.Interfaces;
-using Qala.Cli.Services.Interfaces;
 using Qala.Cli.Utils;
+using Qala.Cli.Data.Gateway.Interfaces;
+using Qala.Cli.Data.Repository.Interfaces;
+using Qala.Cli.Services.Interfaces;
 
 namespace Qala.Cli.Services;
 
-public class EnvironmentService(IOrganizationService organizationService) : IEnvironmentService
+public class EnvironmentService(IOrganizationService organizationService, ILocalEnvironments localEnvironments) : IEnvironmentService
 {
     public Task<Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>> CreateEnvironmentAsync(string name, string region, string type)
     {
@@ -15,7 +16,7 @@ public class EnvironmentService(IOrganizationService organizationService) : IEnv
 
     public async Task<Either<GetEnvironmentErrorResponse, GetEnvironemntSuccessResponse>> GetEnvironmentAsync()
     {
-        var environmentId = System.Environment.GetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_ENVIRONMENT_ID], EnvironmentVariableTarget.User);
+        var environmentId = localEnvironments.GetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID]);
         if(string.IsNullOrEmpty(environmentId))
         {
             return await Task.FromResult<Either<GetEnvironmentErrorResponse, GetEnvironemntSuccessResponse>>(new GetEnvironmentErrorResponse("No environment was set found"));
@@ -63,7 +64,7 @@ public class EnvironmentService(IOrganizationService organizationService) : IEnv
             return await Task.FromResult<Either<SetEnvironmentErrorResponse, SetEnvironmentSuccessResponse>>(new SetEnvironmentErrorResponse(ex.Message));
         }
 
-        Environment.SetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_ENVIRONMENT_ID], environmentId.ToString(), EnvironmentVariableTarget.User);
+        localEnvironments.SetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID], environmentId.ToString());
         return await Task.FromResult<Either<SetEnvironmentErrorResponse, SetEnvironmentSuccessResponse>>(new SetEnvironmentSuccessResponse(environmentId));
     }
 }

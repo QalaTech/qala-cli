@@ -14,7 +14,6 @@ public class GetEnvironmentShould(QalaCliBaseFixture fixture) : IClassFixture<Qa
     public async Task Execute_WithValidParameters()
     {
         // Arrange
-        fixture.SetEnvironmet(fixture.AvailableEnvironments.First().Id);
         var command = new GetEnvironmentCommand(fixture.Mediator);
         var arguments = new List<string> { "environment", "current" };
         var context = new CommandContext(arguments, _remainingArguments, "current", null);

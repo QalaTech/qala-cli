@@ -1,25 +1,26 @@
 using Qala.Cli.Commands.Config;
 using Qala.Cli.Services.Interfaces;
 using LanguageExt;
+using Qala.Cli.Data.Models;
+using Qala.Cli.Data.Repository.Interfaces;
 using Qala.Cli.Utils;
-using Qala.Cli.Models;
 
 namespace Qala.Cli.Services;
 
-public class ConfigService() : IConfigService
+public class ConfigService(ILocalEnvironments localEnvironments) : IConfigService
 {
     public async Task<Either<ConfigErrorResponse, ConfigSuccessResponse>> CreateConfigAsync(string key, Guid environmentId)
     {
-        System.Environment.SetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_API_KEY], key, EnvironmentVariableTarget.User);
-        System.Environment.SetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_ENVIRONMENT_ID], environmentId.ToString(), EnvironmentVariableTarget.User);
+        localEnvironments.SetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_API_KEY], key);
+        localEnvironments.SetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID], environmentId.ToString());
 
         return await Task.FromResult<Either<ConfigErrorResponse, ConfigSuccessResponse>>(new ConfigSuccessResponse(new Config(key, environmentId)));
     }
 
     public async Task<Either<ConfigErrorResponse, ConfigSuccessResponse>> GetAsync()
     {
-        var key = System.Environment.GetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_API_KEY], EnvironmentVariableTarget.User);
-        var environmentId = System.Environment.GetEnvironmentVariable(Constants.EnvironmentVariable[EnvironmentVariableType.QALA_ENVIRONMENT_ID], EnvironmentVariableTarget.User);
+        var key = localEnvironments.GetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_API_KEY]);
+        var environmentId = localEnvironments.GetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID]);
 
         if(string.IsNullOrEmpty(key))
         {

@@ -47,4 +47,8 @@
     <PackageReference Include="Spectre.Console" Version="0.49.1" />
     <PackageReference Include="Spectre.Console.Cli" Version="0.49.1" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Qala.Cli.Data\Qala.Cli.Data.csproj" />
+  </ItemGroup>
 </Project>

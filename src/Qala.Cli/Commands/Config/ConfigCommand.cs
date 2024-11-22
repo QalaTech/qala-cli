@@ -1,4 +1,3 @@
-using Qala.Cli.Utils;
 using MediatR;
 using Spectre.Console;
 using Spectre.Console.Cli;

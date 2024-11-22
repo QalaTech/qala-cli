@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Qala.Cli.Data\Qala.Cli.Data.csproj" />
     <ProjectReference Include="..\..\src\Qala.Cli\Qala.Cli.csproj" />
   </ItemGroup>
 

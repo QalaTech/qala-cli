@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Qala.Cli.Models.Auth;
+namespace Qala.Cli.Data.Models.Auth;
 
 public class AuthToken
 {
