@@ -2,7 +2,7 @@ using Qala.Cli.Data.Models;
 
 namespace Qala.Cli.Data.Gateway.Interfaces;
 
-public interface IOrganizationService
+public interface IOrganizationGateway
 {
     Task<Organization> GetOrganizationAsync();
 }

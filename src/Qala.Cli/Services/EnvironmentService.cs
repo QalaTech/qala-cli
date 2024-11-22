@@ -7,11 +7,50 @@ using Qala.Cli.Services.Interfaces;
 
 namespace Qala.Cli.Services;
 
-public class EnvironmentService(IOrganizationService organizationService, ILocalEnvironments localEnvironments) : IEnvironmentService
+public class EnvironmentService(
+    IEnvironmentGateway environmentGateway,
+    IOrganizationGateway organizationService, 
+    ILocalEnvironments localEnvironments) : IEnvironmentService
 {
-    public Task<Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>> CreateEnvironmentAsync(string name, string region, string type)
+    public async Task<Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>> CreateEnvironmentAsync(string name, string region, string type)
     {
-        throw new NotImplementedException();
+        if(string.IsNullOrEmpty(name))
+        {
+            return await Task.FromResult<Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>>(new CreateEnvironmentErrorResponse("Name is required"));
+        }
+
+        if(string.IsNullOrEmpty(region))
+        {
+            return await Task.FromResult<Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>>(new CreateEnvironmentErrorResponse("Region is required"));
+        }
+
+        if(string.IsNullOrEmpty(type))
+        {
+            return await Task.FromResult<Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>>(new CreateEnvironmentErrorResponse("Type is required"));
+        }
+
+        try
+        {
+            var newEnvironment = new Data.Models.Environment
+            {
+                Name = name,
+                Region = region,
+                EnvironmentType = type
+            };
+
+            var environmentCreated = await environmentGateway.CreateEnvironmentAsync(newEnvironment);
+
+            if(environmentCreated is null)
+            {
+                return await Task.FromResult<Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>>(new CreateEnvironmentErrorResponse("Failed to create environment"));
+            }
+
+            return await Task.FromResult<Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>>(new CreateEnvironmentSuccessResponse(environmentCreated));
+        }
+        catch (Exception ex)
+        {
+            return await Task.FromResult<Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>>(new CreateEnvironmentErrorResponse(ex.Message));
+        }
     }
 
     public async Task<Either<GetEnvironmentErrorResponse, GetEnvironemntSuccessResponse>> GetEnvironmentAsync()

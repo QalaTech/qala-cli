@@ -27,5 +27,8 @@ public class GetEnvironmentShould(QalaCliBaseFixture fixture) : IClassFixture<Qa
         var output = AnsiConsole.ExportText();
         Assert.Contains("Environment found successfully", output);
         Assert.Contains(fixture.AvailableEnvironments.First().Name, output);
+        Assert.Contains(fixture.AvailableEnvironments.First().Id.ToString(), output);
+        Assert.Contains(fixture.AvailableEnvironments.First().Region, output);
+        Assert.Contains(fixture.AvailableEnvironments.First().EnvironmentType, output);
     }
 }

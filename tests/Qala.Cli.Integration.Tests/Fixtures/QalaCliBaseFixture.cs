@@ -25,18 +25,21 @@ public class QalaCliBaseFixture : IDisposable
 
     public readonly string ApiKey = Guid.NewGuid().ToString();
 
-    public Mock<IOrganizationService> OrganizationServiceMock = new();
+    public Mock<IOrganizationGateway> OrganizationServiceMock = new();
     public Mock<ILocalEnvironments> LocalEnvironmentsMock = new();
+    public Mock<IEnvironmentGateway> EnvironmentGatewayMock = new();
 
     public required IMediator Mediator { get; init; }
 
     public QalaCliBaseFixture()
     {
-        InitializeOrganizationService();
-        InitializaLocalEnvironments();
+        InitializaLocalEnvironmentsMock();
+        InitializeOrganizationGatewayMock();
+        InitializeEnvironmentGatewayMock();
 
         var services = new ServiceCollection();
         InitializeDataServices(services);
+        InitializeCommandHandlers(services);
         InitializeServices(services);
 
         var serviceProvider = services.BuildServiceProvider();
@@ -48,7 +51,18 @@ public class QalaCliBaseFixture : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    private void InitializeOrganizationService()
+    private void InitializaLocalEnvironmentsMock()
+    {
+        LocalEnvironmentsMock.Setup(
+            l => l.GetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_API_KEY]))
+                    .Returns(ApiKey);
+
+        LocalEnvironmentsMock.Setup(
+            l => l.GetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID]))
+                    .Returns(AvailableEnvironments.First().Id.ToString());
+    }
+
+    private void InitializeOrganizationGatewayMock()
     {
         OrganizationServiceMock.Setup(
             o => o.GetOrganizationAsync())
@@ -60,24 +74,36 @@ public class QalaCliBaseFixture : IDisposable
                     });
     }
 
-    private void InitializaLocalEnvironments()
+    private void InitializeEnvironmentGatewayMock()
     {
-        LocalEnvironmentsMock.Setup(
-            l => l.GetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_API_KEY]))
-                    .Returns(ApiKey);
+        EnvironmentGatewayMock.Setup(
+            e => e.CreateEnvironmentAsync(It.IsAny<Data.Models.Environment>()))
+                    .ReturnsAsync(() => {
+                        var newEnvironment = new Data.Models.Environment
+                        {
+                            Id = Guid.NewGuid(),
+                            Name = "NewlyCreatedTestEnv",
+                            Region = "newly-region",
+                            EnvironmentType = "newly-env-type"
+                        };
 
-        LocalEnvironmentsMock.Setup(
-            l => l.GetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID]))
-                    .Returns(AvailableEnvironments.First().Id.ToString());
+                        AvailableEnvironments.Add(newEnvironment);
+
+                        return newEnvironment;
+                    });
     }
 
-    private void InitializeServices(IServiceCollection services)
+    private static void InitializeCommandHandlers(IServiceCollection services)
     {
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
         services.AddTransient<IRequestHandler<SetEnvironmentRequest, Either<SetEnvironmentErrorResponse, SetEnvironmentSuccessResponse>>, SetEnvironmentHandler>();
         services.AddTransient<IRequestHandler<GetEnvironmentRequest, Either<GetEnvironmentErrorResponse, GetEnvironemntSuccessResponse>>, GetEnvironmentHandler>();
+        services.AddTransient<IRequestHandler<CreateEnvironmentRequest, Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>>, CreateEnvironmentHandler>();
+    }
 
+    private static void InitializeServices(IServiceCollection services)
+    {
         services.AddTransient<IEnvironmentService, EnvironmentService>();
         services.AddTransient<IRequestHandler<ConfigRequest, Either<ConfigErrorResponse, ConfigSuccessResponse>>, ConfigHandler>();
         services.AddTransient<IConfigService, ConfigService>();
@@ -86,6 +112,7 @@ public class QalaCliBaseFixture : IDisposable
     private void InitializeDataServices(IServiceCollection services)
     {
         services.AddSingleton<ILocalEnvironments>(LocalEnvironmentsMock.Object);
-        services.AddSingleton<IOrganizationService>(OrganizationServiceMock.Object);
+        services.AddSingleton<IOrganizationGateway>(OrganizationServiceMock.Object);
+        services.AddSingleton<IEnvironmentGateway>(EnvironmentGatewayMock.Object);
     }
 }

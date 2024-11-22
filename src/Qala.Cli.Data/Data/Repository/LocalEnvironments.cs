@@ -6,7 +6,7 @@ public class LocalEnvironments : ILocalEnvironments
 {
     public string GetLocalEnvironment(string variable)
     {
-        return Environment.GetEnvironmentVariable(variable) ?? string.Empty;
+        return Environment.GetEnvironmentVariable(variable, EnvironmentVariableTarget.User) ?? string.Empty;
     }
 
     public void SetLocalEnvironment(string variable, string? value)

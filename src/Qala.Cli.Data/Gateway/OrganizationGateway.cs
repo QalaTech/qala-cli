@@ -4,7 +4,7 @@ using Qala.Cli.Data.Gateway.Interfaces;
 
 namespace Qala.Cli.Gateway;
 
-public class OrganizationService(HttpClient client) : IOrganizationService
+public class OrganizationGateway(HttpClient client) : IOrganizationGateway
 {
     public async Task<Organization> GetOrganizationAsync()
     {

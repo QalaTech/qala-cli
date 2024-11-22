@@ -6,6 +6,7 @@ using Qala.Cli.Data.Repository.Interfaces;
 using Qala.Cli.Data.Repository;
 using Qala.Cli.Data.Gateway.Interfaces;
 using Qala.Cli.Utils;
+using Qala.Cli.Data.Gateway;
 
 namespace Qala.Cli.Configurations;
 
@@ -22,7 +23,8 @@ public class Services
     public static void RegisterDataServices(IServiceCollection services)
     {
         services.AddSingleton<ILocalEnvironments, LocalEnvironments>();
-        services.AddHttpClient<IOrganizationService, OrganizationService>(BuildHttpClient);
+        services.AddHttpClient<IOrganizationGateway, OrganizationGateway>(BuildHttpClient);
+        services.AddHttpClient<IEnvironmentGateway, EnvironmentGateway>(BuildHttpClient);
     }
 
     private static void BuildHttpClient(HttpClient client)

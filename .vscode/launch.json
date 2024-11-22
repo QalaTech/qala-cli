@@ -74,6 +74,26 @@
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "stopAtEntry": false
+        },
+        {
+            "name": "Create Environment",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/Qala.Cli.dll",
+            "args": [
+                "environment",
+                "create",
+                "-n",
+                "${input:environmentName}",
+                "-r",
+                "${input:environmentRegion}",
+                "-t",
+                "${input:environmentType}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
         }
     ],
     "inputs": [
@@ -86,6 +106,31 @@
             "id": "environmentId",
             "type": "promptString",
             "description": "Enter the environment ID"
+        },
+        {
+            "id": "environmentName",
+            "type": "promptString",
+            "description": "Enter the environment name"
+        },
+        {
+            "id": "environmentRegion",
+            "type": "promptString",
+            "description": "Enter the environment region"
+        },
+        {
+            "id": "environmentType",
+            "type": "pickString",
+            "description": "Select the environment type",
+            "options": [
+                {
+                    "label": "Development",
+                    "value": "development"
+                },
+                {
+                    "label": "Production",
+                    "value": "production"
+                }
+            ]
         },
         {
             "id": "command",
