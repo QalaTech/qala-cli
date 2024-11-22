@@ -6,6 +6,7 @@ using Qala.Cli.Commands.Login;
 using Qala.Cli.Commands.Environment;
 using Qala.Cli.Utils;
 using Qala.Cli.Commands.EventTypes;
+using LanguageExt;
 
 Environment.SetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_MANAGEMENT_API_URL], "https://localhost:7143/v1/", EnvironmentVariableTarget.User);
 
@@ -46,6 +47,10 @@ app.Configure(config =>
             .WithDescription("this command lists all the event types available in your environment.")
             .WithExample("events ls")
             .WithAlias("ls");
+        et.AddCommand<GetEventTypeCommand>("get")
+            .WithDescription("this command retrieves the event type with the specified ID.")
+            .WithExample("events inspect <EVENT_TYPE_ID>")
+            .WithAlias("i");
     }) 
     .WithAlias("ev");   
 });

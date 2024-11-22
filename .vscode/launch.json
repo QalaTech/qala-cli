@@ -108,6 +108,21 @@
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "stopAtEntry": false
+        },
+        {
+            "name": "Get Event Type",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/Qala.Cli.dll",
+            "args": [
+                "events",
+                "i",
+                "${input:eventTypeId}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
         }
     ],
     "inputs": [
@@ -147,6 +162,11 @@
             ]
         },
         {
+            "id": "eventTypeId",
+            "type": "promptString",
+            "description": "Enter the event type ID"
+        },
+        {
             "id": "command",
             "type": "pickString",
             "description": "Select the command",
@@ -166,6 +186,10 @@
                 {
                     "label": "environment",
                     "value": "environment"
+                },
+                {
+                    "label": "events",
+                    "value": "events"
                 }
             ]
         }
