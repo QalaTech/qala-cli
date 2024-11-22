@@ -5,6 +5,7 @@ using Spectre.Console.Cli;
 using Qala.Cli.Commands.Login;
 using Qala.Cli.Commands.Environment;
 using Qala.Cli.Utils;
+using Qala.Cli.Commands.EventTypes;
 
 Environment.SetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_MANAGEMENT_API_URL], "https://localhost:7143/v1/", EnvironmentVariableTarget.User);
 
@@ -39,6 +40,14 @@ app.Configure(config =>
             .WithExample("environment set -e <ENVIRONMENT_ID>");
     })
     .WithAlias("env");
+    config.AddBranch("events", et =>
+    {
+        et.AddCommand<ListEventTypesCommand>("list")
+            .WithDescription("this command lists all the event types available in your environment.")
+            .WithExample("events ls")
+            .WithAlias("ls");
+    }) 
+    .WithAlias("ev");   
 });
 
 await app.RunAsync(args);

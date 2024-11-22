@@ -11,6 +11,7 @@ using Qala.Cli.Data.Models;
 using Qala.Cli.Data.Repository.Interfaces;
 using Qala.Cli.Services;
 using Qala.Cli.Services.Interfaces;
+using Qala.Cli.Commands.EventTypes;
 
 namespace Qala.Cli.Integration.Tests.Fixtures;
 
@@ -23,11 +24,19 @@ public class QalaCliBaseFixture : IDisposable
         new() { Id = Guid.NewGuid(), Name = "TestEnv3", Region = "us-east-3", EnvironmentType = "prod" }
     };
 
+    public readonly List<Data.Models.EventType> AvailableEventTypes = new()
+    {
+        new() { Id = Guid.NewGuid(), Type = "Type 1", Description = "Test Event Description", Schema="{}", ContentType="application/json", Encoding="utf-8", Categories = new List<string> { "cat1", "cat2" } },
+        new() { Id = Guid.NewGuid(), Type = "Type 2", Description = "Test Event Description 2", Schema="{}", ContentType="application/json", Encoding="utf-8", Categories = new List<string> { "cat3", "cat4" } },
+        new() { Id = Guid.NewGuid(), Type = "Type 3", Description = "Test Event Description 3", Schema="{}", ContentType="application/json", Encoding="utf-8", Categories = new List<string> { "cat5", "cat6" } }
+    };
+
     public readonly string ApiKey = Guid.NewGuid().ToString();
 
     public Mock<IOrganizationGateway> OrganizationServiceMock = new();
     public Mock<ILocalEnvironments> LocalEnvironmentsMock = new();
     public Mock<IEnvironmentGateway> EnvironmentGatewayMock = new();
+    public Mock<IEventTypeGateway> EventTypeGatewayMock = new();
 
     public required IMediator Mediator { get; init; }
 
@@ -36,6 +45,7 @@ public class QalaCliBaseFixture : IDisposable
         InitializaLocalEnvironmentsMock();
         InitializeOrganizationGatewayMock();
         InitializeEnvironmentGatewayMock();
+        InitializeEventTypeGatewayMock();
 
         var services = new ServiceCollection();
         InitializeDataServices(services);
@@ -93,6 +103,13 @@ public class QalaCliBaseFixture : IDisposable
                     });
     }
 
+    private void InitializeEventTypeGatewayMock()
+    {
+        EventTypeGatewayMock.Setup(
+            e => e.ListEventTypesAsync())
+                    .ReturnsAsync(AvailableEventTypes);
+    }
+
     private static void InitializeCommandHandlers(IServiceCollection services)
     {
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
@@ -100,6 +117,7 @@ public class QalaCliBaseFixture : IDisposable
         services.AddTransient<IRequestHandler<SetEnvironmentRequest, Either<SetEnvironmentErrorResponse, SetEnvironmentSuccessResponse>>, SetEnvironmentHandler>();
         services.AddTransient<IRequestHandler<GetEnvironmentRequest, Either<GetEnvironmentErrorResponse, GetEnvironemntSuccessResponse>>, GetEnvironmentHandler>();
         services.AddTransient<IRequestHandler<CreateEnvironmentRequest, Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>>, CreateEnvironmentHandler>();
+        services.AddTransient<IRequestHandler<ListEventTypesRequest, Either<ListEventTypesErrorResponse, ListEventTypesSuccessResponse>>, ListEventTypesHandler>();
     }
 
     private static void InitializeServices(IServiceCollection services)
@@ -107,6 +125,7 @@ public class QalaCliBaseFixture : IDisposable
         services.AddTransient<IEnvironmentService, EnvironmentService>();
         services.AddTransient<IRequestHandler<ConfigRequest, Either<ConfigErrorResponse, ConfigSuccessResponse>>, ConfigHandler>();
         services.AddTransient<IConfigService, ConfigService>();
+        services.AddTransient<IEventTypeService, EventTypeService>();
     }
 
     private void InitializeDataServices(IServiceCollection services)
@@ -114,5 +133,6 @@ public class QalaCliBaseFixture : IDisposable
         services.AddSingleton<ILocalEnvironments>(LocalEnvironmentsMock.Object);
         services.AddSingleton<IOrganizationGateway>(OrganizationServiceMock.Object);
         services.AddSingleton<IEnvironmentGateway>(EnvironmentGatewayMock.Object);
+        services.AddSingleton<IEventTypeGateway>(EventTypeGatewayMock.Object);
     }
 }

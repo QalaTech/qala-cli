@@ -18,6 +18,7 @@ public class Services
         services.AddSingleton<IAuthService, AuthService>();
         services.AddSingleton<IConfigService, ConfigService>();
         services.AddSingleton<IEnvironmentService, EnvironmentService>();
+        services.AddSingleton<IEventTypeService, EventTypeService>();
     }
 
     public static void RegisterDataServices(IServiceCollection services)
@@ -25,6 +26,7 @@ public class Services
         services.AddSingleton<ILocalEnvironments, LocalEnvironments>();
         services.AddHttpClient<IOrganizationGateway, OrganizationGateway>(BuildHttpClient);
         services.AddHttpClient<IEnvironmentGateway, EnvironmentGateway>(BuildHttpClient);
+        services.AddHttpClient<IEventTypeGateway, EventTypeGateway>(BuildHttpClient);
     }
 
     private static void BuildHttpClient(HttpClient client)
@@ -53,6 +55,11 @@ public class Services
         else
         {
             client.DefaultRequestHeaders.Add("x-auth-token", key);
+            var environmentId = System.Environment.GetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID], EnvironmentVariableTarget.User);
+            if (!string.IsNullOrEmpty(environmentId))
+            {
+                client.DefaultRequestHeaders.Add("x-environment-id", environmentId);
+            }
         }
     }
 }

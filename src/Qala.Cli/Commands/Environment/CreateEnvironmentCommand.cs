@@ -41,4 +41,24 @@ public class CreateEnvironmentCommand(IMediator mediator) : AsyncCommand<CreateE
             }
         );
     }
+
+    public override ValidationResult Validate(CommandContext context, CreateEnvironmentArgument argument)
+    {
+        if (string.IsNullOrWhiteSpace(argument.Name))
+        {
+            return ValidationResult.Error("Name is required");
+        }
+
+        if (string.IsNullOrWhiteSpace(argument.Region))
+        {
+            return ValidationResult.Error("Region is required");
+        }
+
+        if (string.IsNullOrWhiteSpace(argument.Type))
+        {
+            return ValidationResult.Error("Type is required");
+        }
+
+        return ValidationResult.Success();
+    }
 }
