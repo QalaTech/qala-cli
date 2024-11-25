@@ -1,4 +1,3 @@
-using System;
 using Moq;
 using Qala.Cli.Commands.Environment;
 using Qala.Cli.Integration.Tests.Fixtures;

@@ -8,4 +8,5 @@ public interface ITopicService
 {
     Task<Either<ListTopicsErrorResponse, ListTopicsSuccessResponse>> ListTopicsAsync();
     Task<Either<GetTopicErrorResponse, GetTopicSuccessResponse>> GetTopicAsync(string name);
+    Task<Either<CreateTopicErrorResponse, CreateTopicSuccessResponse>> CreateTopicAsync(string name, string description, List<Guid> eventTypeIds);
 }

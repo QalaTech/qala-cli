@@ -15,7 +15,7 @@ public class CommaSeparatedGuidArrayConverter : TypeConverter
         if (value is string stringValue)
         {
             var guids = stringValue.Split([','], StringSplitOptions.RemoveEmptyEntries);
-            return Array.ConvertAll(guids, Guid.Parse);
+            return Array.ConvertAll(guids, Guid.Parse).ToList();
         }
         var result = base.ConvertFrom(context, culture, value) ?? throw new InvalidOperationException("Conversion resulted in a null value.");
         return result;

@@ -6,6 +6,26 @@ namespace Qala.Cli.Data.Gateway;
 
 public class TopicGateway(HttpClient client) : ITopicGateway
 {
+    public async Task<Topic> CreateTopicAsync(string name, string description, List<Guid> eventTypeIds)
+    {
+        try
+        {
+            var response = await client.PostAsJsonAsync("topics", new { Name = name, Description = description, EventTypeIds = eventTypeIds });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Failed to create topic");
+            }
+
+            var content = await response.Content.ReadFromJsonAsync<Topic>() ?? throw new Exception("Failed to create topic");
+            return content;
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Failed to create topic", e);
+        }
+    }
+
     public async Task<Topic> GetTopicAsync(string name)
     {
         try

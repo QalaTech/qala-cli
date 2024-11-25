@@ -152,6 +152,26 @@
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "stopAtEntry": false
+        },
+        {
+            "name": "Create Topic",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/Qala.Cli.dll",
+            "args": [
+                "topics",
+                "create",
+                "-n",
+                "${input:topicName}",
+                "-d",
+                "${input:topicDescription}",
+                "-e",
+                "${input:topicEventTypeIds}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
         }
     ],
     "inputs": [
@@ -199,6 +219,16 @@
             "id": "topicName",
             "type": "promptString",
             "description": "Enter the topic name"
+        },
+        {
+            "id": "topicDescription",
+            "type": "promptString",
+            "description": "Enter the topic description"
+        },
+        {
+            "id": "topicEventTypeIds",
+            "type": "promptString",
+            "description": "Enter the topic event type IDs with comma separated values"
         },
         {
             "id": "command",

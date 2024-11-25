@@ -135,6 +135,23 @@ public class QalaCliBaseFixture : IDisposable
         TopicGatewayMock.Setup(
             t => t.GetTopicAsync(It.IsAny<string>()))
                     .ReturnsAsync((string name) => AvailableTopics.FirstOrDefault(t => t.Name == name));
+
+        TopicGatewayMock.Setup(
+            t => t.CreateTopicAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Guid>>()))
+                    .ReturnsAsync((string name, string description, List<Guid> eventTypeIds) => {
+                        var newTopic = new Topic
+                        {
+                            Id = Guid.NewGuid(),
+                            Name = name,
+                            Description = description,
+                            ProvisioningState = "Provisioning",
+                            EventTypes = AvailableEventTypes.Where(et => eventTypeIds.Contains(et.Id)).ToList()
+                        };
+
+                        AvailableTopics.Add(newTopic);
+
+                        return newTopic;
+                    });
     }
 
     private static void InitializeCommandHandlers(IServiceCollection services)
@@ -148,6 +165,7 @@ public class QalaCliBaseFixture : IDisposable
         services.AddTransient<IRequestHandler<GetEventTypeRequest, Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>>, GetEventTypeHandler>();
         services.AddTransient<IRequestHandler<ListTopicRequest, Either<ListTopicsErrorResponse, ListTopicsSuccessResponse>>, ListTopicsHandler>();
         services.AddTransient<IRequestHandler<GetTopicRequest, Either<GetTopicErrorResponse, GetTopicSuccessResponse>>, GetTopicHandler>();
+        services.AddTransient<IRequestHandler<CreateTopicRequest, Either<CreateTopicErrorResponse, CreateTopicSuccessResponse>>, CreateTopicHandler>();
     }
 
     private static void InitializeServices(IServiceCollection services)
