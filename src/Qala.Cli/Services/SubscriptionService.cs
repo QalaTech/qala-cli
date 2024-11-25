@@ -7,6 +7,37 @@ namespace Qala.Cli.Services;
 
 public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISubscriptionService
 {
+    public async Task<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>> CreateSubscriptionAsync(string topicName, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts)
+    {
+        if (string.IsNullOrWhiteSpace(topicName))
+        {
+            return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Topic name is required"));
+        }
+
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Name is required"));
+        }
+
+        if (string.IsNullOrWhiteSpace(webhookUrl))
+        {
+            return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Webhook url is required"));
+        }
+
+        if (eventTypeIds == null || eventTypeIds.Count == 0)
+        {
+            return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Event type ids are required"));
+        }
+
+        if (maxDeliveryAttempts <= 0)
+        {
+            return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Max delivery attempts should be greater than 0"));
+        }
+
+        var subscription = await subscriptionGateway.CreateSubscriptionAsync(topicName, name, description, webhookUrl, eventTypeIds, maxDeliveryAttempts);
+        return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionSuccessResponse(subscription));
+    }
+
     public async Task<Either<GetSubscriptionErrorResponse, GetSubscriptionSuccessResponse>> GetSubscriptionAsync(string topicName, Guid subscriptionId)
     {
         if (string.IsNullOrWhiteSpace(topicName))

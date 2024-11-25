@@ -89,6 +89,9 @@ app.Configure(config =>
             .WithDescription("this command retrieves the subscription with the specified ID.")
             .WithExample("qala subscriptions i -t <TOPIC_NAME> -s <SUBSCRIPTION_ID>")
             .WithAlias("i");
+        s.AddCommand<CreateSubscriptionCommand>("create")
+            .WithDescription("this command creates a new subscription for the Qala CLI.")
+            .WithExample("qala sub create -n <SUBSCRIPTION_NAME> -t|--topic <TOPIC_NAME> -d|--description <DESCRIPTION> -e|--events <EVENTS_COMMA_SEPERATED_IDS> -u|--url <WEBHOOK_URL> -m|--max-attempts <MAX_DELIVERY_ATTEMPTS>");
     })
     .WithAlias("sub");
 });

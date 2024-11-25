@@ -188,6 +188,24 @@ public class QalaCliBaseFixture : IDisposable
         SubscriptionGatewayMock.Setup(
             s => s.GetSubscriptionAsync(It.IsAny<string>(), It.IsAny<Guid>()))
                     .ReturnsAsync((string topicName, Guid subscriptionId) => AvailableSubscriptions.FirstOrDefault(s => s.Id == subscriptionId));
+
+        SubscriptionGatewayMock.Setup(
+            s => s.CreateSubscriptionAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Guid>>(), It.IsAny<int>()))
+                    .ReturnsAsync((string topicName, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts) => {
+                        var newSubscription = new Subscription
+                        {
+                            Id = Guid.NewGuid(),
+                            Name = name,
+                            Description = description,
+                            ProvisioningState = "Provisioning",
+                            MaxDeliveryAttempts = maxDeliveryAttempts,
+                            DeadletterCount = 0
+                        };
+
+                        AvailableSubscriptions.Add(newSubscription);
+
+                        return newSubscription;
+                    });
     }
 
     private static void InitializeCommandHandlers(IServiceCollection services)
@@ -205,6 +223,7 @@ public class QalaCliBaseFixture : IDisposable
         services.AddTransient<IRequestHandler<UpdateTopicRequest, Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>, UpdateTopicHandler>();
         services.AddTransient<IRequestHandler<ListSubscriptionsRequest, Either<ListSubscriptionsErrorResponse, ListSubscriptionsSuccessResponse>>, ListSubscriptionsHandler>();
         services.AddTransient<IRequestHandler<GetSubscriptionRequest, Either<GetSubscriptionErrorResponse, GetSubscriptionSuccessResponse>>, GetSubscriptionHandler>();
+        services.AddTransient<IRequestHandler<CreateSubscriptionRequest, Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>, CreateSubscriptionHandler>();
     }
 
     private static void InitializeServices(IServiceCollection services)

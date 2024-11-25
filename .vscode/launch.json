@@ -167,7 +167,7 @@
                 "-d",
                 "${input:topicDescription}",
                 "-e",
-                "${input:topicEventTypeIds}"
+                "${input:eventTypeIds}"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -186,7 +186,7 @@
                 "-d",
                 "${input:topicDescription}",
                 "-e",
-                "${input:topicEventTypeIds}"
+                "${input:eventTypeIds}"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -221,6 +221,32 @@
                 "${input:topicName}",
                 "-s",
                 "${input:subscriptionId}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Create Subscription",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/Qala.Cli.dll",
+            "args": [
+                "subscriptions",
+                "create",
+                "-t",
+                "${input:topicName}",
+                "-n",
+                "${input:subscriptionName}",
+                "-d",
+                "${input:subscriptionDescription}",
+                "-e",
+                "${input:eventTypeIds}",
+                "-u",
+                "${input:webhookUrl}",
+                "-m",
+                "${input:subscriptionMaxDeliveryAttempts}"
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
@@ -279,14 +305,34 @@
             "description": "Enter the topic description"
         },
         {
-            "id": "topicEventTypeIds",
-            "type": "promptString",
-            "description": "Enter the topic event type IDs with comma separated values"
-        },
-        {
             "id": "subscriptionId",
             "type": "promptString",
             "description": "Enter the subscription ID"
+        },
+        {
+            "id": "subscriptionName",
+            "type": "promptString",
+            "description": "Enter the subscription name"
+        },
+        {
+            "id": "subscriptionDescription",
+            "type": "promptString",
+            "description": "Enter the subscription description"
+        },
+        {
+            "id": "eventTypeIds",
+            "type": "promptString",
+            "description": "Enter the event type IDs with comma separated values"
+        },
+        {
+            "id": "webhookUrl",
+            "type": "promptString",
+            "description": "Enter the webhook URL"
+        },
+        {
+            "id": "subscriptionMaxDeliveryAttempts",
+            "type": "promptString",
+            "description": "Enter the subscription max delivery attempts"
         },
         {
             "id": "command",
