@@ -73,8 +73,30 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
         }
     }
 
-    public Task<Subscription> UpdateSubscriptionAsync(string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts)
+    public async Task<Subscription> UpdateSubscriptionAsync(string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var response = await httpClient.PutAsJsonAsync($"topics/{topicName}/subscriptions/{subscriptionId}", new
+            {
+                Name = name,
+                Description = description,
+                WebhookUrl = webhookUrl,
+                EventTypeIds = eventTypeIds,
+                MaxDeliveryAttempts = maxDeliveryAttempts
+            });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Failed to update subscription");
+            }
+
+            var content = await response.Content.ReadFromJsonAsync<Subscription>() ?? throw new Exception("Failed to update subscription");
+            return content;
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Failed to update subscription", e);
+        }
     }
 }

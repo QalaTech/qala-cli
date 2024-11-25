@@ -251,6 +251,33 @@
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "stopAtEntry": false
+        },
+        {
+            "name": "Update Subscription",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/Qala.Cli.dll",
+            "args": [
+                "subscriptions",
+                "update",
+                "${input:subscriptionId}",
+                "-t",
+                "${input:topicName}",
+                "-n",
+                "${input:subscriptionName}",
+                "-d",
+                "${input:subscriptionDescription}",
+                "-e",
+                "${input:eventTypeIds}",
+                "-u",
+                "${input:webhookUrl}",
+                "-m",
+                "${input:subscriptionMaxDeliveryAttempts}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
         }
     ],
     "inputs": [

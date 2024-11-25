@@ -64,4 +64,40 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
         var subscriptions = await subscriptionGateway.ListSubscriptionsAsync(topicName);
         return await Task.FromResult<Either<ListSubscriptionsErrorResponse, ListSubscriptionsSuccessResponse>>(new ListSubscriptionsSuccessResponse(subscriptions));
     }
+
+    public async Task<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>> UpdateSubscriptionAsync(string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts)
+    {
+        if (string.IsNullOrWhiteSpace(topicName))
+        {
+            return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Topic name is required"));
+        }
+
+        if (subscriptionId == Guid.Empty)
+        {
+            return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Subscription id is required"));
+        }
+
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Name is required"));
+        }
+
+        if (string.IsNullOrWhiteSpace(webhookUrl))
+        {
+            return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Webhook url is required"));
+        }
+
+        if (eventTypeIds == null || eventTypeIds.Count == 0)
+        {
+            return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Event type ids are required"));
+        }
+
+        if (maxDeliveryAttempts <= 0)
+        {
+            return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Max delivery attempts should be greater than 0"));
+        }
+
+        var subscription = await subscriptionGateway.UpdateSubscriptionAsync(topicName, subscriptionId, name, description, webhookUrl, eventTypeIds, maxDeliveryAttempts);
+        return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionSuccessResponse(subscription));
+    }
 }

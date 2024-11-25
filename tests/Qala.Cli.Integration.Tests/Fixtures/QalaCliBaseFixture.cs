@@ -206,6 +206,20 @@ public class QalaCliBaseFixture : IDisposable
 
                         return newSubscription;
                     });
+
+        SubscriptionGatewayMock.Setup(
+            s => s.UpdateSubscriptionAsync(It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Guid>>(), It.IsAny<int>()))
+                    .ReturnsAsync((string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts) => {
+                        var subscription = AvailableSubscriptions.FirstOrDefault(s => s.Id == subscriptionId);
+                        if (subscription != null)
+                        {
+                            subscription.Name = name;
+                            subscription.Description = description;
+                            subscription.MaxDeliveryAttempts = maxDeliveryAttempts;
+                        }
+
+                        return subscription;
+                    });
     }
 
     private static void InitializeCommandHandlers(IServiceCollection services)
@@ -224,6 +238,7 @@ public class QalaCliBaseFixture : IDisposable
         services.AddTransient<IRequestHandler<ListSubscriptionsRequest, Either<ListSubscriptionsErrorResponse, ListSubscriptionsSuccessResponse>>, ListSubscriptionsHandler>();
         services.AddTransient<IRequestHandler<GetSubscriptionRequest, Either<GetSubscriptionErrorResponse, GetSubscriptionSuccessResponse>>, GetSubscriptionHandler>();
         services.AddTransient<IRequestHandler<CreateSubscriptionRequest, Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>, CreateSubscriptionHandler>();
+        services.AddTransient<IRequestHandler<UpdateSubscriptionRequest, Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>, UpdateSubscriptionHandler>();
     }
 
     private static void InitializeServices(IServiceCollection services)
