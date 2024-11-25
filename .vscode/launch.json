@@ -137,6 +137,21 @@
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "stopAtEntry": false
+        },
+        {
+            "name": "Get Topic",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/Qala.Cli.dll",
+            "args": [
+                "topics",
+                "n",
+                "${input:topicName}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
         }
     ],
     "inputs": [
@@ -179,6 +194,11 @@
             "id": "eventTypeId",
             "type": "promptString",
             "description": "Enter the event type ID"
+        },
+        {
+            "id": "topicName",
+            "type": "promptString",
+            "description": "Enter the topic name"
         },
         {
             "id": "command",

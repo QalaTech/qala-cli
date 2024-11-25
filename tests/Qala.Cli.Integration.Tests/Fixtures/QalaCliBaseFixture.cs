@@ -131,6 +131,10 @@ public class QalaCliBaseFixture : IDisposable
         TopicGatewayMock.Setup(
             t => t.ListTopicsAsync())
                     .ReturnsAsync(AvailableTopics);
+        
+        TopicGatewayMock.Setup(
+            t => t.GetTopicAsync(It.IsAny<string>()))
+                    .ReturnsAsync((string name) => AvailableTopics.FirstOrDefault(t => t.Name == name));
     }
 
     private static void InitializeCommandHandlers(IServiceCollection services)
@@ -143,6 +147,7 @@ public class QalaCliBaseFixture : IDisposable
         services.AddTransient<IRequestHandler<ListEventTypesRequest, Either<ListEventTypesErrorResponse, ListEventTypesSuccessResponse>>, ListEventTypesHandler>();
         services.AddTransient<IRequestHandler<GetEventTypeRequest, Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>>, GetEventTypeHandler>();
         services.AddTransient<IRequestHandler<ListTopicRequest, Either<ListTopicsErrorResponse, ListTopicsSuccessResponse>>, ListTopicsHandler>();
+        services.AddTransient<IRequestHandler<GetTopicRequest, Either<GetTopicErrorResponse, GetTopicSuccessResponse>>, GetTopicHandler>();
     }
 
     private static void InitializeServices(IServiceCollection services)

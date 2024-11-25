@@ -52,7 +52,7 @@ app.Configure(config =>
             .WithDescription("this command lists all the event types available in your environment.")
             .WithExample("events ls")
             .WithAlias("ls");
-        et.AddCommand<GetEventTypeCommand>("get")
+        et.AddCommand<GetEventTypeCommand>("id")
             .WithDescription("this command retrieves the event type with the specified ID.")
             .WithExample("events inspect <EVENT_TYPE_ID>")
             .WithAlias("i");
@@ -65,6 +65,10 @@ app.Configure(config =>
             .WithDescription("this command lists all the topics available in your environment.")
             .WithExample("topics ls")
             .WithAlias("ls");
+        t.AddCommand<GetTopicCommand>("name")
+            .WithDescription("this command retrieves the topic with the specified NAME.")
+            .WithExample("topics inspect <TOPIC_NAME>")
+            .WithAlias("n");
     })
     .WithAlias("tp");
 });
