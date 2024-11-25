@@ -72,6 +72,9 @@ app.Configure(config =>
         t.AddCommand<CreateTopicCommand>("create")
             .WithDescription("this command creates a new topic for the Qala CLI.")
             .WithExample("topics create -n <NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS>");
+        t.AddCommand<UpdateTopicCommand>("update")
+            .WithDescription("this command updates an existing topic for the Qala CLI.")
+            .WithExample("topics update <NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS>");
     })
     .WithAlias("tp");
 });

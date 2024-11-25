@@ -152,6 +152,16 @@ public class QalaCliBaseFixture : IDisposable
 
                         return newTopic;
                     });
+
+        TopicGatewayMock.Setup(
+            t => t.UpdateTopicAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Guid>>()))
+                    .ReturnsAsync((string name, string description, List<Guid> eventTypeIds) => {
+                        var topic = AvailableTopics.FirstOrDefault(t => t.Name == name);
+                        topic.Description = description;
+                        topic.EventTypes = AvailableEventTypes.Where(et => eventTypeIds.Contains(et.Id)).ToList();
+
+                        return topic;
+                    });
     }
 
     private static void InitializeCommandHandlers(IServiceCollection services)
@@ -166,6 +176,7 @@ public class QalaCliBaseFixture : IDisposable
         services.AddTransient<IRequestHandler<ListTopicRequest, Either<ListTopicsErrorResponse, ListTopicsSuccessResponse>>, ListTopicsHandler>();
         services.AddTransient<IRequestHandler<GetTopicRequest, Either<GetTopicErrorResponse, GetTopicSuccessResponse>>, GetTopicHandler>();
         services.AddTransient<IRequestHandler<CreateTopicRequest, Either<CreateTopicErrorResponse, CreateTopicSuccessResponse>>, CreateTopicHandler>();
+        services.AddTransient<IRequestHandler<UpdateTopicRequest, Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>, UpdateTopicHandler>();
     }
 
     private static void InitializeServices(IServiceCollection services)

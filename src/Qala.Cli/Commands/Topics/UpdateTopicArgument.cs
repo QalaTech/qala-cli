@@ -4,9 +4,9 @@ using Spectre.Console.Cli;
 
 namespace Qala.Cli.Commands.Topics;
 
-public class CreateTopicArgument : CommandSettings
+public class UpdateTopicArgument : CommandSettings
 {
-    [CommandOption("-n|--name <NAME>")]
+    [CommandArgument(0, "<NAME>")]
     [Description("The name of the topic.")]
     public string Name { get; set; } = string.Empty;
 

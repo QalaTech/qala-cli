@@ -172,6 +172,25 @@
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "stopAtEntry": false
+        },
+        {
+            "name": "Update Topic",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/Qala.Cli.dll",
+            "args": [
+                "topics",
+                "update",
+                "${input:topicName}",
+                "-d",
+                "${input:topicDescription}",
+                "-e",
+                "${input:topicEventTypeIds}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
         }
     ],
     "inputs": [

@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace Qala.Cli.Utils;
 
-public class CommaSeparatedGuidArrayConverter : TypeConverter
+public class CommaSeparatedGuidListConverter : TypeConverter
 {
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
     {

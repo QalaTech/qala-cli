@@ -65,4 +65,24 @@ public class TopicGateway(HttpClient client) : ITopicGateway
             throw new Exception("Failed to list topics", e);
         }
     }
+
+    public async Task<Topic> UpdateTopicAsync(string name, string description, List<Guid> eventTypeIds)
+    {
+        try
+        {
+            var response = await client.PutAsJsonAsync($"topics/{name}", new { Name = name, Description = description, EventTypeIds = eventTypeIds });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Failed to update topic");
+            }
+
+            var content = await response.Content.ReadFromJsonAsync<Topic>() ?? throw new Exception("Failed to update topic");
+            return content;
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Failed to update topic", e);
+        }
+    }
 }

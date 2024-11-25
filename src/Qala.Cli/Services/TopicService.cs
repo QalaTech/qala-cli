@@ -44,4 +44,25 @@ public class TopicService(ITopicGateway topicGateway) : ITopicService
         var topics = await topicGateway.ListTopicsAsync();
         return await Task.FromResult<Either<ListTopicsErrorResponse, ListTopicsSuccessResponse>>(new ListTopicsSuccessResponse(topics));
     }
+
+    public async Task<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>> UpdateTopicAsync(string name, string description, List<Guid> eventTypeIds)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicErrorResponse("Name is required"));
+        }
+
+        if (string.IsNullOrWhiteSpace(description))
+        {
+            return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicErrorResponse("Description is required"));
+        }
+
+        if (eventTypeIds == null || eventTypeIds.Count == 0)
+        {
+            return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicErrorResponse("Event type ids are required"));
+        }
+
+        var topic = await topicGateway.UpdateTopicAsync(name, description, eventTypeIds);
+        return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicSuccessResponse(topic));
+    }
 }
