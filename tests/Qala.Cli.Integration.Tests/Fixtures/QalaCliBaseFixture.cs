@@ -220,6 +220,16 @@ public class QalaCliBaseFixture : IDisposable
 
                         return subscription;
                     });
+
+        SubscriptionGatewayMock.Setup(
+            s => s.DeleteSubscriptionAsync(It.IsAny<string>(), It.IsAny<Guid>()))
+                    .Callback((string topicName, Guid subscriptionId) => {
+                        var subscription = AvailableSubscriptions.FirstOrDefault(s => s.Id == subscriptionId);
+                        if (subscription != null)
+                        {
+                            AvailableSubscriptions.Remove(subscription);
+                        }
+                    });
     }
 
     private static void InitializeCommandHandlers(IServiceCollection services)
@@ -239,6 +249,7 @@ public class QalaCliBaseFixture : IDisposable
         services.AddTransient<IRequestHandler<GetSubscriptionRequest, Either<GetSubscriptionErrorResponse, GetSubscriptionSuccessResponse>>, GetSubscriptionHandler>();
         services.AddTransient<IRequestHandler<CreateSubscriptionRequest, Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>, CreateSubscriptionHandler>();
         services.AddTransient<IRequestHandler<UpdateSubscriptionRequest, Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>, UpdateSubscriptionHandler>();
+        services.AddTransient<IRequestHandler<DeleteSubscriptionRequest, Either<DeleteSubscriptionErrorResponse, DeleteSubscriptionSuccessResponse>>, DeleteSubscriptionHandler>();
     }
 
     private static void InitializeServices(IServiceCollection services)

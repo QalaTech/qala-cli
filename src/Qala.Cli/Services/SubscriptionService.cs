@@ -38,6 +38,22 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
         return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionSuccessResponse(subscription));
     }
 
+    public async Task<Either<DeleteSubscriptionErrorResponse, DeleteSubscriptionSuccessResponse>> DeleteSubscriptionAsync(string topicName, Guid subscriptionId)
+    {
+        if (string.IsNullOrWhiteSpace(topicName))
+        {
+            return await Task.FromResult<Either<DeleteSubscriptionErrorResponse, DeleteSubscriptionSuccessResponse>>(new DeleteSubscriptionErrorResponse("Topic name is required"));
+        }
+
+        if (subscriptionId == Guid.Empty)
+        {
+            return await Task.FromResult<Either<DeleteSubscriptionErrorResponse, DeleteSubscriptionSuccessResponse>>(new DeleteSubscriptionErrorResponse("Subscription id is required"));
+        }
+
+        await subscriptionGateway.DeleteSubscriptionAsync(topicName, subscriptionId);
+        return await Task.FromResult<Either<DeleteSubscriptionErrorResponse, DeleteSubscriptionSuccessResponse>>(new DeleteSubscriptionSuccessResponse());
+    }
+
     public async Task<Either<GetSubscriptionErrorResponse, GetSubscriptionSuccessResponse>> GetSubscriptionAsync(string topicName, Guid subscriptionId)
     {
         if (string.IsNullOrWhiteSpace(topicName))

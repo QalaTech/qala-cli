@@ -33,6 +33,23 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
         }
     }
 
+    public async Task DeleteSubscriptionAsync(string topicName, Guid subscriptionId)
+    {
+        try
+        {
+            var response = await httpClient.DeleteAsync($"topics/{topicName}/subscriptions/{subscriptionId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Failed to delete subscription");
+            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Failed to delete subscription", e);
+        }
+    }
+
     public async Task<Subscription> GetSubscriptionAsync(string topicName, Guid subscriptionId)
     {
         try
