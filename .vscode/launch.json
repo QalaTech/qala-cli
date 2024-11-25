@@ -191,6 +191,40 @@
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "stopAtEntry": false
+        },
+        {
+            "name": "List Subscriptions",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/Qala.Cli.dll",
+            "args": [
+                "subscriptions",
+                "ls",
+                "-t",
+                "${input:topicName}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Get Subscription",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/Qala.Cli.dll",
+            "args": [
+                "subscriptions",
+                "i",
+                "-t",
+                "${input:topicName}",
+                "-s",
+                "${input:subscriptionId}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
         }
     ],
     "inputs": [
@@ -250,6 +284,11 @@
             "description": "Enter the topic event type IDs with comma separated values"
         },
         {
+            "id": "subscriptionId",
+            "type": "promptString",
+            "description": "Enter the subscription ID"
+        },
+        {
             "id": "command",
             "type": "pickString",
             "description": "Select the command",
@@ -277,6 +316,10 @@
                 {
                     "label": "topics",
                     "value": "topics"
+                },
+                {
+                    "label": "subscriptions",
+                    "value": "subscriptions"
                 }
             ]
         }

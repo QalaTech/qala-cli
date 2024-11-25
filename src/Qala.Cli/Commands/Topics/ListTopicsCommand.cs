@@ -6,7 +6,7 @@ namespace Qala.Cli.Commands.Topics;
 
 public class ListTopicsCommand(IMediator mediator) : AsyncCommand<ListTopicsArgument>
 {
-    public override async Task<int> ExecuteAsync(CommandContext context, ListTopicsArgument settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, ListTopicsArgument arguments)
     {
         return await mediator.Send(new ListTopicRequest())
             .ToAsync()

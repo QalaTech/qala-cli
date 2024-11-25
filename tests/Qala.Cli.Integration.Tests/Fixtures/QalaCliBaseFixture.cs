@@ -13,6 +13,7 @@ using Qala.Cli.Services;
 using Qala.Cli.Services.Interfaces;
 using Qala.Cli.Commands.EventTypes;
 using Qala.Cli.Commands.Topics;
+using Qala.Cli.Commands.Subscriptions;
 
 namespace Qala.Cli.Integration.Tests.Fixtures;
 
@@ -39,6 +40,13 @@ public class QalaCliBaseFixture : IDisposable
         new() { Id = Guid.NewGuid(), Name = "TestTopic3", Description = "Test Topic Description 3", ProvisioningState = "Provisioned" }
     };
 
+    public List<Subscription> AvailableSubscriptions = new ()
+    {
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription", Description = "Test Subscription Description", ProvisioningState = "Provisioning", MaxDeliveryAttempts = 3, DeadletterCount = 1 },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription2", Description = "Test Subscription Description 2", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 2 },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription3", Description = "Test Subscription Description 3", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 3 }
+    };
+
     public readonly string ApiKey = Guid.NewGuid().ToString();
 
     public Mock<IOrganizationGateway> OrganizationServiceMock = new();
@@ -46,6 +54,7 @@ public class QalaCliBaseFixture : IDisposable
     public Mock<IEnvironmentGateway> EnvironmentGatewayMock = new();
     public Mock<IEventTypeGateway> EventTypeGatewayMock = new();
     public Mock<ITopicGateway> TopicGatewayMock = new();
+    public Mock<ISubscriptionGateway> SubscriptionGatewayMock = new();
 
     public required IMediator Mediator { get; init; }
 
@@ -56,6 +65,7 @@ public class QalaCliBaseFixture : IDisposable
         InitializeEnvironmentGatewayMock();
         InitializeEventTypeGatewayMock();
         InitializeTopicGatewayMock();
+        InitializeSubscriptionGatewayMock();
 
         var services = new ServiceCollection();
         InitializeDataServices(services);
@@ -157,11 +167,27 @@ public class QalaCliBaseFixture : IDisposable
             t => t.UpdateTopicAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Guid>>()))
                     .ReturnsAsync((string name, string description, List<Guid> eventTypeIds) => {
                         var topic = AvailableTopics.FirstOrDefault(t => t.Name == name);
-                        topic.Description = description;
-                        topic.EventTypes = AvailableEventTypes.Where(et => eventTypeIds.Contains(et.Id)).ToList();
+                        if (topic != null)
+                        {
+                            topic.Description = description;
+                            topic.EventTypes = AvailableEventTypes.Where(et => eventTypeIds.Contains(et.Id)).ToList();
+                        }
 
                         return topic;
                     });
+    }
+
+    private void InitializeSubscriptionGatewayMock()
+    {
+        AvailableSubscriptions.ForEach(s => s.TopicName = AvailableTopics.First().Name);
+
+        SubscriptionGatewayMock.Setup(
+            s => s.ListSubscriptionsAsync(It.IsAny<string>()))
+                    .ReturnsAsync(AvailableSubscriptions);
+        
+        SubscriptionGatewayMock.Setup(
+            s => s.GetSubscriptionAsync(It.IsAny<string>(), It.IsAny<Guid>()))
+                    .ReturnsAsync((string topicName, Guid subscriptionId) => AvailableSubscriptions.FirstOrDefault(s => s.Id == subscriptionId));
     }
 
     private static void InitializeCommandHandlers(IServiceCollection services)
@@ -177,6 +203,8 @@ public class QalaCliBaseFixture : IDisposable
         services.AddTransient<IRequestHandler<GetTopicRequest, Either<GetTopicErrorResponse, GetTopicSuccessResponse>>, GetTopicHandler>();
         services.AddTransient<IRequestHandler<CreateTopicRequest, Either<CreateTopicErrorResponse, CreateTopicSuccessResponse>>, CreateTopicHandler>();
         services.AddTransient<IRequestHandler<UpdateTopicRequest, Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>, UpdateTopicHandler>();
+        services.AddTransient<IRequestHandler<ListSubscriptionsRequest, Either<ListSubscriptionsErrorResponse, ListSubscriptionsSuccessResponse>>, ListSubscriptionsHandler>();
+        services.AddTransient<IRequestHandler<GetSubscriptionRequest, Either<GetSubscriptionErrorResponse, GetSubscriptionSuccessResponse>>, GetSubscriptionHandler>();
     }
 
     private static void InitializeServices(IServiceCollection services)
@@ -186,6 +214,7 @@ public class QalaCliBaseFixture : IDisposable
         services.AddTransient<IConfigService, ConfigService>();
         services.AddTransient<IEventTypeService, EventTypeService>();
         services.AddTransient<ITopicService, TopicService>();
+        services.AddTransient<ISubscriptionService, SubscriptionService>();
     }
 
     private void InitializeDataServices(IServiceCollection services)
@@ -195,5 +224,6 @@ public class QalaCliBaseFixture : IDisposable
         services.AddSingleton<IEnvironmentGateway>(EnvironmentGatewayMock.Object);
         services.AddSingleton<IEventTypeGateway>(EventTypeGatewayMock.Object);
         services.AddSingleton<ITopicGateway>(TopicGatewayMock.Object);
+        services.AddSingleton<ISubscriptionGateway>(SubscriptionGatewayMock.Object);
     }
 }

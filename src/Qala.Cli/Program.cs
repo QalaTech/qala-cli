@@ -8,6 +8,7 @@ using Qala.Cli.Utils;
 using Qala.Cli.Commands.EventTypes;
 using LanguageExt;
 using Qala.Cli.Commands.Topics;
+using Qala.Cli.Commands.Subscriptions;
 
 Environment.SetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_MANAGEMENT_API_URL], "https://localhost:7143/v1/", EnvironmentVariableTarget.User);
 
@@ -52,7 +53,7 @@ app.Configure(config =>
             .WithDescription("this command lists all the event types available in your environment.")
             .WithExample("events ls")
             .WithAlias("ls");
-        et.AddCommand<GetEventTypeCommand>("id")
+        et.AddCommand<GetEventTypeCommand>("inspect")
             .WithDescription("this command retrieves the event type with the specified ID.")
             .WithExample("events inspect <EVENT_TYPE_ID>")
             .WithAlias("i");
@@ -77,6 +78,19 @@ app.Configure(config =>
             .WithExample("topics update <NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS>");
     })
     .WithAlias("tp");
+
+    config.AddBranch("subscriptions", s =>
+    {
+        s.AddCommand<ListSubscriptionsCommand>("list")
+            .WithDescription("this command lists all the subscriptions available in your environment.")
+            .WithExample("qala subscriptions ls -t <TOPIC_NAME>")
+            .WithAlias("ls");
+        s.AddCommand<GetSubscriptionCommand>("inspect")
+            .WithDescription("this command retrieves the subscription with the specified ID.")
+            .WithExample("qala subscriptions i -t <TOPIC_NAME> -s <SUBSCRIPTION_ID>")
+            .WithAlias("i");
+    })
+    .WithAlias("sub");
 });
 
 await app.RunAsync(args);
