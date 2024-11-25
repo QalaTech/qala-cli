@@ -9,4 +9,6 @@ public interface ISubscriptionGateway
     Task<Subscription> CreateSubscriptionAsync(string topicName, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts);
     Task<Subscription> UpdateSubscriptionAsync(string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts);
     Task DeleteSubscriptionAsync(string topicName, Guid subscriptionId);
+    Task<string> GetWebhookSecretAsync(string topicName, Guid subscriptionId);
+    Task<string> RotateWebhookSecretAsync(string topicName, Guid subscriptionId);
 }

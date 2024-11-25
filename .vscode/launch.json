@@ -296,6 +296,44 @@
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "stopAtEntry": false
+        },
+        {
+            "name": "Get Webhook Secret",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/Qala.Cli.dll",
+            "args": [
+                "subscriptions",
+                "secret",
+                "inspect",
+                "-t",
+                "${input:topicName}",
+                "-s",
+                "${input:subscriptionId}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Rotate Webhook Secret",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/Qala.Cli.dll",
+            "args": [
+                "subscriptions",
+                "secret",
+                "rotate",
+                "-t",
+                "${input:topicName}",
+                "-s",
+                "${input:subscriptionId}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
         }
     ],
     "inputs": [

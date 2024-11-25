@@ -42,9 +42,9 @@ public class QalaCliBaseFixture : IDisposable
 
     public List<Subscription> AvailableSubscriptions = new ()
     {
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription", Description = "Test Subscription Description", ProvisioningState = "Provisioning", MaxDeliveryAttempts = 3, DeadletterCount = 1 },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription2", Description = "Test Subscription Description 2", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 2 },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription3", Description = "Test Subscription Description 3", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 3 }
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription", Description = "Test Subscription Description", ProvisioningState = "Provisioning", MaxDeliveryAttempts = 3, DeadletterCount = 1, WebhookSecret = Guid.NewGuid().ToString() },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription2", Description = "Test Subscription Description 2", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 2, WebhookSecret = Guid.NewGuid().ToString() },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription3", Description = "Test Subscription Description 3", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 3, WebhookSecret = Guid.NewGuid().ToString() }
     };
 
     public readonly string ApiKey = Guid.NewGuid().ToString();
@@ -230,6 +230,22 @@ public class QalaCliBaseFixture : IDisposable
                             AvailableSubscriptions.Remove(subscription);
                         }
                     });
+
+        SubscriptionGatewayMock.Setup(
+            s => s.GetWebhookSecretAsync(It.IsAny<string>(), It.IsAny<Guid>()))
+                    .ReturnsAsync((string topicName, Guid subscriptionId) => AvailableSubscriptions.FirstOrDefault(s => s.Id == subscriptionId)?.WebhookSecret);
+
+        SubscriptionGatewayMock.Setup(
+            s => s.RotateWebhookSecretAsync(It.IsAny<string>(), It.IsAny<Guid>()))
+                    .ReturnsAsync((string topicName, Guid subscriptionId) => {
+                        var subscription = AvailableSubscriptions.FirstOrDefault(s => s.Id == subscriptionId);
+                        if (subscription != null)
+                        {
+                            subscription.WebhookSecret = Guid.NewGuid().ToString();
+                        }
+
+                        return subscription?.WebhookSecret;
+                    });
     }
 
     private static void InitializeCommandHandlers(IServiceCollection services)
@@ -250,6 +266,8 @@ public class QalaCliBaseFixture : IDisposable
         services.AddTransient<IRequestHandler<CreateSubscriptionRequest, Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>, CreateSubscriptionHandler>();
         services.AddTransient<IRequestHandler<UpdateSubscriptionRequest, Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>, UpdateSubscriptionHandler>();
         services.AddTransient<IRequestHandler<DeleteSubscriptionRequest, Either<DeleteSubscriptionErrorResponse, DeleteSubscriptionSuccessResponse>>, DeleteSubscriptionHandler>();
+        services.AddTransient<IRequestHandler<GetWebhookSecretRequest, Either<GetWebhookSecretErrorResponse, GetWebhookSecretSuccessResponse>>, GetWebhookSecretHandler>();
+        services.AddTransient<IRequestHandler<RotateWebhookSecretRequest, Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>>, RotateWebhookSecretHandler>();
     }
 
     private static void InitializeServices(IServiceCollection services)

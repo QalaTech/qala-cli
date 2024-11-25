@@ -11,4 +11,5 @@ public class Subscription
     public int MaxDeliveryAttempts { get; set; }
     public string TopicName { get; set; } = string.Empty;
     public int DeadletterCount { get; set; }
+    public string? WebhookSecret { get; set; }
 }

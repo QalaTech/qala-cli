@@ -9,6 +9,7 @@ using Qala.Cli.Commands.EventTypes;
 using LanguageExt;
 using Qala.Cli.Commands.Topics;
 using Qala.Cli.Commands.Subscriptions;
+using System.IO.Compression;
 
 Environment.SetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_MANAGEMENT_API_URL], "https://localhost:7143/v1/", EnvironmentVariableTarget.User);
 
@@ -98,6 +99,17 @@ app.Configure(config =>
         s.AddCommand<DeleteSubscriptionCommand>("delete")
             .WithDescription("this command deletes the subscription with the specified ID.")
             .WithExample("qala sub delete -t <TOPIC_NAME> -s <SUBSCRIPTION_ID>");
+        s.AddBranch("secret", ws => 
+        {
+            ws.AddCommand<GetWebhookSecretCommand>("inspect")
+                .WithDescription("this command retrieves the webhook secret for the subscription with the specified ID.")
+                .WithExample("qala sub secret i -t <TOPIC_NAME> -s <SUBSCRIPTION_ID>")
+                .WithAlias("i");
+            ws.AddCommand<RotateWebhookSecretCommand>("rotate")
+                .WithDescription("this command rotates the webhook secret for the subscription with the specified ID.")
+                .WithExample("qala sub secret rotate -t <TOPIC_NAME> -s <SUBSCRIPTION_ID>")
+                .WithAlias("r");
+        });
     })
     .WithAlias("sub");
 });

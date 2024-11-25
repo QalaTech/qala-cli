@@ -70,6 +70,22 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
         return await Task.FromResult<Either<GetSubscriptionErrorResponse, GetSubscriptionSuccessResponse>>(new GetSubscriptionSuccessResponse(subscription));
     }
 
+    public async Task<Either<GetWebhookSecretErrorResponse, GetWebhookSecretSuccessResponse>> GetWebhookSecretAsync(string topicName, Guid subscriptionId)
+    {
+        if (string.IsNullOrWhiteSpace(topicName))
+        {
+            return await Task.FromResult<Either<GetWebhookSecretErrorResponse, GetWebhookSecretSuccessResponse>>(new GetWebhookSecretErrorResponse("Topic name is required"));
+        }
+
+        if (subscriptionId == Guid.Empty)
+        {
+            return await Task.FromResult<Either<GetWebhookSecretErrorResponse, GetWebhookSecretSuccessResponse>>(new GetWebhookSecretErrorResponse("Subscription id is required"));
+        }
+
+        var secret = await subscriptionGateway.GetWebhookSecretAsync(topicName, subscriptionId);
+        return await Task.FromResult<Either<GetWebhookSecretErrorResponse, GetWebhookSecretSuccessResponse>>(new GetWebhookSecretSuccessResponse(secret));
+    }
+
     public async Task<Either<ListSubscriptionsErrorResponse, ListSubscriptionsSuccessResponse>> ListSubscriptionsAsync(string topicName)
     {
         if (string.IsNullOrWhiteSpace(topicName))
@@ -79,6 +95,22 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
 
         var subscriptions = await subscriptionGateway.ListSubscriptionsAsync(topicName);
         return await Task.FromResult<Either<ListSubscriptionsErrorResponse, ListSubscriptionsSuccessResponse>>(new ListSubscriptionsSuccessResponse(subscriptions));
+    }
+
+    public async Task<Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>> RotateWebhookSecretAsync(string topicName, Guid subscriptionId)
+    {
+        if (string.IsNullOrWhiteSpace(topicName))
+        {
+            return await Task.FromResult<Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>>(new RotateWebhookSecretErrorResponse("Topic name is required"));
+        }
+
+        if (subscriptionId == Guid.Empty)
+        {
+            return await Task.FromResult<Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>>(new RotateWebhookSecretErrorResponse("Subscription id is required"));
+        }
+
+        var secret = await subscriptionGateway.RotateWebhookSecretAsync(topicName, subscriptionId);
+        return await Task.FromResult<Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>>(new RotateWebhookSecretSuccessResponse(secret));
     }
 
     public async Task<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>> UpdateSubscriptionAsync(string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts)
