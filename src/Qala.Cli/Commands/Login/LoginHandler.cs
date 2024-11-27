@@ -4,7 +4,7 @@ using Qala.Cli.Services.Interfaces;
 
 namespace Qala.Cli.Commands.Login;
 
-public record LoginSuccessResponse(string Token);
+public record LoginSuccessResponse(string Token, List<Data.Models.Environment> Environments);
 public record LoginErrorResponse(string Message);
 public record LoginRequest() : IRequest<Either<LoginErrorResponse, LoginSuccessResponse>>;
 

@@ -9,10 +9,11 @@ using Qala.Cli.Data.Models.Auth;
 using Qala.Cli.Data.Repository.Interfaces;
 using Qala.Cli.Services.Interfaces;
 using Spectre.Console;
+using Qala.Cli.Data.Gateway.Interfaces;
 
 namespace Qala.Cli.Services;
 
-public class AuthService(ILocalEnvironments localEnvironments) : IAuthService
+public class AuthService(ILocalEnvironments localEnvironments, IOrganizationGateway organizationGateway) : IAuthService
 {
     private static readonly HttpClient client = new();
 
@@ -105,9 +106,23 @@ public class AuthService(ILocalEnvironments localEnvironments) : IAuthService
                 return new LoginErrorResponse("Failed to retrieve token.");
             }
 
+            var organization = await organizationGateway.GetOrganizationAsync();
+            if (organization is null)
+            {
+                return await Task.FromResult<Either<LoginErrorResponse, LoginSuccessResponse>>(new LoginErrorResponse("Organization not found"));
+            }
+
+            var environments = organization.Environments.Select(e => new Data.Models.Environment
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Region = e.Region,
+                EnvironmentType = e.EnvironmentType,
+            }).ToList();
+
             localEnvironments.SetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_AUTH_TOKEN], token);
             
-            return new LoginSuccessResponse(token);
+            return new LoginSuccessResponse(token, environments);
         }
         catch (Exception ex)
         {

@@ -9,7 +9,7 @@ namespace Qala.Cli.Services;
 
 public class EnvironmentService(
     IEnvironmentGateway environmentGateway,
-    IOrganizationGateway organizationService, 
+    IOrganizationGateway organizationGateway, 
     ILocalEnvironments localEnvironments) : IEnvironmentService
 {
     public async Task<Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>> CreateEnvironmentAsync(string name, string region, string type)
@@ -63,7 +63,7 @@ public class EnvironmentService(
 
         try
         {
-            var organization = await organizationService.GetOrganizationAsync();
+            var organization = await organizationGateway.GetOrganizationAsync();
             if (organization is null)
             {
                 return await Task.FromResult<Either<GetEnvironmentErrorResponse, GetEnvironemntSuccessResponse>>(new GetEnvironmentErrorResponse("Organization not found"));
@@ -87,7 +87,7 @@ public class EnvironmentService(
     {
         try
         {
-            var organization = await organizationService.GetOrganizationAsync();
+            var organization = await organizationGateway.GetOrganizationAsync();
             if (organization is null)
             {
                 return await Task.FromResult<Either<SetEnvironmentErrorResponse, SetEnvironmentSuccessResponse>>(new SetEnvironmentErrorResponse("Organization not found"));
