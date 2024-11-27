@@ -5,11 +5,11 @@ using Spectre.Console.Cli;
 
 namespace Qala.Cli.Commands.Environment;
 
-public class CreateEnvironmentCommand(IMediator mediator) : AsyncCommand<CreateEnvironmentArgument>
+public class CreateEnvironmentCommand(IMediator mediator, IAnsiConsole console) : AsyncCommand<CreateEnvironmentArgument>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, CreateEnvironmentArgument argument)
     {
-        return await AnsiConsole.Status()
+        return await console.Status()
             .AutoRefresh(true)
             .Spinner(Spinner.Known.Star2)
             .SpinnerStyle(Style.Parse("yellow bold"))
@@ -20,8 +20,8 @@ public class CreateEnvironmentCommand(IMediator mediator) : AsyncCommand<CreateE
                 .Match(
                     success => 
                     {
-                        BaseCommands.DisplaySuccessCommand("Environment", BaseCommands.CommandAction.Create);
-                        AnsiConsole.Write(new Grid()
+                        BaseCommands.DisplaySuccessCommand("Environment", BaseCommands.CommandAction.Create, console);
+                        console.Write(new Grid()
                             .AddColumns(4)
                             .AddRow(
                                 new Text("ID", new Style(decoration: Decoration.Bold)),
@@ -41,7 +41,7 @@ public class CreateEnvironmentCommand(IMediator mediator) : AsyncCommand<CreateE
                     },
                     error => 
                     {
-                        BaseCommands.DisplayErrorCommand("Environment", BaseCommands.CommandAction.Create, error.Message);
+                        BaseCommands.DisplayErrorCommand("Environment", BaseCommands.CommandAction.Create, error.Message, console);
 
                         return -1;
                     }

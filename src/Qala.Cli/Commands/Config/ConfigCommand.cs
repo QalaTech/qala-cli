@@ -5,11 +5,11 @@ using Spectre.Console.Cli;
 
 namespace Qala.Cli.Commands.Config;
 
-public class ConfigCommand(IMediator mediator) : AsyncCommand<ConfigArgument>
+public class ConfigCommand(IMediator mediator, IAnsiConsole console) : AsyncCommand<ConfigArgument>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, ConfigArgument argument)
     {   
-        return await AnsiConsole.Status()
+        return await console.Status()
             .AutoRefresh(true)
             .Spinner(Spinner.Known.Star2)
             .SpinnerStyle(Style.Parse("yellow bold"))
@@ -20,8 +20,8 @@ public class ConfigCommand(IMediator mediator) : AsyncCommand<ConfigArgument>
                     .Match(
                         success =>
                         {
-                            BaseCommands.DisplaySuccessCommand("Configuration", BaseCommands.CommandAction.Configuration);
-                            AnsiConsole.Write(new Grid()
+                            BaseCommands.DisplaySuccessCommand("Configuration", BaseCommands.CommandAction.Configuration, console);
+                            console.Write(new Grid()
                                 .AddColumns(2)
                                 .AddRow(
                                     new Text("Api Key", new Style(decoration: Decoration.Bold)),
@@ -37,7 +37,7 @@ public class ConfigCommand(IMediator mediator) : AsyncCommand<ConfigArgument>
                         },
                         error =>
                         {
-                            BaseCommands.DisplayErrorCommand("Configuration", BaseCommands.CommandAction.Configuration, error.Message);
+                            BaseCommands.DisplayErrorCommand("Configuration", BaseCommands.CommandAction.Configuration, error.Message, console);
 
                             return -1;
                         }

@@ -5,11 +5,11 @@ using Spectre.Console.Cli;
 
 namespace Qala.Cli.Commands.EventTypes;
 
-public class ListEventTypesCommand(IMediator mediator) : AsyncCommand<ListEventTypesArgument>
+public class ListEventTypesCommand(IMediator mediator, IAnsiConsole console) : AsyncCommand<ListEventTypesArgument>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, ListEventTypesArgument argument)
     {
-        return await AnsiConsole.Status()
+        return await console.Status()
             .AutoRefresh(true)
             .Spinner(Spinner.Known.Star2)
             .SpinnerStyle(Style.Parse("yellow bold"))
@@ -20,7 +20,7 @@ public class ListEventTypesCommand(IMediator mediator) : AsyncCommand<ListEventT
                     .Match(
                         success =>
                         {
-                            BaseCommands.DisplaySuccessCommand("Event Types", BaseCommands.CommandAction.List);
+                            BaseCommands.DisplaySuccessCommand("Event Types", BaseCommands.CommandAction.List, console);
                             var grid = new Grid()
                                 .AddColumns(4)
                                 .AddRow(
@@ -39,13 +39,13 @@ public class ListEventTypesCommand(IMediator mediator) : AsyncCommand<ListEventT
                                         new Text(eventType.ContentType)
                                     );
                                 }
-                            AnsiConsole.Write(grid);
+                            console.Write(grid);
 
                             return 0;
                         },
                         error =>
                         {
-                            BaseCommands.DisplayErrorCommand("Event Types", BaseCommands.CommandAction.List, error.Message);
+                            BaseCommands.DisplayErrorCommand("Event Types", BaseCommands.CommandAction.List, error.Message, console);
 
                             return -1;
                         }

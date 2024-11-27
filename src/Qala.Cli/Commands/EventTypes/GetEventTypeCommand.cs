@@ -6,11 +6,11 @@ using Spectre.Console.Json;
 
 namespace Qala.Cli.Commands.EventTypes;
 
-public class GetEventTypeCommand(IMediator mediator) : AsyncCommand<GetEventTypeArgument>
+public class GetEventTypeCommand(IMediator mediator, IAnsiConsole console) : AsyncCommand<GetEventTypeArgument>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, GetEventTypeArgument argument)
     {
-        return await AnsiConsole.Status()
+        return await console.Status()
             .AutoRefresh(true)
             .Spinner(Spinner.Known.Star2)
             .SpinnerStyle(Style.Parse("yellow bold"))
@@ -21,8 +21,8 @@ public class GetEventTypeCommand(IMediator mediator) : AsyncCommand<GetEventType
                     .Match(
                         success =>
                         {
-                            BaseCommands.DisplaySuccessCommand("Event Type", BaseCommands.CommandAction.Get);
-                            AnsiConsole.Write(new Grid()
+                            BaseCommands.DisplaySuccessCommand("Event Type", BaseCommands.CommandAction.Get, console);
+                            console.Write(new Grid()
                                 .AddColumns(5)
                                 .AddRow(
                                     new Text("Id", new Style(decoration: Decoration.Bold)),
@@ -42,7 +42,7 @@ public class GetEventTypeCommand(IMediator mediator) : AsyncCommand<GetEventType
                             
                             if(!string.IsNullOrEmpty(success.EventType.Schema))
                             {
-                                AnsiConsole.Write(
+                                console.Write(
                                     new Panel(new JsonText(success.EventType.Schema))
                                         .Header("Schema")
                                         .Collapse()
@@ -55,7 +55,7 @@ public class GetEventTypeCommand(IMediator mediator) : AsyncCommand<GetEventType
                         },
                         error =>
                         {
-                            BaseCommands.DisplayErrorCommand("Event Type", BaseCommands.CommandAction.Get, error.Message);
+                            BaseCommands.DisplayErrorCommand("Event Type", BaseCommands.CommandAction.Get, error.Message, console);
 
                             return -1;
                         }

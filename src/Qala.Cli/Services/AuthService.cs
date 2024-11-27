@@ -13,7 +13,7 @@ using Qala.Cli.Data.Gateway.Interfaces;
 
 namespace Qala.Cli.Services;
 
-public class AuthService(ILocalEnvironments localEnvironments, IOrganizationGateway organizationGateway) : IAuthService
+public class AuthService(ILocalEnvironments localEnvironments, IOrganizationGateway organizationGateway, IAnsiConsole console) : IAuthService
 {
     private static readonly HttpClient client = new();
 
@@ -37,7 +37,7 @@ public class AuthService(ILocalEnvironments localEnvironments, IOrganizationGate
                 return new LoginErrorResponse("Failed to retrieve device code.");
             }
 
-            AnsiConsole.MarkupLineInterpolated($"Please go to [bold]{deviceCodeResponse.VerificationUriComplete}[/] and enter the code [bold]{deviceCodeResponse.UserCode}[/].");
+            console.MarkupLineInterpolated($"Please go to [bold]{deviceCodeResponse.VerificationUriComplete}[/] and enter the code [bold]{deviceCodeResponse.UserCode}[/].");
 
             Process.Start(new ProcessStartInfo
             {

@@ -5,11 +5,11 @@ using Spectre.Console.Cli;
 
 namespace Qala.Cli.Commands.Subscriptions;
 
-public class GetSubscriptionCommand(IMediator mediator) : AsyncCommand<GetSubscriptionArgument>
+public class GetSubscriptionCommand(IMediator mediator, IAnsiConsole console) : AsyncCommand<GetSubscriptionArgument>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, GetSubscriptionArgument arguments)
     {
-        return await AnsiConsole.Status()
+        return await console.Status()
             .AutoRefresh(true)
             .Spinner(Spinner.Known.Star2)
             .SpinnerStyle(Style.Parse("yellow bold"))
@@ -20,7 +20,7 @@ public class GetSubscriptionCommand(IMediator mediator) : AsyncCommand<GetSubscr
                     .Match(
                         success => 
                         {
-                            BaseCommands.DisplaySuccessCommand("Subscription", BaseCommands.CommandAction.Get);
+                            BaseCommands.DisplaySuccessCommand("Subscription", BaseCommands.CommandAction.Get, console);
                             var grid = new Grid()
                                 .AddColumns(8)
                                 .AddRow(
@@ -45,13 +45,13 @@ public class GetSubscriptionCommand(IMediator mediator) : AsyncCommand<GetSubscr
                                 new Text(success.Subscription.DeadletterCount.ToString())
                             );
 
-                            AnsiConsole.Write(grid);
+                            console.Write(grid);
 
                             return 0;
                         },
                         error =>
                         {
-                            BaseCommands.DisplayErrorCommand("Subscription", BaseCommands.CommandAction.Get, error.Message);
+                            BaseCommands.DisplayErrorCommand("Subscription", BaseCommands.CommandAction.Get, error.Message, console);
 
                             return -1;
                         }

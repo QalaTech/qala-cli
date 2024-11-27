@@ -5,11 +5,11 @@ using Spectre.Console.Cli;
 
 namespace Qala.Cli.Commands.Subscriptions;
 
-public class RotateWebhookSecretCommand(IMediator mediator) : AsyncCommand<RotateWebhookSecretArgument>
+public class RotateWebhookSecretCommand(IMediator mediator, IAnsiConsole console) : AsyncCommand<RotateWebhookSecretArgument>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, RotateWebhookSecretArgument settings)
     {
-        return await AnsiConsole.Status()
+        return await console.Status()
             .AutoRefresh(true)
             .Spinner(Spinner.Known.Star2)
             .SpinnerStyle(Style.Parse("yellow bold"))
@@ -20,14 +20,14 @@ public class RotateWebhookSecretCommand(IMediator mediator) : AsyncCommand<Rotat
                     .Match(
                         success =>
                         {
-                            BaseCommands.DisplaySuccessCommand("Webhook secret", BaseCommands.CommandAction.Rotate);
-                            AnsiConsole.MarkupLine($"[bold]{success.WebhookSecret}[/]");
+                            BaseCommands.DisplaySuccessCommand("Webhook secret", BaseCommands.CommandAction.Rotate, console);
+                            console.MarkupLine($"[bold]{success.WebhookSecret}[/]");
 
                             return 0;
                         },
                         error =>
                         {
-                            BaseCommands.DisplayErrorCommand("Webhook secret", BaseCommands.CommandAction.Rotate, error.Message);
+                            BaseCommands.DisplayErrorCommand("Webhook secret", BaseCommands.CommandAction.Rotate, error.Message, console);
 
                             return -1;
                         }

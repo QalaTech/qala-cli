@@ -3,10 +3,11 @@ using Qala.Cli.Commands.Subscriptions;
 using Qala.Cli.Integration.Tests.Fixtures;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using Spectre.Console.Testing;
 
 namespace Qala.Cli.Integration.Tests.Commands;
 
-public class UpdateSubscriptionCommandShould(QalaCliBaseFixture qalaCliBaseFixture) : IClassFixture<QalaCliBaseFixture>
+public class UpdateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClassFixture<QalaCliBaseFixture>
 {
     private readonly IRemainingArguments _remainingArguments = new Mock<IRemainingArguments>().Object;
 
@@ -14,42 +15,90 @@ public class UpdateSubscriptionCommandShould(QalaCliBaseFixture qalaCliBaseFixtu
     public async Task Execute_WithValidParameters()
     {
         // Arrange
+        var console = new TestConsole();
         var topicName = "NewlyUpdatedTestTopic";
-        var subscriptionId = qalaCliBaseFixture.AvailableSubscriptions.First().Id;
+        var subscriptionId = fixture.AvailableSubscriptions.First().Id;
         var subscriptionName = "NewlyUpdatedTestSubscription";
         var subscriptionDescription = "updated";
         var webhookUrl = "https://newly-updated-subscription-webhook.com";
-        var eventTypeIds = qalaCliBaseFixture.AvailableEventTypes.Select(x => x.Id).ToList();
+        var eventTypeIds = fixture.AvailableEventTypes.Select(x => x.Id).ToList();
         var maxDeliveryAttempts = 5;
-        var command = new UpdateSubscriptionCommand(qalaCliBaseFixture.Mediator);
+        var command = new UpdateSubscriptionCommand(fixture.Mediator, console);
         var arguments = new List<string> { "subscription", "update", subscriptionId.ToString(), "-t", topicName, "-n", subscriptionName, "-d", subscriptionDescription, "-w", webhookUrl, "-e", string.Join(",", eventTypeIds), "-m", maxDeliveryAttempts.ToString() };
         var context = new CommandContext(arguments, _remainingArguments, "update", null);
-        AnsiConsole.Record();
-
+        var expectedOutput = new TestConsole();
+        expectedOutput.Status()
+                    .AutoRefresh(true)
+                    .Spinner(Spinner.Known.Star2)
+                    .SpinnerStyle(Style.Parse("yellow bold"))
+                    .Start("Processing request...", ctx => 
+                    {
+                expectedOutput.MarkupLine("[green bold]Subscription updated successfully:[/]");
+                expectedOutput.Write(new Grid()
+                    .AddColumns(6)
+                    .AddRow(
+                        new Text("Id", new Style(decoration: Decoration.Bold)),
+                        new Text("Name", new Style(decoration: Decoration.Bold)),
+                        new Text("Description", new Style(decoration: Decoration.Bold)),
+                        new Text("Webhook Url", new Style(decoration: Decoration.Bold)),
+                        new Text("Event Types", new Style(decoration: Decoration.Bold)),
+                        new Text("Max Delivery Attempts", new Style(decoration: Decoration.Bold))
+                    )
+                    .AddRow(
+                        new Text(subscriptionId.ToString()),
+                        new Text(subscriptionName),
+                        new Text(subscriptionDescription),
+                        new Text(webhookUrl),
+                        new Text(string.Join(", ", eventTypeIds.Select(et => et.ToString()))),
+                        new Text(maxDeliveryAttempts.ToString())
+                    )
+                );
+            });
+        
         // Act
         var result = await command.ExecuteAsync(context, new UpdateSubscriptionArgument() { TopicName = topicName, SubscriptionId = subscriptionId, Name = subscriptionName, Description = subscriptionDescription, WebhookUrl = webhookUrl, EventTypeIds = eventTypeIds, MaxDeliveryAttempts = maxDeliveryAttempts });
 
         // Assert
         Assert.Equal(0, result);
-        var output = AnsiConsole.ExportText();
-        Assert.Contains("Subscription updated successfully:", output);
+        var expectedLines = expectedOutput.Lines;
+        var actualLines = console.Lines;
+
+        for (int i = 0; i < expectedLines.Count; i++)
+        {
+            Assert.Equal(expectedLines[i], actualLines[i]);
+        }
     }
 
     [Fact]
     public async Task Execute_WithInvalidParameters()
     {
         // Arrange
-        var command = new UpdateSubscriptionCommand(qalaCliBaseFixture.Mediator);
+        var console = new TestConsole();
+        var command = new UpdateSubscriptionCommand(fixture.Mediator, console);
         var arguments = new List<string> { "subscription", "update" };
         var context = new CommandContext(arguments, _remainingArguments, "update", null);
-        AnsiConsole.Record();
-
+        var expectedOutput = new TestConsole();
+        expectedOutput.Status()
+                    .AutoRefresh(true)
+                    .Spinner(Spinner.Known.Star2)
+                    .SpinnerStyle(Style.Parse("yellow bold"))
+                    .Start("Processing request...", ctx => 
+                    {
+                expectedOutput.MarkupLine("[red bold]Error during Subscription update:[/]");
+                expectedOutput.MarkupLine("[red]Topic name is required[/]");
+            });
+        
         // Act
         var result = await command.ExecuteAsync(context, new UpdateSubscriptionArgument());
 
         // Assert
         Assert.Equal(-1, result);
-        var output = AnsiConsole.ExportText();
-        Assert.Contains("Error during Subscription update:", output);
+        var expectedLines = expectedOutput.Lines;
+        var actualLines = console.Lines;
+
+        for (int i = 0; i < expectedLines.Count; i++)
+        {
+            Assert.Equal(expectedLines[i], actualLines[i]);
+        }
     }
 }

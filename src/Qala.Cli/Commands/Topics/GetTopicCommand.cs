@@ -5,11 +5,11 @@ using Spectre.Console.Cli;
 
 namespace Qala.Cli.Commands.Topics;
 
-public class GetTopicCommand(IMediator mediator) : AsyncCommand<GetTopicArgument>
+public class GetTopicCommand(IMediator mediator, IAnsiConsole console) : AsyncCommand<GetTopicArgument>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, GetTopicArgument argument)
     {
-        return await AnsiConsole.Status()
+        return await console.Status()
             .AutoRefresh(true)
             .Spinner(Spinner.Known.Star2)
             .SpinnerStyle(Style.Parse("yellow bold"))
@@ -20,8 +20,8 @@ public class GetTopicCommand(IMediator mediator) : AsyncCommand<GetTopicArgument
                     .Match(
                         success =>
                         {
-                            BaseCommands.DisplaySuccessCommand("Topic", BaseCommands.CommandAction.Get);
-                            AnsiConsole.Write(new Grid()
+                            BaseCommands.DisplaySuccessCommand("Topic", BaseCommands.CommandAction.Get, console);
+                            console.Write(new Grid()
                                 .AddColumns(5)
                                 .AddRow(
                                     new Text("Id", new Style(decoration: Decoration.Bold)),
@@ -35,7 +35,7 @@ public class GetTopicCommand(IMediator mediator) : AsyncCommand<GetTopicArgument
                                     new Text(success.Topic.Name),
                                     new Text(success.Topic.Description),
                                     new Text(success.Topic.ProvisioningState),
-                                    new Text(string.Join(", ", success.Topic.EventTypes))
+                                    new Text(string.Join(", ", success.Topic.EventTypes.Select(et => et.Type)))
                                 )
                             );
 
@@ -43,7 +43,7 @@ public class GetTopicCommand(IMediator mediator) : AsyncCommand<GetTopicArgument
                         },
                         error =>
                         {
-                            BaseCommands.DisplayErrorCommand("Topic", BaseCommands.CommandAction.Get, error.Message);
+                            BaseCommands.DisplayErrorCommand("Topic", BaseCommands.CommandAction.Get, error.Message, console);
 
                             return -1;
                         }

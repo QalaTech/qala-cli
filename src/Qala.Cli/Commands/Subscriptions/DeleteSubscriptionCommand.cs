@@ -5,11 +5,11 @@ using Spectre.Console.Cli;
 
 namespace Qala.Cli.Commands.Subscriptions;
 
-public class DeleteSubscriptionCommand(IMediator mediator) : AsyncCommand<DeleteSubscriptionArgument>
+public class DeleteSubscriptionCommand(IMediator mediator, IAnsiConsole console) : AsyncCommand<DeleteSubscriptionArgument>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, DeleteSubscriptionArgument argument)
     {
-        return await AnsiConsole.Status()
+        return await console.Status()
             .AutoRefresh(true)
             .Spinner(Spinner.Known.Star2)
             .SpinnerStyle(Style.Parse("yellow bold"))
@@ -20,12 +20,12 @@ public class DeleteSubscriptionCommand(IMediator mediator) : AsyncCommand<Delete
                     .Match(
                         success =>
                         {
-                            BaseCommands.DisplaySuccessCommand("Subscription", BaseCommands.CommandAction.Delete);
+                            BaseCommands.DisplaySuccessCommand("Subscription", BaseCommands.CommandAction.Delete, console);
                             return 0;
                         },
                         error =>
                         {
-                            BaseCommands.DisplayErrorCommand("Subscription", BaseCommands.CommandAction.Delete, error.Message);
+                            BaseCommands.DisplayErrorCommand("Subscription", BaseCommands.CommandAction.Delete, error.Message, console);
 
                             return -1;
                         }

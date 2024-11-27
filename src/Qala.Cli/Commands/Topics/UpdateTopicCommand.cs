@@ -5,11 +5,11 @@ using Spectre.Console.Cli;
 
 namespace Qala.Cli.Commands.Topics;
 
-public class UpdateTopicCommand(IMediator mediator) : AsyncCommand<UpdateTopicArgument>
+public class UpdateTopicCommand(IMediator mediator, IAnsiConsole console) : AsyncCommand<UpdateTopicArgument>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, UpdateTopicArgument argument)
     {
-        return await AnsiConsole.Status()
+        return await console.Status()
             .AutoRefresh(true)
             .Spinner(Spinner.Known.Star2)
             .SpinnerStyle(Style.Parse("yellow bold"))
@@ -20,8 +20,8 @@ public class UpdateTopicCommand(IMediator mediator) : AsyncCommand<UpdateTopicAr
                     .Match(
                         success =>
                         {
-                            BaseCommands.DisplaySuccessCommand("Topic", BaseCommands.CommandAction.Update);
-                            AnsiConsole.Write(new Grid()
+                            BaseCommands.DisplaySuccessCommand("Topic", BaseCommands.CommandAction.Update, console);
+                            console.Write(new Grid()
                                 .AddColumns(5)
                                 .AddRow(
                                     new Text("Id", new Style(decoration: Decoration.Bold)),
@@ -43,7 +43,7 @@ public class UpdateTopicCommand(IMediator mediator) : AsyncCommand<UpdateTopicAr
                         },
                         error =>
                         {
-                            BaseCommands.DisplayErrorCommand("Topic", BaseCommands.CommandAction.Update, error.Message);
+                            BaseCommands.DisplayErrorCommand("Topic", BaseCommands.CommandAction.Update, error.Message, console);
 
                             return -1;
                         }

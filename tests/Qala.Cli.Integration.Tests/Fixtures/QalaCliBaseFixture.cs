@@ -111,7 +111,7 @@ public class QalaCliBaseFixture : IDisposable
                     .ReturnsAsync(() => {
                         var newEnvironment = new Data.Models.Environment
                         {
-                            Id = Guid.NewGuid(),
+                            Id = new Guid("60ef03bb-f5a7-4c81-addf-38e2b360bff5"),
                             Name = "NewlyCreatedTestEnv",
                             Region = "newly-region",
                             EnvironmentType = "newly-env-type"
@@ -151,7 +151,7 @@ public class QalaCliBaseFixture : IDisposable
                     .ReturnsAsync((string name, string description, List<Guid> eventTypeIds) => {
                         var newTopic = new Topic
                         {
-                            Id = Guid.NewGuid(),
+                            Id = new Guid("60ef03bb-f5a7-4c81-addf-38e2b360bff5"),
                             Name = name,
                             Description = description,
                             ProvisioningState = "Provisioning",
@@ -169,7 +169,9 @@ public class QalaCliBaseFixture : IDisposable
                         var topic = AvailableTopics.FirstOrDefault(t => t.Name == name);
                         if (topic != null)
                         {
+                            topic.Name = name;
                             topic.Description = description;
+                            topic.ProvisioningState = "Provisioning";
                             topic.EventTypes = AvailableEventTypes.Where(et => eventTypeIds.Contains(et.Id)).ToList();
                         }
 
@@ -194,9 +196,11 @@ public class QalaCliBaseFixture : IDisposable
                     .ReturnsAsync((string topicName, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts) => {
                         var newSubscription = new Subscription
                         {
-                            Id = Guid.NewGuid(),
+                            Id = new Guid("60ef03bb-f5a7-4c81-addf-38e2b360bff5"),
                             Name = name,
                             Description = description,
+                            WebhookUrl = webhookUrl,
+                            EventTypes = AvailableEventTypes,
                             ProvisioningState = "Provisioning",
                             MaxDeliveryAttempts = maxDeliveryAttempts,
                             DeadletterCount = 0
@@ -213,8 +217,11 @@ public class QalaCliBaseFixture : IDisposable
                         var subscription = AvailableSubscriptions.FirstOrDefault(s => s.Id == subscriptionId);
                         if (subscription != null)
                         {
+                            subscription.Id = subscriptionId;
                             subscription.Name = name;
                             subscription.Description = description;
+                            subscription.WebhookUrl = webhookUrl;
+                            subscription.EventTypes = AvailableEventTypes.Where(et => eventTypeIds.Contains(et.Id)).ToList();
                             subscription.MaxDeliveryAttempts = maxDeliveryAttempts;
                         }
 
@@ -241,7 +248,7 @@ public class QalaCliBaseFixture : IDisposable
                         var subscription = AvailableSubscriptions.FirstOrDefault(s => s.Id == subscriptionId);
                         if (subscription != null)
                         {
-                            subscription.WebhookSecret = Guid.NewGuid().ToString();
+                            subscription.WebhookSecret = "80ef03bb-f5a7-4c81-addf-38e2b360bff5";
                         }
 
                         return subscription?.WebhookSecret;
