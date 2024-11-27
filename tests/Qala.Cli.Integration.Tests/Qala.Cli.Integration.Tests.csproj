@@ -10,7 +10,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <DisableParallelization>true</DisableParallelization>
+    <ParallelizeAssembly>false</ParallelizeAssembly>
+    <ParallelizeTestCollections>false</ParallelizeTestCollections>
   </PropertyGroup>
 
   <ItemGroup>

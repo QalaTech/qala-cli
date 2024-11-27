@@ -50,6 +50,6 @@ public class UpdateSubscriptionCommandShould(QalaCliBaseFixture qalaCliBaseFixtu
         // Assert
         Assert.Equal(-1, result);
         var output = AnsiConsole.ExportText();
-        Assert.Contains("Error during subscription update:", output);
+        Assert.Contains("Error during Subscription update:", output);
     }
 }

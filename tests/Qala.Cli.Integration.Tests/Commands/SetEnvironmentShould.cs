@@ -43,6 +43,6 @@ public class SetEnvironmentShould(QalaCliBaseFixture fixture) : IClassFixture<Qa
         // Assert
         Assert.Equal(-1, result);
         var output = AnsiConsole.ExportText();
-        Assert.Contains("Error setting environment", output);
+        Assert.Contains("Error setting Environment:", output);
     }
 }

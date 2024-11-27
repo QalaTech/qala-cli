@@ -26,7 +26,7 @@ public class GetEventTypeCommandShould(QalaCliBaseFixture fixture) : IClassFixtu
         Assert.Equal(0, result);
         var output = AnsiConsole.ExportText();
         var eventType = fixture.AvailableEventTypes.First();
-        Assert.Contains("Event type retrieved:", output);
+        Assert.Contains("Event Type retrieved successfully:", output);
         Assert.Contains(eventType.Type, output);
         Assert.Contains(eventType.ContentType, output);
         Assert.Contains(string.Join(", ", eventType.Categories), output);
@@ -48,6 +48,6 @@ public class GetEventTypeCommandShould(QalaCliBaseFixture fixture) : IClassFixtu
         // Assert
         Assert.NotEqual(0, result);
         var output = AnsiConsole.ExportText();
-        Assert.Contains("Error during event type retrieval:", output);
+        Assert.Contains("Error during Event Type retrieval:", output);
     }
 }

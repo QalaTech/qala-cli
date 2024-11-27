@@ -25,6 +25,7 @@ public class ConfigCommandShould(QalaCliBaseFixture fixture) : IClassFixture<Qal
         // Assert
         Assert.Equal(0, result);
         var output = AnsiConsole.ExportText();
+        Assert.Contains("Configuration configured successfully:", output);
         Assert.Contains("Api Key", output);
         Assert.Contains("Environment Id", output);
         Assert.Contains(fixture.ApiKey, output);

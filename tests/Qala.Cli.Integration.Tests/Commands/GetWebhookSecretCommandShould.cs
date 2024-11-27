@@ -26,7 +26,7 @@ public class GetWebhookSecretCommandShould(QalaCliBaseFixture fixture) : IClassF
         // Assert
         Assert.Equal(0, result);
         var output = AnsiConsole.ExportText();
-        Assert.Contains("Webhook secret:", output);
+        Assert.Contains("Webhook secret retrieved successfully:", output);
     }
 
     [Fact]
@@ -44,6 +44,6 @@ public class GetWebhookSecretCommandShould(QalaCliBaseFixture fixture) : IClassF
         // Assert
         Assert.NotEqual(0, result);
         var output = AnsiConsole.ExportText();
-        Assert.Contains("Error:", output);
+        Assert.Contains("Error during Webhook secret retrieval:", output);
     }
 }

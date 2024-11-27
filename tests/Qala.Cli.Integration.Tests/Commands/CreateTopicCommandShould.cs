@@ -46,6 +46,6 @@ public class CreateTopicCommandShould(QalaCliBaseFixture fixture) : IClassFixtur
         // Assert
         Assert.Equal(-1, result);
         var output = AnsiConsole.ExportText();
-        Assert.Contains("Error during topic creation:", output);
+        Assert.Contains("Error during Topic creation:", output);
     }
 }

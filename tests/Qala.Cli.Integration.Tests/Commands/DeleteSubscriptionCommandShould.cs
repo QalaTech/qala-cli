@@ -27,7 +27,7 @@ public class DeleteSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
         // Assert
         Assert.Equal(0, result);
         var output = AnsiConsole.ExportText();
-        Assert.Contains("Subscription deleted successfully:", output);
+        Assert.Contains("Subscription deleted successfully.", output);
     }
 
     [Fact]
@@ -45,6 +45,6 @@ public class DeleteSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
         // Assert
         Assert.Equal(-1, result);
         var output = AnsiConsole.ExportText();
-        Assert.Contains("Error during subscription deletion:", output);
+        Assert.Contains("Error during Subscription deletion:", output);
     }
 }

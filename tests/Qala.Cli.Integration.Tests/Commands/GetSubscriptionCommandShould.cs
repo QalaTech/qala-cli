@@ -28,7 +28,7 @@ public class GetSubscriptionCommandShould(QalaCliBaseFixture qalaCliBaseFixture)
         Assert.Equal(0, result);
         var output = AnsiConsole.ExportText();
         var subscription = qalaCliBaseFixture.AvailableSubscriptions.First();
-        Assert.Contains("Subscription:", output);
+        Assert.Contains("Subscription retrieved successfully:", output);
     }
 
     [Fact]
@@ -46,6 +46,6 @@ public class GetSubscriptionCommandShould(QalaCliBaseFixture qalaCliBaseFixture)
         // Assert
         Assert.NotEqual(0, result);
         var output = AnsiConsole.ExportText();
-        Assert.Contains("Error during getting subscription:", output);
+        Assert.Contains("Error during Subscription retrieval:", output);
     }
 }

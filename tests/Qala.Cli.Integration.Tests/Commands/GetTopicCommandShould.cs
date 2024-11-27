@@ -26,7 +26,7 @@ public class GetTopicCommandShould(QalaCliBaseFixture fixture) : IClassFixture<Q
         Assert.Equal(0, result);
         var output = AnsiConsole.ExportText();
         var topic = fixture.AvailableTopics.First();
-        Assert.Contains("Topic retrieved:", output);
+        Assert.Contains("Topic retrieved successfully:", output);
         Assert.Contains(topic.Name, output);
     }
 
@@ -45,6 +45,6 @@ public class GetTopicCommandShould(QalaCliBaseFixture fixture) : IClassFixture<Q
         // Assert
         Assert.NotEqual(0, result);
         var output = AnsiConsole.ExportText();
-        Assert.Contains("Error during topic retrieval:", output);
+        Assert.Contains("Error during Topic retrieval:", output);
     }
 }

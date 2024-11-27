@@ -50,6 +50,6 @@ public class CreateSubscriptionCommandShould(QalaCliBaseFixture qalaCliBaseFixtu
         // Assert
         Assert.Equal(-1, result);
         var output = AnsiConsole.ExportText();
-        Assert.Contains("Error during subscription creation:", output);
+        Assert.Contains("Error during Subscription creation:", output);
     }
 }

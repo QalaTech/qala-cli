@@ -26,7 +26,6 @@ public class LoginCommand(IMediator mediator) : AsyncCommand<LoginArgument>
                     
                     System.Environment.SetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID], environmentId, EnvironmentVariableTarget.User);
                     AnsiConsole.MarkupLine($"[green bold]Login Successful[/]");
-                    
 
                     return 0;
                 },

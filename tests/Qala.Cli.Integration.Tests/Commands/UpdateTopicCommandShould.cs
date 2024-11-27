@@ -6,7 +6,7 @@ using Spectre.Console.Cli;
 
 namespace Qala.Cli.Integration.Tests.Commands;
 
-public class UpdateTopicCommandShould(QalaCliBaseFixture qalaCliBaseFixture): IClassFixture<QalaCliBaseFixture>
+public class UpdateTopicCommandShould(QalaCliBaseFixture fixture): IClassFixture<QalaCliBaseFixture>
 {
     private readonly IRemainingArguments _remainingArguments = new Mock<IRemainingArguments>().Object;
 
@@ -14,10 +14,10 @@ public class UpdateTopicCommandShould(QalaCliBaseFixture qalaCliBaseFixture): IC
     public async Task Execute_WithValidParameters()
     {
         // Arrange
-        var topicName = "NewlyUpdatedTestTopic";
+        var topicName = fixture.AvailableTopics.First().Name;
         var topicDescription = "updated";
         var eventTypeIds = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
-        var command = new UpdateTopicCommand(qalaCliBaseFixture.Mediator);
+        var command = new UpdateTopicCommand(fixture.Mediator);
         var arguments = new List<string> { "topic", "update", topicName, "-d", topicDescription, "-e", string.Join(",", eventTypeIds) };
         var context = new CommandContext(arguments, _remainingArguments, "update", null);
         AnsiConsole.Record();
@@ -35,7 +35,7 @@ public class UpdateTopicCommandShould(QalaCliBaseFixture qalaCliBaseFixture): IC
     public async Task Execute_WithInvalidParameters()
     {
         // Arrange
-        var command = new UpdateTopicCommand(qalaCliBaseFixture.Mediator);
+        var command = new UpdateTopicCommand(fixture.Mediator);
         var arguments = new List<string> { "topic", "update" };
         var context = new CommandContext(arguments, _remainingArguments, "update", null);
         AnsiConsole.Record();
@@ -46,6 +46,6 @@ public class UpdateTopicCommandShould(QalaCliBaseFixture qalaCliBaseFixture): IC
         // Assert
         Assert.Equal(-1, result);
         var output = AnsiConsole.ExportText();
-        Assert.Contains("Error during topic update:", output);
+        Assert.Contains("Error during Topic update:", output);
     }
 }

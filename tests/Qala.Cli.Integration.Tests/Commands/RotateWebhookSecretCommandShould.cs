@@ -26,7 +26,7 @@ public class RotateWebhookSecretCommandShould(QalaCliBaseFixture fixture) : ICla
         // Assert
         Assert.Equal(0, result);
         var output = AnsiConsole.ExportText();
-        Assert.Contains("Rotation of webhook secret successfull:", output);
+        Assert.Contains("Rotation of Webhook secret successfull:", output);
     }
 
     [Fact]
@@ -44,6 +44,6 @@ public class RotateWebhookSecretCommandShould(QalaCliBaseFixture fixture) : ICla
         // Assert
         Assert.NotEqual(0, result);
         var output = AnsiConsole.ExportText();
-        Assert.Contains("Error:", output);
+        Assert.Contains("Error during rotation of Webhook secret:", output);
     }
 }

@@ -49,6 +49,6 @@ public class CreateEnvironmetCommandShould(QalaCliBaseFixture fixture) : IClassF
         // Assert
         Assert.Equal(-1, result);
         var output = AnsiConsole.ExportText();
-        Assert.Contains("Error creating environment", output);
+        Assert.Contains("Error during Environment creation:", output);
     }
 }
