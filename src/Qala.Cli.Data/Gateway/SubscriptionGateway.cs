@@ -6,7 +6,7 @@ namespace Qala.Cli.Data.Gateway;
 
 public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
 {
-    public async Task<Subscription> CreateSubscriptionAsync(string topicName, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts)
+    public async Task<Subscription?> CreateSubscriptionAsync(string topicName, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts)
     {
         try
         {
@@ -50,7 +50,7 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
         }
     }
 
-    public async Task<Subscription> GetSubscriptionAsync(string topicName, Guid subscriptionId)
+    public async Task<Subscription?> GetSubscriptionAsync(string topicName, Guid subscriptionId)
     {
         try
         {
@@ -70,7 +70,7 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
         }
     }
 
-    public async Task<string> GetWebhookSecretAsync(string topicName, Guid subscriptionId)
+    public async Task<string?> GetWebhookSecretAsync(string topicName, Guid subscriptionId)
     {
         try
         {
@@ -110,7 +110,7 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
         }
     }
 
-    public async Task<string> RotateWebhookSecretAsync(string topicName, Guid subscriptionId)
+    public async Task<string?> RotateWebhookSecretAsync(string topicName, Guid subscriptionId)
     {
         try
         {
@@ -130,7 +130,7 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
         }
     }
 
-    public async Task<Subscription> UpdateSubscriptionAsync(string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts)
+    public async Task<Subscription?> UpdateSubscriptionAsync(string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts)
     {
         try
         {

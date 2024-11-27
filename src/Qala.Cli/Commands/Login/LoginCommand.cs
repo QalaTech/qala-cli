@@ -9,7 +9,7 @@ public class LoginCommand(IMediator mediator) : AsyncCommand<LoginArgument>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, LoginArgument argument)
     {
-        BaseCommands.DisplayStart("Login");
+        BaseCommands.DisplayLogoStart("Login");
         return await mediator.Send(new LoginRequest())
             .ToAsync()
             .Match(

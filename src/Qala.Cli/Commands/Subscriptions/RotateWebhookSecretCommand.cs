@@ -1,4 +1,5 @@
 using MediatR;
+using Qala.Cli.Utils;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -8,24 +9,30 @@ public class RotateWebhookSecretCommand(IMediator mediator) : AsyncCommand<Rotat
 {
     public override async Task<int> ExecuteAsync(CommandContext context, RotateWebhookSecretArgument settings)
     {
-        return await mediator.Send(new RotateWebhookSecretRequest(settings.TopicName, settings.SubscriptionId))
-            .ToAsync()
-            .Match(
-                success =>
-                {
-                    AnsiConsole.MarkupLine($"[bold]Rotation of webhook secret successfull:[/]");
-                    AnsiConsole.MarkupLine($"[bold]{success.WebhookSecret}[/]");
+        return await AnsiConsole.Status()
+            .AutoRefresh(true)
+            .Spinner(Spinner.Known.Star2)
+            .SpinnerStyle(Style.Parse("yellow bold"))
+            .StartAsync("Processing request...", async ctx => 
+            {
+                return await mediator.Send(new RotateWebhookSecretRequest(settings.TopicName, settings.SubscriptionId))
+                    .ToAsync()
+                    .Match(
+                        success =>
+                        {
+                            BaseCommands.DisplaySuccessCommand("Webhook secret", BaseCommands.CommandAction.Rotate);
+                            AnsiConsole.MarkupLine($"[bold]{success.WebhookSecret}[/]");
 
-                    return 0;
-                },
-                error =>
-                {
-                    AnsiConsole.MarkupLine($"[red bold]Error:[/]");
-                    AnsiConsole.MarkupLine($"[red]{error.Message}[/]");
+                            return 0;
+                        },
+                        error =>
+                        {
+                            BaseCommands.DisplayErrorCommand("Webhook secret", BaseCommands.CommandAction.Rotate, error.Message);
 
-                    return -1;
-                }
-            );
+                            return -1;
+                        }
+                    );
+            });
     }
 
     public override ValidationResult Validate(CommandContext context, RotateWebhookSecretArgument argument)

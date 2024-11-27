@@ -6,7 +6,7 @@ namespace Qala.Cli.Data.Gateway;
 
 public class TopicGateway(HttpClient client) : ITopicGateway
 {
-    public async Task<Topic> CreateTopicAsync(string name, string description, List<Guid> eventTypeIds)
+    public async Task<Topic?> CreateTopicAsync(string name, string description, List<Guid> eventTypeIds)
     {
         try
         {
@@ -26,7 +26,7 @@ public class TopicGateway(HttpClient client) : ITopicGateway
         }
     }
 
-    public async Task<Topic> GetTopicAsync(string name)
+    public async Task<Topic?> GetTopicAsync(string name)
     {
         try
         {
@@ -66,7 +66,7 @@ public class TopicGateway(HttpClient client) : ITopicGateway
         }
     }
 
-    public async Task<Topic> UpdateTopicAsync(string name, string description, List<Guid> eventTypeIds)
+    public async Task<Topic?> UpdateTopicAsync(string name, string description, List<Guid> eventTypeIds)
     {
         try
         {

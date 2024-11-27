@@ -1,4 +1,5 @@
 using MediatR;
+using Qala.Cli.Utils;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -8,22 +9,28 @@ public class DeleteSubscriptionCommand(IMediator mediator) : AsyncCommand<Delete
 {
     public override async Task<int> ExecuteAsync(CommandContext context, DeleteSubscriptionArgument argument)
     {
-        return await mediator.Send(new DeleteSubscriptionRequest(argument.TopicName, argument.SubscriptionId))
-            .ToAsync()
-            .Match(
-                success =>
-                {
-                    AnsiConsole.MarkupLine($"[bold]Subscription deleted successfully:[/]");
-                    return 0;
-                },
-                error =>
-                {
-                    AnsiConsole.MarkupLine($"[red bold]Error during subscription deletion:[/]");
-                    AnsiConsole.MarkupLine($"[red]{error.Message}[/]");
+        return await AnsiConsole.Status()
+            .AutoRefresh(true)
+            .Spinner(Spinner.Known.Star2)
+            .SpinnerStyle(Style.Parse("yellow bold"))
+            .StartAsync("Processing request...", async ctx => 
+            {
+                return await mediator.Send(new DeleteSubscriptionRequest(argument.TopicName, argument.SubscriptionId))
+                    .ToAsync()
+                    .Match(
+                        success =>
+                        {
+                            BaseCommands.DisplaySuccessCommand("Subscription", BaseCommands.CommandAction.Delete);
+                            return 0;
+                        },
+                        error =>
+                        {
+                            BaseCommands.DisplayErrorCommand("Subscription", BaseCommands.CommandAction.Delete, error.Message);
 
-                    return -1;
-                }
-            );
+                            return -1;
+                        }
+                    );
+            });
     }
 
     public override ValidationResult Validate(CommandContext context, DeleteSubscriptionArgument argument)

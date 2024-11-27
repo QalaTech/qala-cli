@@ -1,4 +1,5 @@
 using MediatR;
+using Qala.Cli.Utils;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -8,40 +9,46 @@ public class UpdateTopicCommand(IMediator mediator) : AsyncCommand<UpdateTopicAr
 {
     public override async Task<int> ExecuteAsync(CommandContext context, UpdateTopicArgument argument)
     {
-        return await mediator.Send(new UpdateTopicRequest(argument.Name, argument.Description, argument.EventTypeIds))
-            .ToAsync()
-            .Match(
-                success =>
-                {
-                    AnsiConsole.MarkupLine($"[bold]Topic updated successfully:[/]");
-                    AnsiConsole.Write(new Grid()
-                        .AddColumns(5)
-                        .AddRow(
-                            new Text("Id", new Style(decoration: Decoration.Bold)),
-                            new Text("Name", new Style(decoration: Decoration.Bold)),
-                            new Text("Description", new Style(decoration: Decoration.Bold)),
-                            new Text("Provisioning State", new Style(decoration: Decoration.Bold)),
-                            new Text("Event Types", new Style(decoration: Decoration.Bold))
-                        )
-                        .AddRow(
-                            new Text(success.Topic.Id.ToString()),
-                            new Text(success.Topic.Name),
-                            new Text(success.Topic.Description),
-                            new Text(success.Topic.ProvisioningState),
-                            new Text(string.Join(", ", success.Topic.EventTypes.Select(et => et.Id.ToString())))
-                        )
+        return await AnsiConsole.Status()
+            .AutoRefresh(true)
+            .Spinner(Spinner.Known.Star2)
+            .SpinnerStyle(Style.Parse("yellow bold"))
+            .StartAsync("Processing request...", async ctx => 
+            {
+                return await mediator.Send(new UpdateTopicRequest(argument.Name, argument.Description, argument.EventTypeIds))
+                    .ToAsync()
+                    .Match(
+                        success =>
+                        {
+                            BaseCommands.DisplaySuccessCommand("Topic", BaseCommands.CommandAction.Update);
+                            AnsiConsole.Write(new Grid()
+                                .AddColumns(5)
+                                .AddRow(
+                                    new Text("Id", new Style(decoration: Decoration.Bold)),
+                                    new Text("Name", new Style(decoration: Decoration.Bold)),
+                                    new Text("Description", new Style(decoration: Decoration.Bold)),
+                                    new Text("Provisioning State", new Style(decoration: Decoration.Bold)),
+                                    new Text("Event Types", new Style(decoration: Decoration.Bold))
+                                )
+                                .AddRow(
+                                    new Text(success.Topic.Id.ToString()),
+                                    new Text(success.Topic.Name),
+                                    new Text(success.Topic.Description),
+                                    new Text(success.Topic.ProvisioningState),
+                                    new Text(string.Join(", ", success.Topic.EventTypes.Select(et => et.Id.ToString())))
+                                )
+                            );
+
+                            return 0;
+                        },
+                        error =>
+                        {
+                            BaseCommands.DisplayErrorCommand("Topic", BaseCommands.CommandAction.Update, error.Message);
+
+                            return -1;
+                        }
                     );
-
-                    return 0;
-                },
-                error =>
-                {
-                    AnsiConsole.MarkupLine($"[red bold]Error during topic update:[/]");
-                    AnsiConsole.MarkupLine($"[red]{error.Message}[/]");
-
-                    return -1;
-                }
-            );
+            });
     }
 
     public override ValidationResult Validate(CommandContext context, UpdateTopicArgument argument)

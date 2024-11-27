@@ -19,33 +19,33 @@ namespace Qala.Cli.Integration.Tests.Fixtures;
 
 public class QalaCliBaseFixture : IDisposable
 {
-    public readonly List<Data.Models.Environment> AvailableEnvironments = new()
-    {
+    public readonly List<Data.Models.Environment> AvailableEnvironments =
+    [
         new() { Id = Guid.NewGuid(), Name = "TestEnv", Region = "us-east-1", EnvironmentType = "dev" },
         new() { Id = Guid.NewGuid(), Name = "TestEnv2", Region = "us-east-2", EnvironmentType = "prod" },
         new() { Id = Guid.NewGuid(), Name = "TestEnv3", Region = "us-east-3", EnvironmentType = "prod" }
-    };
+    ];
 
-    public readonly List<EventType> AvailableEventTypes = new()
-    {
-        new() { Id = Guid.NewGuid(), Type = "Type 1", Description = "Test Event Description", Schema="{\"name\":\"Test\"}", ContentType="application/json", Encoding="utf-8", Categories = new List<string> { "cat1", "cat2" } },
-        new() { Id = Guid.NewGuid(), Type = "Type 2", Description = "Test Event Description 2", Schema="{\"name\":\"Test2\"}", ContentType="application/json", Encoding="utf-8", Categories = new List<string> { "cat3", "cat4" } },
-        new() { Id = Guid.NewGuid(), Type = "Type 3", Description = "Test Event Description 3", Schema="{\"name\":\"Test3\"}", ContentType="application/json", Encoding="utf-8", Categories = new List<string> { "cat5", "cat6" } }
-    };
+    public readonly List<EventType> AvailableEventTypes =
+    [
+        new() { Id = Guid.NewGuid(), Type = "Type 1", Description = "Test Event Description", Schema="{\"name\":\"Test\"}", ContentType="application/json", Encoding="utf-8", Categories = ["cat1", "cat2"] },
+        new() { Id = Guid.NewGuid(), Type = "Type 2", Description = "Test Event Description 2", Schema="{\"name\":\"Test2\"}", ContentType="application/json", Encoding="utf-8", Categories = ["cat3", "cat4"] },
+        new() { Id = Guid.NewGuid(), Type = "Type 3", Description = "Test Event Description 3", Schema="{\"name\":\"Test3\"}", ContentType="application/json", Encoding="utf-8", Categories = ["cat5", "cat6"] }
+    ];
 
-    public List<Topic> AvailableTopics = new()
-    {
+    public List<Topic> AvailableTopics =
+    [
         new() { Id = Guid.NewGuid(), Name = "TestTopic", Description = "Test Topic Description", ProvisioningState = "Provisioning" },
         new() { Id = Guid.NewGuid(), Name = "TestTopic2", Description = "Test Topic Description 2", ProvisioningState = "Provisioned" },
         new() { Id = Guid.NewGuid(), Name = "TestTopic3", Description = "Test Topic Description 3", ProvisioningState = "Provisioned" }
-    };
+    ];
 
-    public List<Subscription> AvailableSubscriptions = new ()
-    {
+    public List<Subscription> AvailableSubscriptions =
+    [
         new() { Id = Guid.NewGuid(), Name = "TestSubscription", Description = "Test Subscription Description", ProvisioningState = "Provisioning", MaxDeliveryAttempts = 3, DeadletterCount = 1, WebhookSecret = Guid.NewGuid().ToString() },
         new() { Id = Guid.NewGuid(), Name = "TestSubscription2", Description = "Test Subscription Description 2", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 2, WebhookSecret = Guid.NewGuid().ToString() },
         new() { Id = Guid.NewGuid(), Name = "TestSubscription3", Description = "Test Subscription Description 3", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 3, WebhookSecret = Guid.NewGuid().ToString() }
-    };
+    ];
 
     public readonly string ApiKey = Guid.NewGuid().ToString();
 

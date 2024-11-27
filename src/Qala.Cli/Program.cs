@@ -6,10 +6,8 @@ using Qala.Cli.Commands.Login;
 using Qala.Cli.Commands.Environment;
 using Qala.Cli.Utils;
 using Qala.Cli.Commands.EventTypes;
-using LanguageExt;
 using Qala.Cli.Commands.Topics;
 using Qala.Cli.Commands.Subscriptions;
-using System.IO.Compression;
 
 Environment.SetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_MANAGEMENT_API_URL], "https://localhost:7143/v1/", EnvironmentVariableTarget.User);
 

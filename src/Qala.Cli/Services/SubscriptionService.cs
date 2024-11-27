@@ -35,6 +35,11 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
         }
 
         var subscription = await subscriptionGateway.CreateSubscriptionAsync(topicName, name, description, webhookUrl, eventTypeIds, maxDeliveryAttempts);
+        if (subscription == null)
+        {
+            return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Failed to create subscription"));
+        }
+
         return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionSuccessResponse(subscription));
     }
 
@@ -67,6 +72,11 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
         }
 
         var subscription = await subscriptionGateway.GetSubscriptionAsync(topicName, subscriptionId);
+        if (subscription == null)
+        {
+            return await Task.FromResult<Either<GetSubscriptionErrorResponse, GetSubscriptionSuccessResponse>>(new GetSubscriptionErrorResponse("Subscription not found"));
+        }
+
         return await Task.FromResult<Either<GetSubscriptionErrorResponse, GetSubscriptionSuccessResponse>>(new GetSubscriptionSuccessResponse(subscription));
     }
 
@@ -83,6 +93,11 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
         }
 
         var secret = await subscriptionGateway.GetWebhookSecretAsync(topicName, subscriptionId);
+        if (secret == null)
+        {
+            return await Task.FromResult<Either<GetWebhookSecretErrorResponse, GetWebhookSecretSuccessResponse>>(new GetWebhookSecretErrorResponse("Webhook secret not found"));
+        }
+
         return await Task.FromResult<Either<GetWebhookSecretErrorResponse, GetWebhookSecretSuccessResponse>>(new GetWebhookSecretSuccessResponse(secret));
     }
 
@@ -110,6 +125,11 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
         }
 
         var secret = await subscriptionGateway.RotateWebhookSecretAsync(topicName, subscriptionId);
+        if (secret == null)
+        {
+            return await Task.FromResult<Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>>(new RotateWebhookSecretErrorResponse("Failed to rotate webhook secret"));
+        }
+
         return await Task.FromResult<Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>>(new RotateWebhookSecretSuccessResponse(secret));
     }
 
@@ -146,6 +166,11 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
         }
 
         var subscription = await subscriptionGateway.UpdateSubscriptionAsync(topicName, subscriptionId, name, description, webhookUrl, eventTypeIds, maxDeliveryAttempts);
+        if (subscription == null)
+        {
+            return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Failed to update subscription"));
+        }
+
         return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionSuccessResponse(subscription));
     }
 }

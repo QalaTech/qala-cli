@@ -6,7 +6,7 @@ namespace Qala.Cli.Data.Gateway;
 
 public class EventTypeGateway(HttpClient client) : IEventTypeGateway
 {
-    public async Task<EventType> GetEventTypeAsync(Guid id)
+    public async Task<EventType?> GetEventTypeAsync(Guid id)
     {
         try
         {

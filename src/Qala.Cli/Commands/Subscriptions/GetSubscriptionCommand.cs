@@ -1,4 +1,5 @@
 using MediatR;
+using Qala.Cli.Utils;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -8,48 +9,54 @@ public class GetSubscriptionCommand(IMediator mediator) : AsyncCommand<GetSubscr
 {
     public override async Task<int> ExecuteAsync(CommandContext context, GetSubscriptionArgument arguments)
     {
-        return await mediator.Send(new GetSubscriptionRequest(arguments.TopicName, arguments.SubscriptionId))
-            .ToAsync()
-            .Match(
-                success => 
-                {
-                    AnsiConsole.MarkupLine("[yellow bold]Subscription:[/]");
-                    var grid = new Grid()
-                        .AddColumns(8)
-                        .AddRow(
-                            new Text("Id", new Style(decoration: Decoration.Bold)),
-                            new Text("Name", new Style(decoration: Decoration.Bold)),
-                            new Text("Description", new Style(decoration: Decoration.Bold)),
-                            new Text("Webhook Url", new Style(decoration: Decoration.Bold)),
-                            new Text("Provisioning State", new Style(decoration: Decoration.Bold)),
-                            new Text("Event Types", new Style(decoration: Decoration.Bold)),
-                            new Text("Max Delivery Attempts", new Style(decoration: Decoration.Bold)),
-                            new Text("Deadletters count", new Style(decoration: Decoration.Bold))
-                        );
+        return await AnsiConsole.Status()
+            .AutoRefresh(true)
+            .Spinner(Spinner.Known.Star2)
+            .SpinnerStyle(Style.Parse("yellow bold"))
+            .StartAsync("Processing request...", async ctx => 
+            {
+                return await mediator.Send(new GetSubscriptionRequest(arguments.TopicName, arguments.SubscriptionId))
+                    .ToAsync()
+                    .Match(
+                        success => 
+                        {
+                            BaseCommands.DisplaySuccessCommand("Subscription", BaseCommands.CommandAction.Get);
+                            var grid = new Grid()
+                                .AddColumns(8)
+                                .AddRow(
+                                    new Text("Id", new Style(decoration: Decoration.Bold)),
+                                    new Text("Name", new Style(decoration: Decoration.Bold)),
+                                    new Text("Description", new Style(decoration: Decoration.Bold)),
+                                    new Text("Webhook Url", new Style(decoration: Decoration.Bold)),
+                                    new Text("Provisioning State", new Style(decoration: Decoration.Bold)),
+                                    new Text("Event Types", new Style(decoration: Decoration.Bold)),
+                                    new Text("Max Delivery Attempts", new Style(decoration: Decoration.Bold)),
+                                    new Text("Deadletters count", new Style(decoration: Decoration.Bold))
+                                );
 
-                    grid.AddRow(
-                        new Text(success.Subscription.Id.ToString()),
-                        new Text(success.Subscription.Name),
-                        new Text(success.Subscription.Description),
-                        new Text(success.Subscription.WebhookUrl),
-                        new Text(success.Subscription.ProvisioningState),
-                        new Text(string.Join(", ", success.Subscription.EventTypes.Select(et => et.Type))),
-                        new Text(success.Subscription.MaxDeliveryAttempts.ToString()),
-                        new Text(success.Subscription.DeadletterCount.ToString())
+                            grid.AddRow(
+                                new Text(success.Subscription.Id.ToString()),
+                                new Text(success.Subscription.Name),
+                                new Text(success.Subscription.Description),
+                                new Text(success.Subscription.WebhookUrl),
+                                new Text(success.Subscription.ProvisioningState),
+                                new Text(string.Join(", ", success.Subscription.EventTypes.Select(et => et.Type))),
+                                new Text(success.Subscription.MaxDeliveryAttempts.ToString()),
+                                new Text(success.Subscription.DeadletterCount.ToString())
+                            );
+
+                            AnsiConsole.Write(grid);
+
+                            return 0;
+                        },
+                        error =>
+                        {
+                            BaseCommands.DisplayErrorCommand("Subscription", BaseCommands.CommandAction.Get, error.Message);
+
+                            return -1;
+                        }
                     );
-
-                    AnsiConsole.Write(grid);
-
-                    return 0;
-                },
-                error =>
-                {
-                    AnsiConsole.MarkupLine("[red bold]Error during getting subscription:[/]");
-                    AnsiConsole.MarkupLine($"[red]{error.Message}[/]");
-
-                    return -1;
-                }
-            );
+            });
     }
 
     public override ValidationResult Validate(CommandContext context, GetSubscriptionArgument arguments)

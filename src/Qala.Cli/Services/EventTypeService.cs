@@ -15,6 +15,11 @@ public class EventTypeService(IEventTypeGateway eventTypeGateway) : IEventTypeSe
         }
         
         var eventType = await eventTypeGateway.GetEventTypeAsync(id);
+        if (eventType == null)
+        {
+            return await Task.FromResult<Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>>(new GetEventTypeErrorResponse("Event type not found"));
+        }
+        
         return await Task.FromResult<Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>>(new GetEventTypeSuccessResponse(eventType));
     }
 

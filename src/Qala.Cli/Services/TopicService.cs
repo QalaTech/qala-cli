@@ -25,6 +25,11 @@ public class TopicService(ITopicGateway topicGateway) : ITopicService
         }
 
         var topic = await topicGateway.CreateTopicAsync(name, description, eventTypeIds);
+        if (topic == null)
+        {
+            return await Task.FromResult<Either<CreateTopicErrorResponse, CreateTopicSuccessResponse>>(new CreateTopicErrorResponse("Failed to create topic"));
+        }
+
         return await Task.FromResult<Either<CreateTopicErrorResponse, CreateTopicSuccessResponse>>(new CreateTopicSuccessResponse(topic));
     }
 
@@ -36,6 +41,11 @@ public class TopicService(ITopicGateway topicGateway) : ITopicService
         }
         
         var topic = await topicGateway.GetTopicAsync(name);
+        if (topic == null)
+        {
+            return await Task.FromResult<Either<GetTopicErrorResponse, GetTopicSuccessResponse>>(new GetTopicErrorResponse("Topic not found"));
+        }
+
         return await Task.FromResult<Either<GetTopicErrorResponse, GetTopicSuccessResponse>>(new GetTopicSuccessResponse(topic));
     }
 
@@ -63,6 +73,11 @@ public class TopicService(ITopicGateway topicGateway) : ITopicService
         }
 
         var topic = await topicGateway.UpdateTopicAsync(name, description, eventTypeIds);
+        if (topic == null)
+        {
+            return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicErrorResponse("Failed to update topic"));
+        }
+
         return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicSuccessResponse(topic));
     }
 }

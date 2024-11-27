@@ -1,4 +1,5 @@
 using MediatR;
+using Qala.Cli.Utils;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -8,44 +9,50 @@ public class ListTopicsCommand(IMediator mediator) : AsyncCommand<ListTopicsArgu
 {
     public override async Task<int> ExecuteAsync(CommandContext context, ListTopicsArgument arguments)
     {
-        return await mediator.Send(new ListTopicRequest())
-            .ToAsync()
-            .Match(
-                success => 
-                {
-                    AnsiConsole.MarkupLine("[yellow bold]Topics:[/]");
-                    var grid = new Grid()
-                        .AddColumns(5)
-                        .AddRow(
-                            new Text("Id", new Style(decoration: Decoration.Bold)),
-                            new Text("Name", new Style(decoration: Decoration.Bold)),
-                            new Text("Description", new Style(decoration: Decoration.Bold)),
-                            new Text("Provisioning State", new Style(decoration: Decoration.Bold)),
-                            new Text("Event Types", new Style(decoration: Decoration.Bold))
-                        );
+        return await AnsiConsole.Status()
+            .AutoRefresh(true)
+            .Spinner(Spinner.Known.Star2)
+            .SpinnerStyle(Style.Parse("yellow bold"))
+            .StartAsync("Processing request...", async ctx => 
+            {
+                return await mediator.Send(new ListTopicRequest())
+                    .ToAsync()
+                    .Match(
+                        success => 
+                        {
+                            BaseCommands.DisplaySuccessCommand("Topics", BaseCommands.CommandAction.List);
+                            var grid = new Grid()
+                                .AddColumns(5)
+                                .AddRow(
+                                    new Text("Id", new Style(decoration: Decoration.Bold)),
+                                    new Text("Name", new Style(decoration: Decoration.Bold)),
+                                    new Text("Description", new Style(decoration: Decoration.Bold)),
+                                    new Text("Provisioning State", new Style(decoration: Decoration.Bold)),
+                                    new Text("Event Types", new Style(decoration: Decoration.Bold))
+                                );
 
-                    foreach (var topic in success.Topics)
-                    {
-                        grid.AddRow(
-                            new Text(topic.Id.ToString()),
-                            new Text(topic.Name),
-                            new Text(topic.Description),
-                            new Text(topic.ProvisioningState),
-                            new Text(string.Join(", ", topic.EventTypes.Select(et => et.Type)))
-                        );
-                    }
+                            foreach (var topic in success.Topics)
+                            {
+                                grid.AddRow(
+                                    new Text(topic.Id.ToString()),
+                                    new Text(topic.Name),
+                                    new Text(topic.Description),
+                                    new Text(topic.ProvisioningState),
+                                    new Text(string.Join(", ", topic.EventTypes.Select(et => et.Type)))
+                                );
+                            }
 
-                    AnsiConsole.Write(grid);
+                            AnsiConsole.Write(grid);
 
-                    return 0;
-                },
-                error =>
-                {
-                    AnsiConsole.MarkupLine("[red bold]Error during listing topics:[/]");
-                    AnsiConsole.MarkupLine($"[red]{error.Message}[/]");
+                            return 0;
+                        },
+                        error =>
+                        {
+                            BaseCommands.DisplayErrorCommand("Topics", BaseCommands.CommandAction.List, error.Message);
 
-                    return -1;
-                }
-            );
+                            return -1;
+                        }
+                    );
+            });
     }
 }
