@@ -21,7 +21,7 @@ public class GetEventTypeCommand(IMediator mediator, IAnsiConsole console) : Asy
                     .Match(
                         success =>
                         {
-                            BaseCommands.DisplaySuccessCommand("Event Type", BaseCommands.CommandAction.Get, console);
+                            BaseCommands.DisplaySuccessMessage("Event Type", BaseCommands.CommandAction.Get, console);
                             console.Write(new Grid()
                                 .AddColumns(5)
                                 .AddRow(
@@ -55,7 +55,7 @@ public class GetEventTypeCommand(IMediator mediator, IAnsiConsole console) : Asy
                         },
                         error =>
                         {
-                            BaseCommands.DisplayErrorCommand("Event Type", BaseCommands.CommandAction.Get, error.Message, console);
+                            BaseCommands.DisplayErrorMessage("Event Type", BaseCommands.CommandAction.Get, error.Message, console);
 
                             return -1;
                         }

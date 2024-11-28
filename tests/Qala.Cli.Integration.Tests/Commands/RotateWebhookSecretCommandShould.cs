@@ -27,7 +27,7 @@ public class RotateWebhookSecretCommandShould(QalaCliBaseFixture fixture) : ICla
                     .SpinnerStyle(Style.Parse("yellow bold"))
                     .Start("Processing request...", ctx => 
                     {
-                expectedOutput.MarkupLine("[green bold]Rotation of Webhook secret successfull:[/]");
+                expectedOutput.MarkupLine("[green bold]Rotation of Webhook secret successful:[/]");
                 expectedOutput.MarkupLine("[bold]80ef03bb-f5a7-4c81-addf-38e2b360bff5[/]");
             });
         

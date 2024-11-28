@@ -20,7 +20,7 @@ public class ListTopicsCommand(IMediator mediator, IAnsiConsole console) : Async
                     .Match(
                         success => 
                         {
-                            BaseCommands.DisplaySuccessCommand("Topics", BaseCommands.CommandAction.List, console);
+                            BaseCommands.DisplaySuccessMessage("Topics", BaseCommands.CommandAction.List, console);
                             var grid = new Grid()
                                 .AddColumns(5)
                                 .AddRow(
@@ -48,7 +48,7 @@ public class ListTopicsCommand(IMediator mediator, IAnsiConsole console) : Async
                         },
                         error =>
                         {
-                            BaseCommands.DisplayErrorCommand("Topics", BaseCommands.CommandAction.List, error.Message, console);
+                            BaseCommands.DisplayErrorMessage("Topics", BaseCommands.CommandAction.List, error.Message, console);
 
                             return -1;
                         }

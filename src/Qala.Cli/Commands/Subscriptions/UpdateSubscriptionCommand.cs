@@ -20,7 +20,7 @@ public class UpdateSubscriptionCommand(IMediator mediator, IAnsiConsole console)
                     .Match(
                         success =>
                         {
-                            BaseCommands.DisplaySuccessCommand("Subscription", BaseCommands.CommandAction.Update, console);
+                            BaseCommands.DisplaySuccessMessage("Subscription", BaseCommands.CommandAction.Update, console);
                             console.Write(new Grid()
                                 .AddColumns(6)
                                 .AddRow(
@@ -45,7 +45,7 @@ public class UpdateSubscriptionCommand(IMediator mediator, IAnsiConsole console)
                         },
                         error =>
                         {
-                            BaseCommands.DisplayErrorCommand("Subscription", BaseCommands.CommandAction.Update, error.Message, console);
+                            BaseCommands.DisplayErrorMessage("Subscription", BaseCommands.CommandAction.Update, error.Message, console);
 
                             return -1;
                         }

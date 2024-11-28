@@ -20,12 +20,12 @@ public class DeleteSubscriptionCommand(IMediator mediator, IAnsiConsole console)
                     .Match(
                         success =>
                         {
-                            BaseCommands.DisplaySuccessCommand("Subscription", BaseCommands.CommandAction.Delete, console);
+                            BaseCommands.DisplaySuccessMessage("Subscription", BaseCommands.CommandAction.Delete, console);
                             return 0;
                         },
                         error =>
                         {
-                            BaseCommands.DisplayErrorCommand("Subscription", BaseCommands.CommandAction.Delete, error.Message, console);
+                            BaseCommands.DisplayErrorMessage("Subscription", BaseCommands.CommandAction.Delete, error.Message, console);
 
                             return -1;
                         }

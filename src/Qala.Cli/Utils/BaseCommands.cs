@@ -4,7 +4,7 @@ namespace Qala.Cli.Utils;
 
 public static class BaseCommands
 {
-    public static void DisplayLogoStart(string message, IAnsiConsole console)
+    public static void DisplayQalaFiglet(string message, IAnsiConsole console)
     {
         console.Write(
             new FigletText("Qala CLI")
@@ -13,7 +13,7 @@ public static class BaseCommands
         console.MarkupLine($"[yellow bold]{message}[/]");
     }
 
-    public static void DisplaySuccessCommand(string entityName, CommandAction action, IAnsiConsole console)
+    public static void DisplaySuccessMessage(string entityName, CommandAction action, IAnsiConsole console)
     {
         switch (action)
         {
@@ -39,7 +39,7 @@ public static class BaseCommands
                 console.MarkupLine($"[green bold]{entityName} set successfully.[/]");
                 break;
             case CommandAction.Rotate:
-                console.MarkupLine($"[green bold]Rotation of {entityName} successfull:[/]");
+                console.MarkupLine($"[green bold]Rotation of {entityName} successful:[/]");
                 break;
             default:
                 console.MarkupLine($"[green bold]{entityName}:[/]");
@@ -47,7 +47,7 @@ public static class BaseCommands
         }
     }
 
-    public static void DisplayErrorCommand(string entityName, CommandAction action, string message, IAnsiConsole console)
+    public static void DisplayErrorMessage(string entityName, CommandAction action, string message, IAnsiConsole console)
     {
         switch (action)
         {

@@ -20,13 +20,13 @@ public class SetEnvironmentCommand(IMediator mediator, IAnsiConsole console) : A
                 .Match(
                     success => 
                     {
-                        BaseCommands.DisplaySuccessCommand("Environment", BaseCommands.CommandAction.Set, console);
+                        BaseCommands.DisplaySuccessMessage("Environment", BaseCommands.CommandAction.Set, console);
                         
                         return 0;
                     },
                     error => 
                     {
-                        BaseCommands.DisplayErrorCommand("Environment", BaseCommands.CommandAction.Set, error.Message, console);
+                        BaseCommands.DisplayErrorMessage("Environment", BaseCommands.CommandAction.Set, error.Message, console);
 
                         return -1;
                     }

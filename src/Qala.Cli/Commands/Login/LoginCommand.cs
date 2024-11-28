@@ -9,7 +9,7 @@ public class LoginCommand(IMediator mediator, IAnsiConsole console) : AsyncComma
 {
     public override async Task<int> ExecuteAsync(CommandContext context, LoginArgument argument)
     {
-        BaseCommands.DisplayLogoStart("Login", console);
+        BaseCommands.DisplayQalaFiglet("Login", console);
         return await mediator.Send(new LoginRequest())
             .ToAsync()
             .Match(

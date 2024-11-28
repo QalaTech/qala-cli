@@ -20,14 +20,14 @@ public class GetWebhookSecretCommand(IMediator mediator, IAnsiConsole console) :
                     .Match(
                         success =>
                         {
-                            BaseCommands.DisplaySuccessCommand("Webhook secret", BaseCommands.CommandAction.Get, console);
+                            BaseCommands.DisplaySuccessMessage("Webhook secret", BaseCommands.CommandAction.Get, console);
                             console.MarkupLine($"[bold]{success.WebhookSecret}[/]");
 
                             return 0;
                         },
                         error =>
                         {
-                            BaseCommands.DisplayErrorCommand("Webhook secret", BaseCommands.CommandAction.Get, error.Message, console);
+                            BaseCommands.DisplayErrorMessage("Webhook secret", BaseCommands.CommandAction.Get, error.Message, console);
 
                             return -1;
                         }

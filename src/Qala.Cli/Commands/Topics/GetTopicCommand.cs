@@ -20,7 +20,7 @@ public class GetTopicCommand(IMediator mediator, IAnsiConsole console) : AsyncCo
                     .Match(
                         success =>
                         {
-                            BaseCommands.DisplaySuccessCommand("Topic", BaseCommands.CommandAction.Get, console);
+                            BaseCommands.DisplaySuccessMessage("Topic", BaseCommands.CommandAction.Get, console);
                             console.Write(new Grid()
                                 .AddColumns(5)
                                 .AddRow(
@@ -43,7 +43,7 @@ public class GetTopicCommand(IMediator mediator, IAnsiConsole console) : AsyncCo
                         },
                         error =>
                         {
-                            BaseCommands.DisplayErrorCommand("Topic", BaseCommands.CommandAction.Get, error.Message, console);
+                            BaseCommands.DisplayErrorMessage("Topic", BaseCommands.CommandAction.Get, error.Message, console);
 
                             return -1;
                         }

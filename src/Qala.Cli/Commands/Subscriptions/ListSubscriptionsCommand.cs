@@ -20,7 +20,7 @@ public class ListSubscriptionsCommand(IMediator mediator, IAnsiConsole console) 
                     .Match(
                         success => 
                         {
-                            BaseCommands.DisplaySuccessCommand("Subscriptions", BaseCommands.CommandAction.List, console);
+                            BaseCommands.DisplaySuccessMessage("Subscriptions", BaseCommands.CommandAction.List, console);
                             var grid = new Grid()
                                 .AddColumns(5)
                                 .AddRow(
@@ -48,7 +48,7 @@ public class ListSubscriptionsCommand(IMediator mediator, IAnsiConsole console) 
                         },
                         error =>
                         {
-                            BaseCommands.DisplayErrorCommand("Subscriptions", BaseCommands.CommandAction.List, error.Message, console);
+                            BaseCommands.DisplayErrorMessage("Subscriptions", BaseCommands.CommandAction.List, error.Message, console);
 
                             return -1;
                         }

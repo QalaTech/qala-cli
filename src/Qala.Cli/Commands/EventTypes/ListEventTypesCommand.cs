@@ -20,7 +20,7 @@ public class ListEventTypesCommand(IMediator mediator, IAnsiConsole console) : A
                     .Match(
                         success =>
                         {
-                            BaseCommands.DisplaySuccessCommand("Event Types", BaseCommands.CommandAction.List, console);
+                            BaseCommands.DisplaySuccessMessage("Event Types", BaseCommands.CommandAction.List, console);
                             var grid = new Grid()
                                 .AddColumns(4)
                                 .AddRow(
@@ -45,7 +45,7 @@ public class ListEventTypesCommand(IMediator mediator, IAnsiConsole console) : A
                         },
                         error =>
                         {
-                            BaseCommands.DisplayErrorCommand("Event Types", BaseCommands.CommandAction.List, error.Message, console);
+                            BaseCommands.DisplayErrorMessage("Event Types", BaseCommands.CommandAction.List, error.Message, console);
 
                             return -1;
                         }

@@ -20,7 +20,7 @@ public class ConfigCommand(IMediator mediator, IAnsiConsole console) : AsyncComm
                     .Match(
                         success =>
                         {
-                            BaseCommands.DisplaySuccessCommand("Configuration", BaseCommands.CommandAction.Configuration, console);
+                            BaseCommands.DisplaySuccessMessage("Configuration", BaseCommands.CommandAction.Configuration, console);
                             console.Write(new Grid()
                                 .AddColumns(2)
                                 .AddRow(
@@ -37,7 +37,7 @@ public class ConfigCommand(IMediator mediator, IAnsiConsole console) : AsyncComm
                         },
                         error =>
                         {
-                            BaseCommands.DisplayErrorCommand("Configuration", BaseCommands.CommandAction.Configuration, error.Message, console);
+                            BaseCommands.DisplayErrorMessage("Configuration", BaseCommands.CommandAction.Configuration, error.Message, console);
 
                             return -1;
                         }

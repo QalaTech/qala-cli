@@ -20,7 +20,7 @@ public class GetEnvironmentCommand(IMediator mediator, IAnsiConsole console) : A
                 .Match(
                     success => 
                     {
-                        BaseCommands.DisplaySuccessCommand("Environment", BaseCommands.CommandAction.Get, console);
+                        BaseCommands.DisplaySuccessMessage("Environment", BaseCommands.CommandAction.Get, console);
                         console.Write(new Grid()
                             .AddColumns(4)
                             .AddRow(
@@ -41,7 +41,7 @@ public class GetEnvironmentCommand(IMediator mediator, IAnsiConsole console) : A
                     },
                     error => 
                     {
-                        BaseCommands.DisplayErrorCommand("Environment", BaseCommands.CommandAction.Get, error.Message, console);
+                        BaseCommands.DisplayErrorMessage("Environment", BaseCommands.CommandAction.Get, error.Message, console);
 
                         return -1;
                     }
