@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Define the variables in "$(var.*) expressions" -->
+<?define Name = "Qala Q-Flow CLI" ?>
+<?define Manufacturer = "Qala Technologies" ?>
+<?define Version = "0.0.1" ?>
+<?define UpgradeCode = "07419927-af16-4cca-8a32-0b2b58de68f5" ?>
+
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+    <Package Name="$(Name)"
+             Manufacturer="$(Manufacturer)"
+             Version="$(Version)"
+             UpgradeCode="$(var.UpgradeCode)"
+             Compressed="true"
+             Scope="perMachine">
+        <Media Id="1" Cabinet="setup.cab" EmbedCab="yes" />
+
+        <!-- Allow upgrades and prevent downgrades -->
+        <MajorUpgrade DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit." />
+
+        <!-- Define the directory structure -->
+        <StandardDirectory Id="ProgramFiles64Folder">
+            <!-- Create a folder inside program files -->
+            <Directory Id="ROOTDIRECTORY" Name="$(var.Manufacturer)">
+                <!-- Create a folder within the parent folder given the name -->
+                <Directory Id="INSTALLFOLDER" Name="$(Name)" />
+            </Directory>
+        </StandardDirectory>
+
+        <!-- The files inside this DirectoryRef are linked to
+             the Qala.Cli directory via INSTALLFOLDER -->
+        <DirectoryRef Id="INSTALLFOLDER">
+            <!-- Create a single component which is the Qala.Cli.exe file -->
+            <Component Id="ServiceExecutable">
+                <File Id="QalaCliExe" Source="..\.releases\windows\Qala.Cli.exe" KeyPath="yes" />
+                <ServiceInstall Id="QalaCliService"
+                                Type="ownProcess"
+                                Name="Qala.Cli"
+                                DisplayName="Qala Q-Flow CLI"
+                                Description="Qala Q-Flow CLI Service"
+                                Start="auto"
+                                Account="LocalSystem"
+                                ErrorControl="normal"
+                                Vital="yes" />
+                <ServiceControl Id="StartQalaCliService"
+                                Name="Qala.Cli"
+                                Start="install"
+                                Stop="both"
+                                Remove="uninstall"
+                                Wait="yes" />
+                <!-- Add the installation directory to the PATH environment variable -->
+                <Environment Id="AddToPath" Name="PATH" Value="[INSTALLFOLDER]" Permanent="no" Part="last" Action="set" System="yes" />
+            </Component>
+        </DirectoryRef>
+
+        <Feature Id="ProductFeature" Title="$(var.Name)" Level="1">
+            <ComponentRef Id="ServiceExecutable" />
+        </Feature>
+    </Package>
+</Wix>
