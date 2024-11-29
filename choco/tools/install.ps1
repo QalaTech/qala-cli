@@ -9,7 +9,3 @@ Copy-Item "$releaseDir\qala.exe" $targetPath -Force
 $envVariableName = "qala"
 [System.Environment]::SetEnvironmentVariable($envVariableName, $targetPath, [System.EnvironmentVariableTarget]::Machine)
 Write-Host "Environment variable $envVariableName set to $targetPath"
-
-# Copy the appsettings.json file
-$targetPath = Join-Path $env:ChocolateyInstall 'bin\appsettings.json'
-Copy-Item "$releaseDir\appsettings.json" $targetPath -Force
