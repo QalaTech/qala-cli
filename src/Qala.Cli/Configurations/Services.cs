@@ -51,7 +51,8 @@ public class Services
             var token = System.Environment.GetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_AUTH_TOKEN], EnvironmentVariableTarget.User);
             if (string.IsNullOrEmpty(token))
             {
-                throw new InvalidOperationException("No authentication was provided.");
+                return;
+                //throw new InvalidOperationException("No authentication was provided.");
             }
 
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
