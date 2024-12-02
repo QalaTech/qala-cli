@@ -21,13 +21,15 @@ public class AuthService(IConfiguration configuration, ILocalEnvironments localE
 
     public async Task<Either<LoginErrorResponse, LoginSuccessResponse>> LoginAsync()
     {
-        var authDomain = configuration["Auth:URL"] ?? throw new ArgumentNullException("Auth:URL");
+        var authDomain = configuration["Auth:URL"] ?? "letsqala.eu.auth0.com";
+        var clientId = configuration["Auth:ClientID"] ?? "iOFuT7y5tHCGL1yJDz2zBtcfENythKn1";
+        var audience = configuration["Auth:Audience"] ?? "https://management-api.qalatech.io/";
         var authUrl = $"{authDomain}/oauth/device/code";
         var content = new FormUrlEncodedContent(
         [
-            new KeyValuePair<string, string>("client_id", configuration["Auth:ClientID"] ?? throw new ArgumentNullException("Auth:ClientID")),
+            new KeyValuePair<string, string>("client_id", clientId),
             new KeyValuePair<string, string>("scope", "openid profile"),
-            new KeyValuePair<string, string>("audience", configuration["Auth:Audience"] ?? throw new ArgumentNullException("Auth:Audience")),
+            new KeyValuePair<string, string>("audience", audience),
         ]);
 
         try
@@ -52,10 +54,10 @@ public class AuthService(IConfiguration configuration, ILocalEnvironments localE
             var tokenUrl = $"{authDomain}/oauth/token";
             var tokenContent = new FormUrlEncodedContent(
             [
-                new KeyValuePair<string, string>("client_id", configuration["Auth:ClientID"] ?? string.Empty),
+                new KeyValuePair<string, string>("client_id", clientId),
                 new KeyValuePair<string, string>("device_code", deviceCodeResponse.Code),
                 new KeyValuePair<string, string>("grant_type", "urn:ietf:params:oauth:grant-type:device_code"),
-                new KeyValuePair<string, string>("audience", configuration["Auth:Audience"] ?? string.Empty),
+                new KeyValuePair<string, string>("audience", audience),
             ]);
 
             while (string.IsNullOrEmpty(token))
@@ -137,7 +139,7 @@ public class AuthService(IConfiguration configuration, ILocalEnvironments localE
     private static HttpClient ConfigureHttpClient(IConfiguration configuration, string token)
     {
         var httpClient = new HttpClient();
-        var baseUrl = configuration["Management-API:URL"] ?? "https://management-api-uat.qalatech.io/";
+        var baseUrl = configuration["Management-API:URL"] ?? "https://management-api.qalatech.io/v1/";
 
         httpClient.BaseAddress = new Uri(baseUrl);
 

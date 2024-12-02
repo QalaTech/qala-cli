@@ -8,7 +8,7 @@ public class Configurations
     {
         var builder = new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("config.json", optional: false, reloadOnChange: true);
+            .AddYamlFile("config.yaml", optional: false, reloadOnChange: true);
         return builder.Build();
     }
 }

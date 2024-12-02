@@ -37,7 +37,7 @@ public class Services
 
     private static void BuildHttpClient(HttpClient client, IConfiguration configuration)
     {
-        var baseUrl = configuration["Management-API:URL"] ?? "https://management-api-uat.qalatech.io/";
+        var baseUrl = configuration["Management-API:URL"] ?? "https://management-api.qalatech.io/v1/";
 
         client.BaseAddress = new Uri(baseUrl);
 
