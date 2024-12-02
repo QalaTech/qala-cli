@@ -56,11 +56,12 @@ public class Services
         else
         {
             client.DefaultRequestHeaders.Add("x-auth-token", key);
-            var environmentId = System.Environment.GetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID], EnvironmentVariableTarget.User);
-            if (!string.IsNullOrEmpty(environmentId))
-            {
-                client.DefaultRequestHeaders.Add("x-environment-id", environmentId);
-            }
+        }
+
+        var environmentId = System.Environment.GetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID], EnvironmentVariableTarget.User);
+        if (!string.IsNullOrEmpty(environmentId))
+        {
+            client.DefaultRequestHeaders.Add("x-environment-id", environmentId);
         }
     }
 }

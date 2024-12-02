@@ -9,7 +9,6 @@ using Qala.Cli.Data.Models.Auth;
 using Qala.Cli.Data.Repository.Interfaces;
 using Qala.Cli.Services.Interfaces;
 using Spectre.Console;
-using Qala.Cli.Data.Gateway.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Qala.Cli.Gateway;
 
