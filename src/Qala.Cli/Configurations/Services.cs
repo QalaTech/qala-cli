@@ -35,7 +35,7 @@ public class Services
 
     private static void BuildHttpClient(HttpClient client)
     {
-        var baseUrl = System.Environment.GetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_MANAGEMENT_API_URL], EnvironmentVariableTarget.User);
+        var baseUrl = System.Environment.GetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_MANAGEMENT_API_URL]) ?? "https://management-api-uat.qalatech.io/";
 
         if (string.IsNullOrEmpty(baseUrl))
         {
