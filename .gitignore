@@ -221,6 +221,11 @@ AppPackages/
 # Release Files
 .releases
 
+# Wix Toolset generated files
+qala.exe
+QalaCliInstaller.msi
+QalaCliInstaller.wixpdb
+
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####

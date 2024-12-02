@@ -10,21 +10,24 @@ using Qala.Cli.Data.Repository.Interfaces;
 using Qala.Cli.Services.Interfaces;
 using Spectre.Console;
 using Qala.Cli.Data.Gateway.Interfaces;
+using Microsoft.Extensions.Configuration;
+using Qala.Cli.Gateway;
 
 namespace Qala.Cli.Services;
 
-public class AuthService(ILocalEnvironments localEnvironments, IOrganizationGateway organizationGateway, IAnsiConsole console) : IAuthService
+public class AuthService(IConfiguration configuration, ILocalEnvironments localEnvironments, IAnsiConsole console) : IAuthService
 {
     private static readonly HttpClient client = new();
 
     public async Task<Either<LoginErrorResponse, LoginSuccessResponse>> LoginAsync()
     {
-        var authUrl = "https://dev-lqwdwo2zdrq7ygsg.us.auth0.com/oauth/device/code";
+        var authDomain = configuration["Auth:URL"] ?? throw new ArgumentNullException("Auth:URL");
+        var authUrl = $"{authDomain}/oauth/device/code";
         var content = new FormUrlEncodedContent(
         [
-            new KeyValuePair<string, string>("client_id", "gv2q0aAxsQ1mezQtZ4ao9DJjGOYFeybB"),
+            new KeyValuePair<string, string>("client_id", configuration["Auth:ClientID"] ?? throw new ArgumentNullException("Auth:ClientID")),
             new KeyValuePair<string, string>("scope", "openid profile"),
-            new KeyValuePair<string, string>("audience", "https://localhost:7143/"),
+            new KeyValuePair<string, string>("audience", configuration["Auth:Audience"] ?? throw new ArgumentNullException("Auth:Audience")),
         ]);
 
         try
@@ -46,13 +49,13 @@ public class AuthService(ILocalEnvironments localEnvironments, IOrganizationGate
             });
 
             var token = string.Empty;
-            var tokenUrl = "https://dev-lqwdwo2zdrq7ygsg.us.auth0.com/oauth/token";
+            var tokenUrl = $"{authDomain}/oauth/token";
             var tokenContent = new FormUrlEncodedContent(
             [
-                new KeyValuePair<string, string>("client_id", "gv2q0aAxsQ1mezQtZ4ao9DJjGOYFeybB"),
+                new KeyValuePair<string, string>("client_id", configuration["Auth:ClientID"] ?? string.Empty),
                 new KeyValuePair<string, string>("device_code", deviceCodeResponse.Code),
                 new KeyValuePair<string, string>("grant_type", "urn:ietf:params:oauth:grant-type:device_code"),
-                new KeyValuePair<string, string>("audience", "https://localhost:7143/"),
+                new KeyValuePair<string, string>("audience", configuration["Auth:Audience"] ?? string.Empty),
             ]);
 
             while (string.IsNullOrEmpty(token))
@@ -106,6 +109,7 @@ public class AuthService(ILocalEnvironments localEnvironments, IOrganizationGate
                 return new LoginErrorResponse("Failed to retrieve token.");
             }
 
+            var organizationGateway = new OrganizationGateway(ConfigureHttpClient(configuration, token));
             var organization = await organizationGateway.GetOrganizationAsync();
             if (organization is null)
             {
@@ -128,5 +132,22 @@ public class AuthService(ILocalEnvironments localEnvironments, IOrganizationGate
         {
             return new LoginErrorResponse($"An error occurred: {ex.Message}");
         }
+    }
+
+    private static HttpClient ConfigureHttpClient(IConfiguration configuration, string token)
+    {
+        var httpClient = new HttpClient();
+        var baseUrl = configuration["Management-API:URL"] ?? "https://management-api-uat.qalatech.io/";
+
+        httpClient.BaseAddress = new Uri(baseUrl);
+
+        if (string.IsNullOrEmpty(token))
+        {
+            throw new ArgumentNullException("Token is required.");
+        }
+
+        httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+
+        return httpClient;
     }
 } 

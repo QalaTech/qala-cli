@@ -4,19 +4,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console.Cli;
 using Qala.Cli.Commands.Login;
 using Qala.Cli.Commands.Environment;
-using Qala.Cli.Utils;
 using Qala.Cli.Commands.EventTypes;
 using Qala.Cli.Commands.Topics;
 using Qala.Cli.Commands.Subscriptions;
 using Spectre.Console;
 
-Environment.SetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_MANAGEMENT_API_URL], "https://localhost:7143/v1/", EnvironmentVariableTarget.User);
-
 var services = new ServiceCollection();
+var configuration = Configurations.SetupConfiguration();
 
 services.AddSingleton<IAnsiConsole>(AnsiConsole.Console);
-Services.RegisterDataServices(services);
-Services.RegisterServices(services);
+Services.RegisterDataServices(services, configuration);
+Services.RegisterServices(services, configuration);
 
 var registrar = new TypeRegistrar(services);
 

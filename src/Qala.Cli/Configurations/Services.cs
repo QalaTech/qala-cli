@@ -7,13 +7,15 @@ using Qala.Cli.Data.Repository;
 using Qala.Cli.Data.Gateway.Interfaces;
 using Qala.Cli.Utils;
 using Qala.Cli.Data.Gateway;
+using Microsoft.Extensions.Configuration;
 
 namespace Qala.Cli.Configurations;
 
 public class Services
 {
-    public static void RegisterServices(IServiceCollection services)
+    public static void RegisterServices(IServiceCollection services, IConfiguration configuration)
     {
+        services.AddSingleton<IConfiguration>(configuration);
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
         services.AddSingleton<IAuthService, AuthService>();
         services.AddSingleton<IConfigService, ConfigService>();
@@ -23,24 +25,19 @@ public class Services
         services.AddSingleton<ISubscriptionService, SubscriptionService>();
     }
 
-    public static void RegisterDataServices(IServiceCollection services)
+    public static void RegisterDataServices(IServiceCollection services, IConfiguration configuration)
     {
         services.AddSingleton<ILocalEnvironments, LocalEnvironments>();
-        services.AddHttpClient<IOrganizationGateway, OrganizationGateway>(BuildHttpClient);
-        services.AddHttpClient<IEnvironmentGateway, EnvironmentGateway>(BuildHttpClient);
-        services.AddHttpClient<IEventTypeGateway, EventTypeGateway>(BuildHttpClient);
-        services.AddHttpClient<ITopicGateway, TopicGateway>(BuildHttpClient);
-        services.AddHttpClient<ISubscriptionGateway, SubscriptionGateway>(BuildHttpClient);
+        services.AddHttpClient<IOrganizationGateway, OrganizationGateway>(client => BuildHttpClient(client, configuration));
+        services.AddHttpClient<IEnvironmentGateway, EnvironmentGateway>(client => BuildHttpClient(client, configuration));
+        services.AddHttpClient<IEventTypeGateway, EventTypeGateway>(client => BuildHttpClient(client, configuration));
+        services.AddHttpClient<ITopicGateway, TopicGateway>(client => BuildHttpClient(client, configuration));
+        services.AddHttpClient<ISubscriptionGateway, SubscriptionGateway>(client => BuildHttpClient(client, configuration));
     }
 
-    private static void BuildHttpClient(HttpClient client)
+    private static void BuildHttpClient(HttpClient client, IConfiguration configuration)
     {
-        var baseUrl = System.Environment.GetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_MANAGEMENT_API_URL]) ?? "https://management-api-uat.qalatech.io/";
-
-        if (string.IsNullOrEmpty(baseUrl))
-        {
-            throw new InvalidOperationException("ManagementApi:BaseUrl is not configured.");
-        }
+        var baseUrl = configuration["Management-API:URL"] ?? "https://management-api-uat.qalatech.io/";
 
         client.BaseAddress = new Uri(baseUrl);
 
@@ -52,7 +49,6 @@ public class Services
             if (string.IsNullOrEmpty(token))
             {
                 return;
-                //throw new InvalidOperationException("No authentication was provided.");
             }
 
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");

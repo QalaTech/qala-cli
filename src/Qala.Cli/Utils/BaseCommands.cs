@@ -7,7 +7,7 @@ public static class BaseCommands
     public static void DisplayQalaFiglet(string message, IAnsiConsole console)
     {
         console.Write(
-            new FigletText("Qala CLI")
+            new FigletText("Qala")
                 .LeftJustified()
                 .Color(Color.Yellow1));
         console.MarkupLine($"[yellow bold]{message}[/]");

@@ -54,4 +54,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Qala.Cli.Data\Qala.Cli.Data.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
