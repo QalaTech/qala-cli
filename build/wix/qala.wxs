@@ -26,8 +26,8 @@
                 <Directory Id="INSTALLFOLDER" Name="$(Name)">
                     <!-- Create a single component which is the qala.exe file -->
                     <Component Id="ServiceExecutable">
-                        <File Id="QalaCliExe" Source="..\publish\win-x64\qala.exe" KeyPath="yes" />
-                        <File Id="QalaCliConfig" Source="..\publish\win-x64\config.json" KeyPath="no" />
+                        <File Id="QalaCliExe" Source="..\..\publish\win-x64\qala.exe" KeyPath="yes" />
+                        <File Id="QalaCliConfig" Source="..\..\publish\win-x64\config.json" KeyPath="no" />
                         <!-- Add the installation directory to the PATH environment variable -->
                         <Environment Id="AddToPath" Name="PATH" Value="[INSTALLFOLDER]" Permanent="no" Part="last" Action="set" System="yes" />
                     </Component>
