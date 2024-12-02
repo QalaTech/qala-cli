@@ -2,6 +2,14 @@
 
 Qala CLI is a command-line interface tool designed to simplify and automate various tasks for developers.
 
+## Publish per OS:
+
+### Mac
+
+`dotnet publish -c Release -r osx-x64 --self-contained true -o publish/osx`
+or
+`dotnet publish -c Release -r osx-armx64 --self-contained true -o publish/osx`
+
 ## Features
 
 - Easy setup and configuration
