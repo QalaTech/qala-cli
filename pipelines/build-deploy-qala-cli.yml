@@ -76,7 +76,7 @@ stages:
     - script: |
         for rid in $(runtimeIdentifiers); do
           echo "Publishing Beta version for runtime: $rid"
-          dotnet publish $(projectToPublish) -c $(buildConfiguration) -r $rid --self-contained true -p:PublishSingleFile=true -o $(Pipeline.Workspace)/beta/$rid -o $(Pipeline.Workspace)
+          dotnet publish $(projectToPublish) -c $(buildConfiguration) -r $rid --self-contained true -p:PublishSingleFile=true -o $(Pipeline.Workspace)/beta/$rid
         done
       displayName: 'Build and publish Beta executables'
 
