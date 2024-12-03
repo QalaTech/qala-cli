@@ -48,16 +48,34 @@ stages:
     steps:
 
     - powershell: |
-        $version = (Select-String -Path build.ps1 -Pattern 'VERSION=').Matches[0].Value -replace 'VERSION=', ''
-        Write-Host "Extracted version: $version"
+        # Debugging: List files in the source directory
+        Get-ChildItem -Path "$(Build.SourcesDirectory)"
 
-        Write-Host "##vso[task.setvariable variable=version]$version"
+        # Check if the build.ps1 file exists
+        if (Test-Path "$(Build.SourcesDirectory)/build.ps1") {
+            Write-Host "build.ps1 file found."
+        } else {
+            Write-Host "build.ps1 file not found."
+            exit 1
+        }
 
-        $preReleaseVersion = "$version-alpha.$env:BUILD_BUILDID"
-        Write-Host "##vso[task.setvariable variable=preReleaseVersion]$preReleaseVersion"
-        Write-Host "Alpha pre-release version: $preReleaseVersion"
+        # Extract the version from build.ps1
+        $versionMatch = Select-String -Path "$(Build.SourcesDirectory)/build.ps1" -Pattern "\$VERSION\s*=\s*'(\d+\.\d+\.\d+)'"
+        if ($versionMatch) {
+            $version = $versionMatch.Matches[0].Groups[1].Value
+            Write-Host "Extracted version: $version"
+
+            Write-Host "##vso[task.setvariable variable=version]$version"
+
+            $preReleaseVersion = "$version-alpha.$env:BUILD_BUILDID"
+            Write-Host "##vso[task.setvariable variable=preReleaseVersion]$preReleaseVersion"
+            Write-Host "Alpha pre-release version: $preReleaseVersion"
+        } else {
+            Write-Host "VERSION pattern not found in build.ps1"
+            exit 1
+        }
       displayName: 'Generate Alpha Version and Update package.json'
-      workingDirectory: $(Build.SourcesDirectory)/$(buildDirectory)
+      workingDirectory: $(Build.SourcesDirectory)
 
     - task: UseDotNet@2
       displayName: 'Install SDK Using global.json'
