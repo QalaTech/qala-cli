@@ -36,7 +36,7 @@ variables:
   preReleaseVersion: ''
 
 pool:
-  vmImage: windows-latest
+  vmImage: linux-latest
 
 stages:
 # Stage 1: Build and Deploy Alpha
@@ -48,15 +48,18 @@ stages:
     steps:
 
     - script: |
-        $version = (Select-String -Path build.ps1 -Pattern 'VERSION=').Matches[0].Value -replace 'VERSION=', ''
-        Write-Host "Extracted version: $version"
+        # Extract the version from the build.sh file
+        version=$(grep -Po '(?<=VERSION=).+' build.sh | tr -d "'")
+        echo "Extracted version: $version"
 
-        Write-Host "##vso[task.setvariable variable=version]$version"
+        # Set the version as an environment variable
+        echo "##vso[task.setvariable variable=version]$version"
 
-        $preReleaseVersion = "$version-alpha.$env:BUILD_BUILDID"
-        Write-Host "##vso[task.setvariable variable=preReleaseVersion]$preReleaseVersion"
-        Write-Host "Alpha pre-release version: $preReleaseVersion"
-      displayName: 'Generate Alpha Version and Update package.json'
+        # Append -alpha.<BuildId> to the version
+        preReleaseVersion="$version-alpha.$(Build.BuildId)"
+        echo "##vso[task.setvariable variable=preReleaseVersion]$preReleaseVersion"
+        echo "Alpha pre-release version: $preReleaseVersion"
+      displayName: 'Generate Beta Version and Update package.json'
 
     - task: UseDotNet@2
       displayName: 'Install SDK Using global.json'
@@ -71,19 +74,17 @@ stages:
         projects: '**/*.csproj'
     
     - script: |
-        $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-        foreach ($rid in $runtimeIdentifiers) {
-          Write-Host "Publishing Beta version for runtime: $rid"
-          dotnet publish "$(projectToPublish)" -c "$(buildConfiguration)" -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/beta/$rid"
-        }
+        for rid in $(runtimeIdentifiers); do
+          echo "Publishing Beta version for runtime: $rid"
+          dotnet publish $(projectToPublish) -c $(buildConfiguration) -r $rid --self-contained true -p:PublishSingleFile=true -o $(Pipeline.Workspace)/beta/$rid
+        done
       displayName: 'Build and publish Beta executables'
 
     - script: |
-        $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-        foreach ($rid in $runtimeIdentifiers) {
-          Write-Host "Creating installer for runtime: $rid"
-          & "$(Build.SourcesDirectory)/$(buildDirectory)/build.ps1" $rid
-        }
+        for rid in $(runtimeIdentifiers); do
+          echo "Creating installer: $pid"
+          $(Build.SourcesDirectory)/$(buildDirectory)/build.sh $rid
+        done
       displayName: 'Create installers for each runtime identifiers'
 
     - task: GithubRelease@1 
