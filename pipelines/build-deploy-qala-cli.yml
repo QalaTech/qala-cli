@@ -95,7 +95,7 @@ stages:
       displayName: 'Publish installers for each runtime identifiers'
 
     - task: GithubRelease@1 
-      displayName: 'Create GitHub Release'      
+      displayName: 'Create GitHub Alpha Release'      
       inputs:
         gitHubConnection: '$(gitHubConnection)'
         repositoryName: '$(repositoryName)'
@@ -107,4 +107,3 @@ stages:
       assets: |
         $(Pipeline.Workspace)/*.exe
         $(Build.ArtifactStagingDirectory)/README.txt
-      displayName: 'Create GitHub Alpha Release' 
