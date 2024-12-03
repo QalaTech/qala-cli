@@ -97,15 +97,14 @@ stages:
     - task: GithubRelease@1 
       displayName: 'Create GitHub Release'      
       inputs:
-        inputs:
-          gitHubConnection: '$(gitHubConnection)'
-          repositoryName: '$(repositoryName)'
-          target: '$(Build.SourceBranchName)'
-          tagSource: 'userSpecifiedTag'
-          tag: "$(preReleaseVersion)"
-          isPreRelease: true
-          title: 'Alpha Release $(preReleaseVersion)'   
-        assets: |
-          $(Pipeline.Workspace)/*.exe
-          $(Build.ArtifactStagingDirectory)/README.txt
-        displayName: 'Create GitHub Alpha Release' 
+        gitHubConnection: '$(gitHubConnection)'
+        repositoryName: '$(repositoryName)'
+        target: '$(Build.SourceBranchName)'
+        tagSource: 'userSpecifiedTag'
+        tag: "$(preReleaseVersion)"
+        isPreRelease: true
+        title: 'Alpha Release $(preReleaseVersion)'   
+      assets: |
+        $(Pipeline.Workspace)/*.exe
+        $(Build.ArtifactStagingDirectory)/README.txt
+      displayName: 'Create GitHub Alpha Release' 
