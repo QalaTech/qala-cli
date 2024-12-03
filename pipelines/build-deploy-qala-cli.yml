@@ -104,6 +104,6 @@ stages:
         tag: "$(preReleaseVersion)"
         isPreRelease: true
         title: 'Alpha Release $(preReleaseVersion)'   
-      assets: |
-        $(Pipeline.Workspace)/*.exe
-        $(Build.ArtifactStagingDirectory)/README.txt
+        assets: |
+          $(Pipeline.Workspace)/*.exe
+          $(Build.ArtifactStagingDirectory)/README.txt
