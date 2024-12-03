@@ -29,8 +29,8 @@ variables:
   buildConfiguration: 'Release'
   runtimeIdentifiers: 'win-x64'
   projectToPublish: '**/Qala.Cli/Qala.Cli.csproj'
-  buildDirectory: '**/build'
-  publishDirectory: '**/publish'
+  buildDirectory: 'build'
+  publishDirectory: 'publish'
   gitHubConnection: 'github.com_tvcosta'
   repositoryName: 'QalaTech/qala-cli'
   preReleaseVersion: ''
@@ -83,16 +83,9 @@ stages:
     - script: |
         for rid in $(runtimeIdentifiers); do
           echo "Creating installer: $pid"
-          $(buildDirectory)/build.sh $rid
+          $(Build.SourcesDirectory)/$(buildDirectory)/build.sh $rid
         done
       displayName: 'Create installers for each runtime identifiers'
-
-    - script: |
-        for rid in $(runtimeIdentifiers); do
-          echo "Publishing installer: $pid"
-          $(publishDirectory)/publish.sh $rid
-        done
-      displayName: 'Publish installers for each runtime identifiers'
 
     - task: GithubRelease@1 
       displayName: 'Create GitHub Alpha Release'      
@@ -105,5 +98,5 @@ stages:
         isPreRelease: true
         title: 'Alpha Release $(preReleaseVersion)'   
         assets: |
-          $(Pipeline.Workspace)/*.exe
-          $(Build.ArtifactStagingDirectory)/README.txt
+          $(Build.SourcesDirectory)/$(buildDirectory)/QalaCliInstaller-$(runtimeIdentifiers).msi
+          $(Build.SourcesDirectory)/$(publishDirectory)/qala.exe
