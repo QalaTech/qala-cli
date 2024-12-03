@@ -47,7 +47,7 @@ stages:
     displayName: "Build and Publish Alpha Executables and Installers"
     steps:
 
-    - script: |
+    - powershell: |
         $version = (Select-String -Path build.ps1 -Pattern 'VERSION=').Matches[0].Value -replace 'VERSION=', ''
         Write-Host "Extracted version: $version"
 
@@ -70,7 +70,7 @@ stages:
         command: 'restore'
         projects: '**/*.csproj'
     
-    - script: |
+    - powershell: |
         $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
         foreach ($rid in $runtimeIdentifiers) {
           Write-Host "Publishing Beta version for runtime: $rid"
@@ -78,7 +78,7 @@ stages:
         }
       displayName: 'Build and publish Beta executables'
 
-    - script: |
+    - powershell: |
         $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
         foreach ($rid in $runtimeIdentifiers) {
           Write-Host "Creating installer for runtime: $rid"
