@@ -74,7 +74,7 @@ tar -czvf "$TAR_FILE" -C "$PUBLISH_DIR" .
 echo "Build and packaging completed successfully!"
 echo "Tarball created: $TAR_FILE"
 
-# Start the creation of installers per platform runtime
+## Start the creation of installers per platform runtime
 # For Windows only - creating the msi file
 if [[ "$TARGET_RID" == "win-x64" || "$TARGET_RID" == "win-arm64" ]]; then
   echo "Creating the MSI file for Windows..."
