@@ -73,3 +73,53 @@ tar -czvf "$TAR_FILE" -C "$PUBLISH_DIR" .
 # Output success message
 echo "Build and packaging completed successfully!"
 echo "Tarball created: $TAR_FILE"
+
+# Start the creation of installers per platform runtime
+# For Windows only - creating the msi file
+if [[ "$TARGET_RID" == "win-x64" || "$TARGET_RID" == "win-arm64" ]]; then
+  echo "Creating the MSI file for Windows..."
+
+  # Copy the wix files and folders to the publish directory
+  echo "Copying WiX files to the publish directory..."
+  cp -r build/wix/ $PUBLISH_DIR
+  echo "WiX files copied to the publish directory."
+
+  # Go to the WiX folder within the publish directory
+  cd $PUBLISH_DIR/wix
+
+  # Validate if WiX is installed
+  if wix --version > /dev/null 2>&1; then
+    echo "WiX is already installed."
+  else
+    # Install WiX
+    echo "Installing WiX Toolset..."
+    dotnet tool install --global wix
+
+    # Validate WiX installation
+    echo "Validating WiX installation..."
+    if wix --version > /dev/null 2>&1; then
+      echo "WiX installed successfully."
+    else
+      echo "Error: WiX installation failed."
+      exit 1
+    fi
+  fi
+
+  # Install the extension WixToolset.UI.wixext
+  echo "Installing the WiX extension WixToolset.UI.wixext..."
+  wix extension add WixToolset.UI.wixext
+  echo "WiX extension WixToolset.UI.wixext installed successfully."
+
+  # Generating the MSI file
+  echo "Generating the MSI file..."
+  wix build qala.wxs -ext WixToolset.UI.wixext -o QalaCliInstaller.msi
+
+  # Validate the MSI file
+  echo "Validating the MSI file..."
+  if [ -f QalaCliInstaller.msi ]; then
+    echo "MSI file generated successfully."
+  else
+    echo "Error: MSI file generation failed."
+    exit 1
+  fi
+fi
