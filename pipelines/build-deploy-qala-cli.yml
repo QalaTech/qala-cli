@@ -27,7 +27,7 @@ pr:
 
 variables:
   buildConfiguration: 'Release'
-  runtimeIdentifiers: 'win-x64 win-arm64'
+  runtimeIdentifiers: 'win-x64'
   projectToPublish: '**/Qala.Cli/Qala.Cli.csproj'
   buildDirectory: '**/**/build'
   publishDirectory: '**/**/publish'
