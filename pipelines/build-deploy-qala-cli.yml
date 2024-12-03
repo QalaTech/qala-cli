@@ -49,7 +49,7 @@ stages:
 
     - powershell: |
         # Debugging: List files in the source directory
-        Get-ChildItem -Path "$(Build.SourcesDirectory)"
+        Get-ChildItem -Path "$(Build.SourcesDirectory)/$(buildDirectory)"
 
         # Check if the build.ps1 file exists
         if (Test-Path "$(Build.SourcesDirectory)/$(buildDirectory)/build.ps1") {
