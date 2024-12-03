@@ -47,6 +47,7 @@ OUTPUT_NAME="qala"               # Desired name for the executable
 PUBLISH_DIR="publish/$TARGET_RID" # Directory for the published files
 RELEASE_DIR="publish/releases"   # Directory for tar files
 TAR_FILE="$RELEASE_DIR/qala-$TARGET_RID.tar.gz" # Name of the tar file
+VERSION='0.0.2'                  # Replace with your project version
 
 # Create the release directory if it doesn't exist
 mkdir -p "$RELEASE_DIR"
@@ -112,11 +113,11 @@ if [[ "$TARGET_RID" == "win-x64" || "$TARGET_RID" == "win-arm64" ]]; then
 
   # Generating the MSI file
   echo "Generating the MSI file..."
-  wix build qala.wxs -ext WixToolset.UI.wixext -o QalaCliInstaller.msi
+  wix build qala.wxs -d Verion=$VERSION -ext WixToolset.UI.wixext -o QalaCliInstaller-$TARGET_RID.msi
 
   # Validate the MSI file
   echo "Validating the MSI file..."
-  if [ -f QalaCliInstaller.msi ]; then
+  if [ -f QalaCliInstaller-$TARGET_RID.msi ]; then
     echo "MSI file generated successfully."
   else
     echo "Error: MSI file generation failed."

@@ -3,14 +3,13 @@
 <!-- Define the variables in "$(var.*) expressions" -->
 <?define Name = "Qala Q-Flow CLI" ?>
 <?define Manufacturer = "Qala Technologies" ?>
-<?define Version = "0.0.1" ?>
 <?define UpgradeCode = "07419927-af16-4cca-8a32-0b2b58de68f5" ?>
 <?define ProductResources = ".\resources\" ?>
 
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
-    <Package Name="$(Name)"
-             Manufacturer="$(Manufacturer)"
-             Version="$(Version)"
+    <Package Name="$(var.Name)"
+             Manufacturer="$(var.Manufacturer)"
+             Version="$(var.Version)"
              UpgradeCode="$(var.UpgradeCode)"
              Compressed="true"
              Scope="perMachine">
