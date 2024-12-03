@@ -225,7 +225,6 @@ AppPackages/
 qala.exe
 QalaCliInstaller.msi
 QalaCliInstaller.wixpdb
-.wix/
 
 #####
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)

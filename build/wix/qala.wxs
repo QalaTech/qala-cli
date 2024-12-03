@@ -5,6 +5,7 @@
 <?define Manufacturer = "Qala Technologies" ?>
 <?define Version = "0.0.1" ?>
 <?define UpgradeCode = "07419927-af16-4cca-8a32-0b2b58de68f5" ?>
+<?define ProductResources = ".\resources\" ?>
 
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
     <Package Name="$(Name)"
@@ -14,6 +15,12 @@
              Compressed="true"
              Scope="perMachine">
         <Media Id="1" Cabinet="setup.cab" EmbedCab="yes" />
+        <Icon Id="QalaIcon" SourceFile="$(var.ProductResources)logo.ico" />
+
+        <Property Id="ARPPRODUCTICON" Value="QalaIcon" />
+        <Property Id="ARPHELPLINK" Value="https://developers.qalatech.io/docs/q-flow/getting-started/" />
+        <Property Id="ARPURLINFOABOUT" Value="https://developers.qalatech.io/docs/category/concepts" />
+        <Property Id="ARPURLUPDATEINFO" Value="https://developers.qalatech.io/docs/api/qala-publishing-api" />
 
         <!-- Allow upgrades and prevent downgrades -->
         <MajorUpgrade DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit." />
@@ -27,6 +34,7 @@
                     <!-- Create a single component which is the qala.exe file -->
                     <Component Id="ServiceExecutable">
                         <File Id="QalaCliExe" Source="..\..\publish\win-x64\qala.exe" KeyPath="yes" />
+                        <File Id="QalaCliBatchFile" Name="qala.bat" Source="qala.bat" KeyPath="no" />
                         <File Id="QalaCliConfig" Source="..\..\publish\win-x64\config.yaml" KeyPath="no" />
                         <!-- Add the installation directory to the PATH environment variable -->
                         <Environment Id="AddToPath" Name="PATH" Value="[INSTALLFOLDER]" Permanent="no" Part="last" Action="set" System="yes" />
@@ -35,29 +43,18 @@
             </Directory>
         </StandardDirectory>
 
-        <!-- Create a batch file in the System32 directory -->
-        <StandardDirectory Id="System64Folder">
-            <Component Id="BatchFileComponent" Guid="d4ed2a28-3e07-431a-96ed-461b1d22a815">
-                <File Id="QalaCliBatchFile" Name="qala-cli.bat" Source="qala-cli.bat" KeyPath="yes" />
-            </Component>
-        </StandardDirectory>
-
         <Feature Id="ProductFeature" Title="$(var.Name)" Level="1">
             <ComponentRef Id="ServiceExecutable" />
-            <ComponentRef Id="BatchFileComponent" />
         </Feature>
 
         <!-- UI Elements -->
-        <Icon Id="QalaIcon" SourceFile="resources/logo.ico" />
         <ui:WixUI Id="WixUI_Minimal" />
-        <!-- <WixVariable
-                Id="WixUILicenseRtf"
-                Value="bpl.rtf"
-                /> -->
-                <!-- Message at the end of the installation -->
-            <Property
-                Id="WIXUI_EXITDIALOGOPTIONALTEXT"
-                Value="Thank you for installing this product."
-                />
+        <!-- Define the license file -->
+        <WixVariable Id="WixUILicenseRtf" Value="$(var.ProductResources)CLI_LICENSE.rtf"/>
+        <!-- Define the images -->
+        <WixVariable Id="WixUIDialogBmp" Value="$(var.ProductResources)Dialog.bmp" />
+        <WixVariable Id="WixUIBannerBmp" Value="$(var.ProductResources)Banner.bmp" />
+        <!-- Message at the end of the installation -->
+        <Property Id="WIXUI_EXITDIALOGOPTIONALTEXT" Value="Please close and reopen any active terminal window to use Qala Q-Flow CLI." />
     </Package>
 </Wix>
