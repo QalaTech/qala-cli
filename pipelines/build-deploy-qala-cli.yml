@@ -57,6 +57,7 @@ stages:
         Write-Host "##vso[task.setvariable variable=preReleaseVersion]$preReleaseVersion"
         Write-Host "Alpha pre-release version: $preReleaseVersion"
       displayName: 'Generate Alpha Version and Update package.json'
+      workingDirectory: $(Build.SourcesDirectory)/$(buildDirectory)
 
     - task: UseDotNet@2
       displayName: 'Install SDK Using global.json'
@@ -77,14 +78,16 @@ stages:
           dotnet publish "$(projectToPublish)" -c "$(buildConfiguration)" -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/beta/$rid"
         }
       displayName: 'Build and publish Beta executables'
+      workingDirectory: $(Build.SourcesDirectory)
 
     - powershell: |
         $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
         foreach ($rid in $runtimeIdentifiers) {
           Write-Host "Creating installer for runtime: $rid"
-          & "$(Build.SourcesDirectory)/$(buildDirectory)/build.ps1" $rid
+          & build.ps1 $rid
         }
       displayName: 'Create installers for each runtime identifiers'
+      workingDirectory: $(Build.SourcesDirectory)/$(buildDirectory)
 
     - task: GithubRelease@1 
       displayName: 'Create GitHub Alpha Release'      
