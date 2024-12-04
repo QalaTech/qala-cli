@@ -138,7 +138,7 @@ stages:
         workingDirectory: $(Build.SourcesDirectory)
         targetType: 'inline'
         script: |
-          $alphaVersionMsi = $(alphaVersion).TrimStart('v')
+          $alphaVersionMsi = "$(alphaVersion)".TrimStart('v')
           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
           foreach ($rid in $runtimeIdentifiers) {
             Write-Host "Generating the msi file for runtime: $rid"
