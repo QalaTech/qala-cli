@@ -98,5 +98,5 @@ stages:
         isPreRelease: true
         title: 'Alpha Release $(preReleaseVersion)'   
         assets: |
-          $(Build.SourcesDirectory)/$(buildDirectory)/QalaCliInstaller-$(runtimeIdentifiers).msi
-          $(Build.SourcesDirectory)/$(publishDirectory)/qala.exe
+          $(Build.SourcesDirectory)/$(buildDirectory)/$(runtimeIdentifiers)/wix/QalaCliInstaller-$(runtimeIdentifiers).msi
+          $(Build.SourcesDirectory)/$(publishDirectory)/$(runtimeIdentifiers)/qala.exe

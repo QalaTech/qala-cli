@@ -45,7 +45,7 @@ $OUTPUT_NAME = "qala"               # Desired name for the executable
 $PUBLISH_DIR = "publish/$TARGET_RID" # Directory for the published files
 $RELEASE_DIR = "publish/releases"   # Directory for tar files
 $TAR_FILE = "$RELEASE_DIR/qala-$TARGET_RID.tar.gz" # Name of the tar file
-$VERSION = '0.0.2'
+$VERSION = '0.0.3'
 
 # Create the release directory if it doesn't exist
 if (-not (Test-Path -Path $RELEASE_DIR)) {
