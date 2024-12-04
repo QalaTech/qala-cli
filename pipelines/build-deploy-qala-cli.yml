@@ -121,8 +121,8 @@ stages:
     - task: PowerShell@2
       displayName: 'Install WiX Toolset and UI extensions'
       condition: ne(variables['Build.Reason'], 'PullRequest')
-      workingDirectory: $(Build.SourcesDirectory)
       inputs:
+        workingDirectory: $(Build.SourcesDirectory)
         targetType: 'inline'
         script: |
           dotnet tool install --global wix
@@ -132,8 +132,8 @@ stages:
     - task: PowerShell@2
       displayName: 'Create installers for each runtime identifiers'
       condition: ne(variables['Build.Reason'], 'PullRequest')
-      workingDirectory: $(Build.SourcesDirectory)
       inputs:
+        workingDirectory: $(Build.SourcesDirectory)
         targetType: 'inline'
         script: |
           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(",")
