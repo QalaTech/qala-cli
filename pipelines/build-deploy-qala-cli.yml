@@ -26,7 +26,7 @@ variables:
   major: 1
   minor: 0
   patch: $[counter(variables['major'], 0)]
-  runtimeIdentifiers: 'win-x64, win-arm64'
+  runtimeIdentifiers: 'win-x64;win-arm64'
   gitHubConnection: 'github.com_tvcosta'
   repositoryName: 'QalaTech/qala-cli'
   alphaVersion: ''
@@ -104,7 +104,7 @@ stages:
         targetType: 'inline'
         workingDirectory: $(Build.SourcesDirectory)/src/Qala.Cli
         script: |
-          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(",")
+          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
           # Check if the pathToTheProjectFile file exists
           if (Test-Path $(pathToTheProjectFile) {
               Write-Host "Qala.Cli.csproj file found."
@@ -136,7 +136,7 @@ stages:
         workingDirectory: $(Build.SourcesDirectory)
         targetType: 'inline'
         script: |
-          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(",")
+          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
           foreach ($rid in $runtimeIdentifiers) {
             Write-Host "Generating the msi file for runtime: $rid"
             wix build wix/qala.wxs -d Version=$VERSION -ext WixToolset.UI.wixext -o "QalaCliInstaller--$(alphaVersion)-$rid.msi"
@@ -149,7 +149,7 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(",")
+          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
           foreach ($rid in $runtimeIdentifiers) {
             Write-Host "Moving installer and executables for runtime: $rid"
             Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/wix/QalaCliInstaller-$(alphaVersion)-$rid.msi" -Destination "$(Build.ArtifactStagingDirectory)/alpha/$rid" -Force
