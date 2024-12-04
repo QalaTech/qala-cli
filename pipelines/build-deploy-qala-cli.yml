@@ -29,8 +29,6 @@ variables:
   buildConfiguration: 'Release'
   runtimeIdentifiers: 'win-x64'
   projectToPublish: '**/Qala.Cli/Qala.Cli.csproj'
-  buildDirectory: 'build'
-  publishDirectory: 'publish'
   gitHubConnection: 'github.com_tvcosta'
   repositoryName: 'QalaTech/qala-cli'
   preReleaseVersion: ''
@@ -56,11 +54,10 @@ stages:
             exit 1
         }
 
-        # Debugging: Print the contents of build.ps1
-        Get-Content -Path "$(Build.SourcesDirectory)/build/build.ps1"
-
         # Extract the version from build.ps1
         $versionMatch = Select-String -Path "$(Build.SourcesDirectory)/build/build.ps1" -Pattern "\$VERSION\s*=\s*'(\d+\.\d+\.\d+)'"
+        # Debug output to see what Select-String returns
+        Write-Host "Select-String output: $versionMatch"
         if ($versionMatch) {
             $version = $versionMatch.Matches[0].Groups[1].Value
             Write-Host "Extracted version: $version"
@@ -105,7 +102,7 @@ stages:
           & build.ps1 $rid
         }
       displayName: 'Create installers for each runtime identifiers'
-      workingDirectory: $(Build.SourcesDirectory)/$(buildDirectory)
+      workingDirectory: $(Build.SourcesDirectory)/build
 
     - task: GithubRelease@1 
       displayName: 'Create GitHub Alpha Release'      
@@ -118,5 +115,5 @@ stages:
         isPreRelease: true
         title: 'Alpha Release $(preReleaseVersion)'   
         assets: |
-          $(Build.SourcesDirectory)/$(buildDirectory)/QalaCliInstaller-$(runtimeIdentifiers).msi
-          $(Build.SourcesDirectory)/$(publishDirectory)/qala.exe
+          $(Build.SourcesDirectory)/publish/QalaCliInstaller-$(runtimeIdentifiers).msi
+          $(Build.SourcesDirectory)/publish/qala.exe
