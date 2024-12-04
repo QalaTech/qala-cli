@@ -164,9 +164,18 @@ stages:
         script: |
           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
           foreach ($rid in $runtimeIdentifiers) {
+            $sourcePath = "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller-$(alphaVersionMsi)-$rid.msi"
+            $destinationPath = "$(Build.ArtifactStagingDirectory)/alpha/$rid"
+            
             Write-Host "Moving installer and executables for runtime: $rid"
-            Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller-$(alphaVersionMsi)-$rid.msi" -Destination "$(Build.ArtifactStagingDirectory)/alpha/$rid" -Force
-            Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/qala.exe" -Destination "$(Build.ArtifactStagingDirectory)/alpha/$rid" -Force
+            Write-Host "Source Path: $sourcePath"
+            Write-Host "Destination Path: $destinationPath"
+            
+            if (Test-Path -Path $sourcePath) {
+              Move-Item -Path $sourcePath -Destination $destinationPath -Force
+            } else {
+              Write-Host "Error: Source path does not exist: $sourcePath"
+            }
           }
 
     # Create GitHub Alpha Release
@@ -181,4 +190,4 @@ stages:
         tag: "$(alphaVersion)"
         isPreRelease: true
         title: 'Alpha Release $(alphaVersion)'   
-        assets: $(Build.ArtifactStagingDirectory)/publish/*
+        assets: $(Build.ArtifactStagingDirectory)/alpha/*
