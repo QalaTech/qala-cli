@@ -7,6 +7,7 @@
 <?define PathToProductResources = ".\resources\" ?>
 <?define PathToExecutable = "../qala.exe" ?>
 <?define PathToConfig = "../config.yaml" ?>
+<?define PathToBat = "qala.bat" ?>
 
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
     <Package Name="$(var.Name)"
@@ -35,7 +36,7 @@
                     <!-- Create a single component which is the qala.exe file -->
                     <Component Id="ServiceExecutable">
                         <File Id="QalaCliExe" Source="$(var.PathToExecutable)" KeyPath="yes" />
-                        <File Id="QalaCliBatchFile" Name="qala.bat" Source="qala.bat" KeyPath="no" />
+                        <File Id="QalaCliBatchFile" Name="qala.bat" Source="$(var.PathToBat)" KeyPath="no" />
                         <File Id="QalaCliConfig" Source="$(var.PathToConfig)" KeyPath="no" />
                         <!-- Add the installation directory to the PATH environment variable -->
                         <Environment Id="AddToPath" Name="PATH" Value="[INSTALLFOLDER]" Permanent="no" Part="last" Action="set" System="yes" />

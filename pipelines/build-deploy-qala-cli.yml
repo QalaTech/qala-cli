@@ -144,6 +144,8 @@ stages:
             $wixFileContent = Get-Content -Path $(pathToTheWiXFile)
             $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToExecutable = ").*?(?=" \?>)', "$(Pipeline.Workspace)/alpha/$rid/qala.exe"
             $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToConfig = ").*?(?=" \?>)', "$(Pipeline.Workspace)/alpha/$rid/config.yaml"
+            $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToBat = ").*?(?=" \?>)', "$(Build.SourcesDirectory)/build/wix/qala.bat"
+            $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToProductResources = ").*?(?=" \?>)', "$(Build.SourcesDirectory)/build/wix/resources/"
             Set-Content -Path $(pathToTheWiXFile) -Value $wixFileContent
             wix build $(pathToTheWiXFile) -d Version=$(alphaVersion) -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller--$(alphaVersion)-$rid.msi"
           }
