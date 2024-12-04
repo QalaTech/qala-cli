@@ -143,7 +143,7 @@ stages:
             Write-Host "Generating the msi file for runtime: $rid"
             $wixFileContent = Get-Content -Path $(pathToTheWiXFile)
             $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToExecutable = ").*?(?=" \?>)', "$(Pipeline.Workspace)/alpha/$rid/qala.exe"
-            $wixFileContent = $wixFileContent -replace -replace '(?<=<\?define PathToConfig = ").*?(?=" \?>)', "$(Pipeline.Workspace)/alpha/$rid/config.yaml"
+            $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToConfig = ").*?(?=" \?>)', "$(Pipeline.Workspace)/alpha/$rid/config.yaml"
             Set-Content -Path $(pathToTheWiXFile) -Value $wixFileContent
             wix build $(pathToTheWiXFile) -d Version=$(alphaVersion) -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller--$(alphaVersion)-$rid.msi"
           }
