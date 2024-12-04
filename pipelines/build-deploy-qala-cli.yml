@@ -23,13 +23,14 @@ pr:
       - tests/*
 
 variables:
-  pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj' 
+  pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj'
   major: 1
   minor: 0
   patch: $[counter(variables['major'], 0)]
   runtimeIdentifiers: 'win-x64;win-arm64'
   gitHubConnection: 'github.com_tvcosta'
   repositoryName: 'QalaTech/qala-cli'
+  pathToTheWiXFile: '$(Build.SourcesDirectory)/build/wix/qala.wxs'
   alphaVersion: ''
   releaseVersion: ''
 
@@ -140,7 +141,7 @@ stages:
           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
           foreach ($rid in $runtimeIdentifiers) {
             Write-Host "Generating the msi file for runtime: $rid"
-            wix build wix/qala.wxs -d Version=$VERSION -ext WixToolset.UI.wixext -o "QalaCliInstaller--$(alphaVersion)-$rid.msi"
+            wix build $(pathToTheWiXFile) -d Version=$(alphaVersion) -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller--$(alphaVersion)-$rid.msi"
           }
 
     # Move all installers and executables to the artifact staging directory
