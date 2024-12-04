@@ -56,8 +56,6 @@ stages:
 
         # Extract the version from build.ps1
         $versionMatch = Select-String -Path "$(Build.SourcesDirectory)/build/build.ps1" -Pattern "VERSION\s*=\s*'(\d+\.\d+\.\d+)'"
-        # Debug output to see what Select-String returns
-        Write-Host "Select-String output: $versionMatch"
         if ($versionMatch) {
             $version = $versionMatch.Matches[0].Groups[1].Value
             Write-Host "Extracted version: $version"
@@ -88,6 +86,8 @@ stages:
     
     - powershell: |
         $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
+        Write-Host "Project to publish: $(projectToPublish)"
+        Write-Host "Build configuration: $(buildConfiguration)"
         foreach ($rid in $runtimeIdentifiers) {
           Write-Host "Publishing Beta version for runtime: $rid"
           dotnet publish "$(projectToPublish)" -c "$(buildConfiguration)" -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/beta/$rid"
