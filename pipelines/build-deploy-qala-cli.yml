@@ -28,7 +28,7 @@ pr:
 variables:
   buildConfiguration: 'Release'
   runtimeIdentifiers: 'win-x64'
-  projectToPublish: Qala.Cli/Qala.Cli.csproj'
+  projectToPublish: Qala.Cli.csproj'
   gitHubConnection: 'github.com_tvcosta'
   repositoryName: 'QalaTech/qala-cli'
   preReleaseVersion: ''
@@ -88,7 +88,7 @@ stages:
         $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
         Write-Host "Project to publish: $(projectToPublish)"
         # Check if the projectToPublish file exists
-        if (Test-Path "$(Build.SourcesDirectory)/$(projectToPublish)") {
+        if (Test-Path "$(Build.SourcesDirectory)/src/Qala.Cli/$(projectToPublish)") {
             Write-Host "$(projectToPublish) file found."
         } else {
             Write-Host "$(projectToPublish) file not found."
@@ -100,7 +100,7 @@ stages:
           dotnet publish "$(projectToPublish)" -c "$(buildConfiguration)" -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/beta/$rid"
         }
       displayName: 'Build and publish Beta executables'
-      workingDirectory: $(Build.SourcesDirectory)/src
+      workingDirectory: $(Build.SourcesDirectory)/src/Qala.Cli
 
     - powershell: |
         $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
