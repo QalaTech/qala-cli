@@ -4,5 +4,5 @@ namespace Qala.Cli.Data.Gateway.Interfaces;
 
 public interface IOrganizationGateway
 {
-    Task<Organization> GetOrganizationAsync();
+    Task<Organization?> GetOrganizationAsync();
 }

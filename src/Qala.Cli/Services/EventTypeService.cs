@@ -14,18 +14,32 @@ public class EventTypeService(IEventTypeGateway eventTypeGateway) : IEventTypeSe
             return await Task.FromResult<Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>>(new GetEventTypeErrorResponse("Invalid id"));
         }
         
-        var eventType = await eventTypeGateway.GetEventTypeAsync(id);
-        if (eventType == null)
+        try
         {
-            return await Task.FromResult<Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>>(new GetEventTypeErrorResponse("Event type not found"));
+            var eventType = await eventTypeGateway.GetEventTypeAsync(id);
+            if (eventType == null)
+            {
+                return await Task.FromResult<Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>>(new GetEventTypeErrorResponse("Event type not found"));
+            }
+            
+            return await Task.FromResult<Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>>(new GetEventTypeSuccessResponse(eventType));
         }
-        
-        return await Task.FromResult<Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>>(new GetEventTypeSuccessResponse(eventType));
+        catch (Exception e)
+        {
+            return await Task.FromResult<Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>>(new GetEventTypeErrorResponse(e.Message));
+        }
     }
 
     public async Task<Either<ListEventTypesErrorResponse, ListEventTypesSuccessResponse>> ListEventTypesAsync()
     {
-        var eventTypes = await eventTypeGateway.ListEventTypesAsync();
-        return await Task.FromResult<Either<ListEventTypesErrorResponse, ListEventTypesSuccessResponse>>(new ListEventTypesSuccessResponse(eventTypes));
+        try
+        {
+            var eventTypes = await eventTypeGateway.ListEventTypesAsync();
+            return await Task.FromResult<Either<ListEventTypesErrorResponse, ListEventTypesSuccessResponse>>(new ListEventTypesSuccessResponse(eventTypes));
+        }
+        catch (Exception e)
+        {
+            return await Task.FromResult<Either<ListEventTypesErrorResponse, ListEventTypesSuccessResponse>>(new ListEventTypesErrorResponse(e.Message));
+        }
     }
 }

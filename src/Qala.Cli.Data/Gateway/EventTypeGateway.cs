@@ -14,19 +14,24 @@ public class EventTypeGateway(HttpClient client) : IEventTypeGateway
 
             if (!response.IsSuccessStatusCode)
             {
+                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+                if (data != null && data.Errors != null)
+                {
+                    throw new Exception("Failed to get event type:" + string.Join(", ", data.Errors.Select(x => x.Reason)));
+                }
+                
                 throw new Exception("Failed to get event type");
             }
 
-            var content = await response.Content.ReadFromJsonAsync<EventType>() ?? throw new Exception("Failed to get event type");
-            return content;
+            return await response.Content.ReadFromJsonAsync<EventType>() ?? null;
         }
         catch (Exception e)
         {
-            throw new Exception("Failed to get event type", e);
+            throw new Exception(e.Message);
         }
     }
 
-    public async Task<IEnumerable<EventType>> ListEventTypesAsync()
+    public async Task<IEnumerable<EventType?>> ListEventTypesAsync()
     {
         try
         {
@@ -34,15 +39,20 @@ public class EventTypeGateway(HttpClient client) : IEventTypeGateway
 
             if (!response.IsSuccessStatusCode)
             {
+                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+                if (data != null && data.Errors != null)
+                {
+                    throw new Exception("Failed to list event types:" + string.Join(", ", data.Errors.Select(x => x.Reason)));
+                }
+                
                 throw new Exception("Failed to list event types");
             }
 
-            var content = await response.Content.ReadFromJsonAsync<EventType[]>() ?? throw new Exception("Failed to list event types");
-            return content;
+            return await response.Content.ReadFromJsonAsync<EventType[]>() ?? [];
         }
         catch (Exception e)
         {
-            throw new Exception("Failed to list event types", e);
+            throw new Exception(e.Message);
         }
     }
 }

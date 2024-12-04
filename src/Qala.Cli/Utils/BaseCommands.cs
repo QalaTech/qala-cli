@@ -76,7 +76,11 @@ public static class BaseCommands
                 console.MarkupLine($"[red bold]Error during rotation of {entityName}:[/]");
                 break;
         }
-        console.MarkupLine($"[red]{message}[/]");
+        
+        message.Split(',')
+            .Select(part => part.Trim())
+            .ToList()
+            .ForEach(part => console.MarkupLine($"[red]{part}[/]"));
     }
 
     public enum CommandAction

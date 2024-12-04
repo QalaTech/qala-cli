@@ -21,6 +21,12 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
 
             if (!response.IsSuccessStatusCode)
             {
+                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+                if (data != null && data.Errors != null)
+                {
+                    throw new Exception("Failed to create subscription:" + string.Join(", ", data.Errors.Select(x => x.Reason)));
+                }
+                
                 throw new Exception("Failed to create subscription");
             }
 
@@ -29,7 +35,7 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
         }
         catch (Exception e)
         {
-            throw new Exception("Failed to create subscription", e);
+            throw new Exception(e.Message);
         }
     }
 
@@ -41,12 +47,18 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
 
             if (!response.IsSuccessStatusCode)
             {
+                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+                if (data != null && data.Errors != null)
+                {
+                    throw new Exception("Failed to delete subscription:" + string.Join(", ", data.Errors.Select(x => x.Reason)));
+                }
+                
                 throw new Exception("Failed to delete subscription");
             }
         }
         catch (Exception e)
         {
-            throw new Exception("Failed to delete subscription", e);
+            throw new Exception(e.Message);
         }
     }
 
@@ -58,15 +70,20 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
 
             if (!response.IsSuccessStatusCode)
             {
+                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+                if (data != null && data.Errors != null)
+                {
+                    throw new Exception("Failed to get subscription:" + string.Join(", ", data.Errors.Select(x => x.Reason)));
+                }
+                
                 throw new Exception("Failed to get subscription");
             }
 
-            var content = await response.Content.ReadFromJsonAsync<Subscription>() ?? throw new Exception("Failed to get subscription");
-            return content;
+            return await response.Content.ReadFromJsonAsync<Subscription>() ?? null;
         }
         catch (Exception e)
         {
-            throw new Exception("Failed to get subscription", e);
+            throw new Exception(e.Message);
         }
     }
 
@@ -78,6 +95,12 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
 
             if (!response.IsSuccessStatusCode)
             {
+                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+                if (data != null && data.Errors != null)
+                {
+                    throw new Exception("Failed to get webhook secret:" + string.Join(", ", data.Errors.Select(x => x.Reason)));
+                }
+                
                 throw new Exception("Failed to get webhook secret");
             }
 
@@ -86,11 +109,11 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
         }
         catch (Exception e)
         {
-            throw new Exception("Failed to get webhook secret", e);
+            throw new Exception(e.Message);
         }
     }
 
-    public async Task<IEnumerable<Subscription>> ListSubscriptionsAsync(string topicName)
+    public async Task<IEnumerable<Subscription?>> ListSubscriptionsAsync(string topicName)
     {
         try
         {
@@ -98,15 +121,20 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
 
             if (!response.IsSuccessStatusCode)
             {
+                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+                if (data != null && data.Errors != null)
+                {
+                    throw new Exception("Failed to list subscriptions:" + string.Join(", ", data.Errors.Select(x => x.Reason)));
+                }
+                
                 throw new Exception("Failed to list subscriptions");
             }
 
-            var content = await response.Content.ReadFromJsonAsync<Subscription[]>() ?? throw new Exception("Failed to list subscriptions");
-            return content;
+            return await response.Content.ReadFromJsonAsync<Subscription[]>() ?? [];
         }
         catch (Exception e)
         {
-            throw new Exception("Failed to list subscriptions", e);
+            throw new Exception(e.Message);
         }
     }
 
@@ -118,6 +146,12 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
 
             if (!response.IsSuccessStatusCode)
             {
+                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+                if (data != null && data.Errors != null)
+                {
+                    throw new Exception("Failed to rotate webhook secret:" + string.Join(", ", data.Errors.Select(x => x.Reason)));
+                }
+                
                 throw new Exception("Failed to rotate webhook secret");
             }
 
@@ -126,7 +160,7 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
         }
         catch (Exception e)
         {
-            throw new Exception("Failed to rotate webhook secret", e);
+            throw new Exception(e.Message);
         }
     }
 
@@ -145,6 +179,12 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
 
             if (!response.IsSuccessStatusCode)
             {
+                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+                if (data != null && data.Errors != null)
+                {
+                    throw new Exception("Failed to update subscription:" + string.Join(", ", data.Errors.Select(x => x.Reason)));
+                }
+                
                 throw new Exception("Failed to update subscription");
             }
 
@@ -153,7 +193,7 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
         }
         catch (Exception e)
         {
-            throw new Exception("Failed to update subscription", e);
+            throw new Exception(e.Message);
         }
     }
 }

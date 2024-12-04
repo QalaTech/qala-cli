@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using Qala.Cli.Data.Gateway.Interfaces;
+using Qala.Cli.Data.Models;
 
 namespace Qala.Cli.Data.Gateway;
 
@@ -13,6 +14,12 @@ public class EnvironmentGateway(HttpClient client) : IEnvironmentGateway
 
             if (!response.IsSuccessStatusCode)
             {
+                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+                if (data != null && data.Errors != null)
+                {
+                    throw new Exception("Failed to create environment:" + string.Join(", ", data.Errors.Select(x => x.Reason)));
+                }
+                
                 throw new Exception("Failed to create environment");
             }
 
@@ -21,7 +28,7 @@ public class EnvironmentGateway(HttpClient client) : IEnvironmentGateway
         }
         catch (Exception e)
         {
-            throw new Exception("Failed to create environment", e);
+            throw new Exception(e.Message);
         }
     }
 }

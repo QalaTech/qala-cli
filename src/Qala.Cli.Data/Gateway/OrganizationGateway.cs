@@ -6,7 +6,7 @@ namespace Qala.Cli.Gateway;
 
 public class OrganizationGateway(HttpClient client) : IOrganizationGateway
 {
-    public async Task<Organization> GetOrganizationAsync()
+    public async Task<Organization?> GetOrganizationAsync()
     {
         try
         {
@@ -14,15 +14,20 @@ public class OrganizationGateway(HttpClient client) : IOrganizationGateway
 
             if (!response.IsSuccessStatusCode)
             {
+                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+                if (data != null && data.Errors != null)
+                {
+                    throw new Exception("Failed to get organization:" + string.Join(", ", data.Errors.Select(x => x.Reason)));
+                }
+                
                 throw new Exception("Failed to get organization");
             }
 
-            var content = await response.Content.ReadFromJsonAsync<Organization>() ?? throw new Exception("Failed to get organization");
-            return content;
+            return await response.Content.ReadFromJsonAsync<Organization>() ?? null;
         }
         catch (Exception e)
         {
-            throw new Exception("Failed to get organization", e);
+            throw new Exception(e.Message);
         }
     }
 }

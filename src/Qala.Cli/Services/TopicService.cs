@@ -24,13 +24,22 @@ public class TopicService(ITopicGateway topicGateway) : ITopicService
             return await Task.FromResult<Either<CreateTopicErrorResponse, CreateTopicSuccessResponse>>(new CreateTopicErrorResponse("Event type ids are required"));
         }
 
-        var topic = await topicGateway.CreateTopicAsync(name, description, eventTypeIds);
-        if (topic == null)
+        try
         {
-            return await Task.FromResult<Either<CreateTopicErrorResponse, CreateTopicSuccessResponse>>(new CreateTopicErrorResponse("Failed to create topic"));
+            var topic = await topicGateway.CreateTopicAsync(name, description, eventTypeIds);
+            if (topic == null)
+            {
+                return await Task.FromResult<Either<CreateTopicErrorResponse, CreateTopicSuccessResponse>>(new CreateTopicErrorResponse("Failed to create topic"));
+            }
+
+            return await Task.FromResult<Either<CreateTopicErrorResponse, CreateTopicSuccessResponse>>(new CreateTopicSuccessResponse(topic));
+        }
+        catch (Exception e)
+        {
+            return await Task.FromResult<Either<CreateTopicErrorResponse, CreateTopicSuccessResponse>>(new CreateTopicErrorResponse(e.Message));
         }
 
-        return await Task.FromResult<Either<CreateTopicErrorResponse, CreateTopicSuccessResponse>>(new CreateTopicSuccessResponse(topic));
+        
     }
 
     public async Task<Either<GetTopicErrorResponse, GetTopicSuccessResponse>> GetTopicAsync(string name)
@@ -40,19 +49,33 @@ public class TopicService(ITopicGateway topicGateway) : ITopicService
             return await Task.FromResult<Either<GetTopicErrorResponse, GetTopicSuccessResponse>>(new GetTopicErrorResponse("Name is required"));
         }
         
-        var topic = await topicGateway.GetTopicAsync(name);
-        if (topic == null)
+        try
         {
-            return await Task.FromResult<Either<GetTopicErrorResponse, GetTopicSuccessResponse>>(new GetTopicErrorResponse("Topic not found"));
-        }
+            var topic = await topicGateway.GetTopicAsync(name);
+            if (topic == null)
+            {
+                return await Task.FromResult<Either<GetTopicErrorResponse, GetTopicSuccessResponse>>(new GetTopicErrorResponse("Topic not found"));
+            }
 
-        return await Task.FromResult<Either<GetTopicErrorResponse, GetTopicSuccessResponse>>(new GetTopicSuccessResponse(topic));
+            return await Task.FromResult<Either<GetTopicErrorResponse, GetTopicSuccessResponse>>(new GetTopicSuccessResponse(topic));
+        }
+        catch (Exception e)
+        {
+            return await Task.FromResult<Either<GetTopicErrorResponse, GetTopicSuccessResponse>>(new GetTopicErrorResponse(e.Message));
+        }
     }
 
     public async Task<Either<ListTopicsErrorResponse, ListTopicsSuccessResponse>> ListTopicsAsync()
     {
-        var topics = await topicGateway.ListTopicsAsync();
-        return await Task.FromResult<Either<ListTopicsErrorResponse, ListTopicsSuccessResponse>>(new ListTopicsSuccessResponse(topics));
+        try
+        {
+            var topics = await topicGateway.ListTopicsAsync();
+            return await Task.FromResult<Either<ListTopicsErrorResponse, ListTopicsSuccessResponse>>(new ListTopicsSuccessResponse(topics));
+        }
+        catch (Exception e)
+        {
+            return await Task.FromResult<Either<ListTopicsErrorResponse, ListTopicsSuccessResponse>>(new ListTopicsErrorResponse(e.Message));
+        }
     }
 
     public async Task<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>> UpdateTopicAsync(string name, string description, List<Guid> eventTypeIds)
@@ -72,12 +95,19 @@ public class TopicService(ITopicGateway topicGateway) : ITopicService
             return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicErrorResponse("Event type ids are required"));
         }
 
-        var topic = await topicGateway.UpdateTopicAsync(name, description, eventTypeIds);
-        if (topic == null)
+        try
         {
-            return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicErrorResponse("Failed to update topic"));
-        }
+            var topic = await topicGateway.UpdateTopicAsync(name, description, eventTypeIds);
+            if (topic == null)
+            {
+                return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicErrorResponse("Failed to update topic"));
+            }
 
-        return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicSuccessResponse(topic));
+            return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicSuccessResponse(topic));
+        }
+        catch (Exception e)
+        {
+            return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicErrorResponse(e.Message));
+        }
     }
 }

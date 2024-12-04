@@ -1,3 +1,4 @@
+using System.Data;
 using System.Net.Http.Json;
 using Qala.Cli.Data.Gateway.Interfaces;
 using Qala.Cli.Data.Models;
@@ -14,6 +15,12 @@ public class TopicGateway(HttpClient client) : ITopicGateway
 
             if (!response.IsSuccessStatusCode)
             {
+                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+                if (data != null && data.Errors != null)
+                {
+                    throw new Exception(string.Join(", ", data.Errors.Select(x => x.Reason)));
+                }
+                
                 throw new Exception("Failed to create topic");
             }
 
@@ -22,7 +29,7 @@ public class TopicGateway(HttpClient client) : ITopicGateway
         }
         catch (Exception e)
         {
-            throw new Exception("Failed to create topic", e);
+            throw new Exception(e.Message);
         }
     }
 
@@ -34,19 +41,24 @@ public class TopicGateway(HttpClient client) : ITopicGateway
 
             if (!response.IsSuccessStatusCode)
             {
+                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+                if (data != null && data.Errors != null)
+                {
+                    throw new Exception("Failed to get topic:" + string.Join(", ", data.Errors.Select(x => x.Reason)));
+                }
+                
                 throw new Exception("Failed to get topic");
             }
 
-            var content = await response.Content.ReadFromJsonAsync<Topic>() ?? throw new Exception("Failed to get topic");
-            return content;
+            return await response.Content.ReadFromJsonAsync<Topic>() ?? null;
         }
         catch (Exception e)
         {
-            throw new Exception("Failed to get topic", e);
+            throw new Exception(e.Message);
         }
     }
 
-    public async Task<IEnumerable<Topic>> ListTopicsAsync()
+    public async Task<IEnumerable<Topic?>> ListTopicsAsync()
     {
         try
         {
@@ -54,15 +66,20 @@ public class TopicGateway(HttpClient client) : ITopicGateway
 
             if (!response.IsSuccessStatusCode)
             {
+                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+                if (data != null && data.Errors != null)
+                {
+                    throw new Exception("Failed to list topics:" + string.Join(", ", data.Errors.Select(x => x.Reason)));
+                }
+                
                 throw new Exception("Failed to list topics");
             }
 
-            var content = await response.Content.ReadFromJsonAsync<Topic[]>() ?? throw new Exception("Failed to list topics");
-            return content;
+            return await response.Content.ReadFromJsonAsync<Topic[]>() ?? [];
         }
         catch (Exception e)
         {
-            throw new Exception("Failed to list topics", e);
+            throw new Exception(e.Message);
         }
     }
 
@@ -74,6 +91,12 @@ public class TopicGateway(HttpClient client) : ITopicGateway
 
             if (!response.IsSuccessStatusCode)
             {
+                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+                if (data != null && data.Errors != null)
+                {
+                    throw new Exception("Failed to update topic:" + string.Join(", ", data.Errors.Select(x => x.Reason)));
+                }
+                
                 throw new Exception("Failed to update topic");
             }
 
@@ -82,7 +105,7 @@ public class TopicGateway(HttpClient client) : ITopicGateway
         }
         catch (Exception e)
         {
-            throw new Exception("Failed to update topic", e);
+            throw new Exception(e.Message);
         }
     }
 }
