@@ -113,7 +113,7 @@ if ($TARGET_RID -eq "win-x64" -or $TARGET_RID -eq "win-arm64") {
 
   # Generating the MSI file
   Write-Host "Generating the MSI file..."
-  wix build qala.wxs -d Verion=$VERSION -ext WixToolset.UI.wixext -o "QalaCliInstaller-$TARGET_RID.msi"
+  wix build qala.wxs -d Version=$VERSION -ext WixToolset.UI.wixext -o "QalaCliInstaller-$TARGET_RID.msi"
 
   # Validate the MSI file
   Write-Host "Validating the MSI file..."
