@@ -148,7 +148,7 @@ stages:
             $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToBat = ").*?(?=" \?>)', "$(Build.SourcesDirectory)/build/wix/qala.bat"
             $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToProductResources = ").*?(?=" \?>)', "$(Build.SourcesDirectory)/build/wix/resources/"
             Set-Content -Path $(pathToTheWiXFile) -Value $wixFileContent
-            wix build $(pathToTheWiXFile) -d Version=$(alphaVersionMsi) -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller-$(alphaVersionMsi)-$rid.msi"
+            wix build $(pathToTheWiXFile) -d Version=$alphaVersionMsi -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller-$(alphaVersionMsi)-$rid.msi"
           }
 
     # Move all installers and executables to the artifact staging directory
@@ -162,7 +162,7 @@ stages:
           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
           foreach ($rid in $runtimeIdentifiers) {
             Write-Host "Moving installer and executables for runtime: $rid"
-            Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller-$(alphaVersionMsi)-$rid.msi" -Destination "$(Build.ArtifactStagingDirectory)/alpha/$rid" -Force
+            Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller-$alphaVersionMsi-$rid.msi" -Destination "$(Build.ArtifactStagingDirectory)/alpha/$rid" -Force
             Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/qala.exe" -Destination "$(Build.ArtifactStagingDirectory)/alpha/$rid" -Force
           }
 
