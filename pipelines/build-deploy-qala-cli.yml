@@ -48,9 +48,6 @@ stages:
     steps:
 
     - powershell: |
-        # Debugging: List files in the build directory
-        Get-ChildItem -Path "$(Build.SourcesDirectory)/build"
-
         # Check if the build.ps1 file exists
         if (Test-Path "$(Build.SourcesDirectory)/build/build.ps1") {
             Write-Host "build.ps1 file found."
@@ -58,6 +55,9 @@ stages:
             Write-Host "build.ps1 file not found."
             exit 1
         }
+
+        # Debugging: Print the contents of build.ps1
+        Get-Content -Path "$(Build.SourcesDirectory)/build/build.ps1"
 
         # Extract the version from build.ps1
         $versionMatch = Select-String -Path "$(Build.SourcesDirectory)/build/build.ps1" -Pattern "\$VERSION\s*=\s*'(\d+\.\d+\.\d+)'"
