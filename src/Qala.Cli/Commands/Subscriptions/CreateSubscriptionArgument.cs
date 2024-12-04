@@ -22,7 +22,7 @@ public class CreateSubscriptionArgument : CommandSettings
     [Description("The webhook url of the subscription.")]
     public string WebhookUrl { get; set; } = string.Empty;
 
-    [CommandOption("-e|--event-type-ids <EVENTS_COMMA_SEPERATED_IDS>")]
+    [CommandOption("-e|--events <EVENTS_COMMA_SEPERATED_IDS>")]
     [Description("The comma separated list of event type ids.")]
     [TypeConverter(typeof(CommaSeparatedGuidListConverter))]
     public List<Guid> EventTypeIds { get; set; } = [];

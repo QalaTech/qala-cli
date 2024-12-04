@@ -87,7 +87,7 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
         }
     }
 
-    public async Task<string?> GetWebhookSecretAsync(string topicName, Guid subscriptionId)
+    public async Task<SubscriptionWebhookSecret?> GetWebhookSecretAsync(string topicName, Guid subscriptionId)
     {
         try
         {
@@ -104,7 +104,7 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
                 throw new Exception("Failed to get webhook secret");
             }
 
-            var content = await response.Content.ReadAsStringAsync() ?? throw new Exception("Failed to get webhook secret");
+            var content = await response.Content.ReadFromJsonAsync<SubscriptionWebhookSecret>() ?? throw new Exception("Failed to get webhook secret");
             return content;
         }
         catch (Exception e)
@@ -138,7 +138,7 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
         }
     }
 
-    public async Task<string?> RotateWebhookSecretAsync(string topicName, Guid subscriptionId)
+    public async Task<SubscriptionWebhookSecret?> RotateWebhookSecretAsync(string topicName, Guid subscriptionId)
     {
         try
         {
@@ -155,7 +155,7 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
                 throw new Exception("Failed to rotate webhook secret");
             }
 
-            var content = await response.Content.ReadAsStringAsync() ?? throw new Exception("Failed to rotate webhook secret");
+            var content = await response.Content.ReadFromJsonAsync<SubscriptionWebhookSecret>() ?? throw new Exception("Failed to rotate webhook secret");
             return content;
         }
         catch (Exception e)

@@ -240,7 +240,7 @@ public class QalaCliBaseFixture : IDisposable
 
         SubscriptionGatewayMock.Setup(
             s => s.GetWebhookSecretAsync(It.IsAny<string>(), It.IsAny<Guid>()))
-                    .ReturnsAsync((string topicName, Guid subscriptionId) => AvailableSubscriptions.FirstOrDefault(s => s.Id == subscriptionId)?.WebhookSecret);
+                    .ReturnsAsync((string topicName, Guid subscriptionId) => new SubscriptionWebhookSecret() { WebhookSecret = AvailableSubscriptions.FirstOrDefault(s => s.Id == subscriptionId)?.WebhookSecret });
 
         SubscriptionGatewayMock.Setup(
             s => s.RotateWebhookSecretAsync(It.IsAny<string>(), It.IsAny<Guid>()))
@@ -251,7 +251,7 @@ public class QalaCliBaseFixture : IDisposable
                             subscription.WebhookSecret = "80ef03bb-f5a7-4c81-addf-38e2b360bff5";
                         }
 
-                        return subscription?.WebhookSecret;
+                        return new SubscriptionWebhookSecret() { WebhookSecret = subscription?.WebhookSecret };
                     });
     }
 
