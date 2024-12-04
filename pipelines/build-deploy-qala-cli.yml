@@ -120,7 +120,7 @@ stages:
     # Install WiX Toolset and UI extensions
     - task: PowerShell@2
       displayName: 'Install WiX Toolset and UI extensions'
-      condition: ne(variables['Build.Reason'], 'PullRequest')
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
       inputs:
         workingDirectory: $(Build.SourcesDirectory)
         targetType: 'inline'
@@ -131,7 +131,7 @@ stages:
     # Create installers for each runtime identifiers
     - task: PowerShell@2
       displayName: 'Create installers for each runtime identifiers'
-      condition: ne(variables['Build.Reason'], 'PullRequest')
+      condition: and(succeeded(),ne(variables['Build.Reason'], 'PullRequest'))
       inputs:
         workingDirectory: $(Build.SourcesDirectory)
         targetType: 'inline'
@@ -145,7 +145,7 @@ stages:
     # Move all installers and executables to the artifact staging directory
     - task: PowerShell@2
       displayName: 'Move all installers and executables to the artifact staging directory'
-      condition: ne(variables['Build.Reason'], 'PullRequest')
+      condition: and(succeeded(),ne(variables['Build.Reason'], 'PullRequest'))
       inputs:
         targetType: 'inline'
         script: |
@@ -159,7 +159,7 @@ stages:
     # Create GitHub Alpha Release
     - task: GithubRelease@1 
       displayName: 'Create GitHub Alpha Release'
-      condition: ne(variables['Build.Reason'], 'PullRequest')      
+      condition: and(succeeded(),ne(variables['Build.Reason'], 'PullRequest'))
       inputs:
         gitHubConnection: '$(gitHubConnection)'
         repositoryName: '$(repositoryName)'
