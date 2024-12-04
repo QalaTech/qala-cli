@@ -3,10 +3,6 @@ $ErrorActionPreference = "Stop"
 
 # Available build types
 $AVAILABLE_RIDS = @(
-  "osx-arm64",
-  "osx-x64",
-  "linux-x64",
-  "linux-arm64",
   "win-x64",
   "win-arm64"
 )

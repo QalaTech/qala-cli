@@ -1,15 +1,7 @@
-# Docker
 # Build and push an image to GitHub Releases and respective hub repositories
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
-name: $(Date:yyyy.MMdd).$(Rev:r)
-
 resources:
   repositories:
     - repository: self
-    - repository: templates
-      type: github
-      name: QalaTech/pipeline-templates
-      endpoint: QalaTech
 
 trigger:
   branches:
@@ -24,53 +16,73 @@ pr:
   branches:
     include:
       - master
+      - development
+  paths:
+    exclude:
+      - tests/*
 
 variables:
-  buildConfiguration: 'Release'
-  runtimeIdentifiers: 'win-x64'
+  pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj' 
+  major: 1
+  minor: 0
+  patch: $[counter(variables['major'], 0)]
+  runtimeIdentifiers: 'win-x64, win-arm64'
   gitHubConnection: 'github.com_tvcosta'
   repositoryName: 'QalaTech/qala-cli'
-  preReleaseVersion: ''
+  alphaVersion: ''
+  releaseVersion: ''
 
 pool:
   vmImage: windows-latest
 
 stages:
-# Stage 1: Build and Deploy Alpha
+# Stage Alpha
+# Only run for development branch
 - stage: Alpha
+  condition: in(variables['Build.SourceBranch'], 'refs/heads/development')
   displayName: "Deploy to Alpha"
   jobs:
+  # Build and Publish Alpha Executables and Installers
   - job: BuildAndPublishAlpha
     displayName: "Build and Publish Alpha Executables and Installers"
     steps:
+    # Set Alpha Version Number
+    - task: PowerShell@2
+      displayName: 'Set Alpha Version Number'
+      inputs:
+        targetType: 'inline'
+        script: |
+          # Fetch the previous version from a file or a variable
+          $previousVersion = "$(major).$(minor).$(patch)" # Default value if no previous version is found
+          if (Test-Path "$(Build.ArtifactStagingDirectory)/previousVersion.txt") {
+            $previousVersion = Get-Content "$(Build.ArtifactStagingDirectory)/currentVersion.txt"
+          }
 
-    - powershell: |
-        # Check if the build.ps1 file exists
-        if (Test-Path "$(Build.SourcesDirectory)/build/build.ps1") {
-            Write-Host "build.ps1 file found."
-        } else {
-            Write-Host "build.ps1 file not found."
-            exit 1
-        }
+          # Split the previous version into major, minor, and patch
+          $versionParts = $previousVersion -split '\.'
+          $major = [int]$versionParts[0]
+          $minor = [int]$versionParts[1]
+          $patch = [int]$versionParts[2]
 
-        # Extract the version from build.ps1
-        $versionMatch = Select-String -Path "$(Build.SourcesDirectory)/build/build.ps1" -Pattern "VERSION\s*=\s*'(\d+\.\d+\.\d+)'"
-        if ($versionMatch) {
-            $version = $versionMatch.Matches[0].Groups[1].Value
-            Write-Host "Extracted version: $version"
+          # Determine if the branch name starts with hotfix or HOTFIX
+          if ($env:BUILD_SOURCEBRANCHNAME -match '^hotfix' -or $env:BUILD_SOURCEBRANCHNAME -match '^HOTFIX') {
+            # Increment the patch version
+            $patch++
+          } else {
+            # Increment the minor version
+            $minor++
+          }
 
-            Write-Host "##vso[task.setvariable variable=version]$version"
+          # Set the alpha version
+          $alphaVersion = "v$major.$minor.$patch-alpha.$env:BUILD_BUILDID"
+          Write-Host "##vso[task.setvariable variable=alphaVersion]$alphaVersion"
+          Write-Host "Alpha Version: $alphaVersion"
 
-            $preReleaseVersion = "$version-alpha.$env:BUILD_BUILDID"
-            Write-Host "##vso[task.setvariable variable=preReleaseVersion]$preReleaseVersion"
-            Write-Host "Alpha pre-release version: $preReleaseVersion"
-        } else {
-            Write-Host "VERSION pattern not found in build.ps1"
-            exit 1
-        }
-      displayName: 'Generate Alpha Version and Update package.json'
-      workingDirectory: $(Build.SourcesDirectory)
+          # Save the new version to a file for future reference
+          $newVersion = "$major.$minor.$patch"
+          Set-Content -Path "$(Build.ArtifactStagingDirectory)/currentVersion.txt" -Value $newVersion
 
+    # Install SDK Using global.json
     - task: UseDotNet@2
       displayName: 'Install SDK Using global.json'
       inputs:
@@ -78,46 +90,82 @@ stages:
         useGlobalJson: true
         workingDirectory: $(Pipeline.Workspace)/s
 
+    # Restore NuGet Packages
     - task: DotNetCoreCLI@2
+      displayName: 'Restore NuGet Packages'
       inputs:
         command: 'restore'
         projects: '**/*.csproj'
-    
-    - powershell: |
-        $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-        # Check if the projectToPublish file exists
-        if (Test-Path "$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj") {
-            Write-Host "Qala.Cli.csproj file found."
-        } else {
-            Write-Host "Qala.Cli.csproj file not found."
-            exit 1
-        }
-        foreach ($rid in $runtimeIdentifiers) {
-          Write-Host "Publishing Beta version for runtime: $rid"
-          dotnet publish "$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj" -c "$(buildConfiguration)" -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/beta/$rid"
-        }
-      displayName: 'Build and publish Beta executables'
-      workingDirectory: $(Build.SourcesDirectory)/src/Qala.Cli
 
-    - powershell: |
-        $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-        foreach ($rid in $runtimeIdentifiers) {
-          Write-Host "Creating installer for runtime: $rid"
-          & "$(Build.SourcesDirectory)/build/build.ps1" $rid
-        }
-      displayName: 'Create installers for each runtime identifiers'
+    # Build and publish Alpha executables
+    - task: PowerShell@2
+      displayName: 'Build and publish Alpha executables'
+      inputs:
+        targetType: 'inline'
+        workingDirectory: $(Build.SourcesDirectory)/src/Qala.Cli
+        script: |
+          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(",")
+          # Check if the pathToTheProjectFile file exists
+          if (Test-Path $(pathToTheProjectFile) {
+              Write-Host "Qala.Cli.csproj file found."
+          } else {
+              Write-Host "Qala.Cli.csproj file not found."
+              exit 1
+          }
+          foreach ($rid in $runtimeIdentifiers) {
+            Write-Host "Publishing Alpha version for runtime: $rid"
+            dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/alpha/$rid"
+          }
+
+    # Install WiX Toolset and UI extensions
+    - task: PowerShell@2
+      displayName: 'Install WiX Toolset and UI extensions'
+      condition: ne(variables['Build.Reason'], 'PullRequest')
       workingDirectory: $(Build.SourcesDirectory)
+      inputs:
+        targetType: 'inline'
+        script: |
+          dotnet tool install --global wix
+          wix extension add WixToolset.UI.wixext
 
+    # Create installers for each runtime identifiers
+    - task: PowerShell@2
+      displayName: 'Create installers for each runtime identifiers'
+      condition: ne(variables['Build.Reason'], 'PullRequest')
+      workingDirectory: $(Build.SourcesDirectory)
+      inputs:
+        targetType: 'inline'
+        script: |
+          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(",")
+          foreach ($rid in $runtimeIdentifiers) {
+            Write-Host "Generating the msi file for runtime: $rid"
+            wix build wix/qala.wxs -d Version=$VERSION -ext WixToolset.UI.wixext -o "QalaCliInstaller--$(alphaVersion)-$rid.msi"
+          }
+
+    # Move all installers and executables to the artifact staging directory
+    - task: PowerShell@2
+      displayName: 'Move all installers and executables to the artifact staging directory'
+      condition: ne(variables['Build.Reason'], 'PullRequest')
+      inputs:
+        targetType: 'inline'
+        script: |
+          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(",")
+          foreach ($rid in $runtimeIdentifiers) {
+            Write-Host "Moving installer and executables for runtime: $rid"
+            Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/wix/QalaCliInstaller-$(alphaVersion)-$rid.msi" -Destination "$(Build.ArtifactStagingDirectory)/alpha/$rid" -Force
+            Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/qala.exe" -Destination "$(Build.ArtifactStagingDirectory)/alpha/$rid" -Force
+          }
+
+    # Create GitHub Alpha Release
     - task: GithubRelease@1 
-      displayName: 'Create GitHub Alpha Release'      
+      displayName: 'Create GitHub Alpha Release'
+      condition: ne(variables['Build.Reason'], 'PullRequest')      
       inputs:
         gitHubConnection: '$(gitHubConnection)'
         repositoryName: '$(repositoryName)'
         target: '$(Build.SourceBranchName)'
         tagSource: 'userSpecifiedTag'
-        tag: "$(preReleaseVersion)"
+        tag: "$(alphaVersion)"
         isPreRelease: true
-        title: 'Alpha Release $(preReleaseVersion)'   
-        assets: |
-          $(Build.SourcesDirectory)/publish/win-x64/wix/QalaCliInstaller-$(runtimeIdentifiers).msi
-          $(Build.SourcesDirectory)/publish/win-x64/qala.exe
+        title: 'Alpha Release $(alphaVersion)'   
+        assets: $(Build.ArtifactStagingDirectory)/publish/*
