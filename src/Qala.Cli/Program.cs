@@ -8,6 +8,7 @@ using Qala.Cli.Commands.EventTypes;
 using Qala.Cli.Commands.Topics;
 using Qala.Cli.Commands.Subscriptions;
 using Spectre.Console;
+using LanguageExt.ClassInstances;
 
 var services = new ServiceCollection();
 var configuration = Configurations.SetupConfiguration();
@@ -34,6 +35,7 @@ app.Configure(config =>
 
     config.AddBranch("environment", env =>
     {
+        env.SetDescription("this command enables you to set, create or view your current enviornment.");
         env.AddCommand<CreateEnvironmentCommand>("create")
             .WithDescription("this command creates a new environment for the Qala CLI.")
             .WithExample("environment create -n <NAME> -r <REGION> -t <TYPE>");
@@ -48,6 +50,7 @@ app.Configure(config =>
 
     config.AddBranch("events", et =>
     {
+        et.SetDescription("this command enables you to list and inpsect event types.");
         et.AddCommand<ListEventTypesCommand>("list")
             .WithDescription("this command lists all the event types available in your environment.")
             .WithExample("events ls")
@@ -61,6 +64,7 @@ app.Configure(config =>
 
      config.AddBranch("topics", t =>
     {
+        t.SetDescription("this command enables you to list, name, create and update topics.");
         t.AddCommand<ListTopicsCommand>("list")
             .WithDescription("this command lists all the topics available in your environment.")
             .WithExample("topics ls")
@@ -80,6 +84,7 @@ app.Configure(config =>
 
     config.AddBranch("subscriptions", s =>
     {
+        s.SetDescription("this command enables you to list, inspect, create, update, delete a subscription, along with inspecting and roating the subscription secret.");
         s.AddCommand<ListSubscriptionsCommand>("list")
             .WithDescription("this command lists all the subscriptions available in your environment.")
             .WithExample("qala subscriptions ls -t <TOPIC_NAME>")
@@ -99,6 +104,7 @@ app.Configure(config =>
             .WithExample("qala sub delete -t <TOPIC_NAME> -s <SUBSCRIPTION_ID>");
         s.AddBranch("secret", ws => 
         {
+            ws.SetDescription("this command enables you to inspect and rotate the webhook secret for a subscription.");
             ws.AddCommand<GetWebhookSecretCommand>("inspect")
                 .WithDescription("this command retrieves the webhook secret for the subscription with the specified ID.")
                 .WithExample("qala sub secret i -t <TOPIC_NAME> -s <SUBSCRIPTION_ID>")
