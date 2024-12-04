@@ -92,7 +92,6 @@ stages:
             Write-Host "Qala.Cli.csproj file not found."
             exit 1
         }
-        Write-Host "Build configuration: $(buildConfiguration)"
         foreach ($rid in $runtimeIdentifiers) {
           Write-Host "Publishing Beta version for runtime: $rid"
           dotnet publish "$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj" -c "$(buildConfiguration)" -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/beta/$rid"
@@ -104,10 +103,10 @@ stages:
         $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
         foreach ($rid in $runtimeIdentifiers) {
           Write-Host "Creating installer for runtime: $rid"
-          & build.ps1 $rid
+          & "$(Build.SourcesDirectory)/build/build.ps1" $rid
         }
       displayName: 'Create installers for each runtime identifiers'
-      workingDirectory: $(Build.SourcesDirectory)/build
+      workingDirectory: $(Build.SourcesDirectory)
 
     - task: GithubRelease@1 
       displayName: 'Create GitHub Alpha Release'      
