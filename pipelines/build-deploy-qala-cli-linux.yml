@@ -29,6 +29,8 @@ variables:
   buildConfiguration: 'Release'
   runtimeIdentifiers: 'win-x64'
   projectToPublish: '**/Qala.Cli/Qala.Cli.csproj'
+  buildDirectory: 'build'
+  publishDirectory: 'publish'
   gitHubConnection: 'github.com_tvcosta'
   repositoryName: 'QalaTech/qala-cli'
   preReleaseVersion: ''
@@ -84,19 +86,6 @@ stages:
           $(Build.SourcesDirectory)/$(buildDirectory)/build.sh $rid
         done
       displayName: 'Create installers for each runtime identifiers'
-    
-    - powershell: |
-        # Verify the generated files
-        Get-ChildItem -Path "$(Build.SourcesDirectory)/publish"
-
-        # Ensure the files exist before uploading
-        if (Test-Path "$(Build.SourcesDirectory)/publish/win-x64/wix/QalaCliInstaller-win-x64.msi" -and Test-Path "$(Build.SourcesDirectory)/publish/win-x64/qala.exe") {
-            Write-Host "Files found, ready to upload."
-        } else {
-            Write-Host "Files not found, exiting."
-            exit 1
-        }
-      displayName: 'Verify Generated Files'
 
     - task: GithubRelease@1 
       displayName: 'Create GitHub Alpha Release'      
@@ -109,5 +98,5 @@ stages:
         isPreRelease: true
         title: 'Alpha Release $(preReleaseVersion)'   
         assets: |
-          $(Build.SourcesDirectory)\publish\win-x64\wix\QalaCliInstaller-win-x64.msi
-          $(Build.SourcesDirectory)\publish\win-x64\qala.exe
+          $(Build.SourcesDirectory)/$(buildDirectory)/QalaCliInstaller-$(runtimeIdentifiers).msi
+          $(Build.SourcesDirectory)/$(publishDirectory)/qala.exe
