@@ -29,8 +29,6 @@ variables:
   buildConfiguration: 'Release'
   runtimeIdentifiers: 'win-x64'
   projectToPublish: '**/Qala.Cli/Qala.Cli.csproj'
-  buildDirectory: 'build'
-  publishDirectory: 'publish'
   gitHubConnection: 'github.com_tvcosta'
   repositoryName: 'QalaTech/qala-cli'
   preReleaseVersion: ''
@@ -98,5 +96,5 @@ stages:
         isPreRelease: true
         title: 'Alpha Release $(preReleaseVersion)'   
         assets: |
-          $(Build.SourcesDirectory)/$(buildDirectory)/$(runtimeIdentifiers)/wix/QalaCliInstaller-$(runtimeIdentifiers).msi
-          $(Build.SourcesDirectory)/$(publishDirectory)/$(runtimeIdentifiers)/qala.exe
+          $(Build.SourcesDirectory)/$(runtimeIdentifiers)/wix/QalaCliInstaller-$(runtimeIdentifiers).msi
+          $(Build.SourcesDirectory)/publish/$(runtimeIdentifiers)/qala.exe
