@@ -26,13 +26,15 @@ variables:
   pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj'
   major: 1
   minor: 0
-  patch: $[counter(variables['major'], 0)]
+  patch: 0
   runtimeIdentifiers: 'win-x64;win-arm64'
   gitHubConnection: 'github.com_tvcosta'
   repositoryName: 'QalaTech/qala-cli'
   pathToTheWiXFile: '$(Build.SourcesDirectory)/build/wix/qala.wxs'
   alphaVersion: ''
+  alphaVersionMsi: ''
   releaseVersion: ''
+  releaseVersionMsi: ''
 
 pool:
   vmImage: windows-latest
@@ -77,6 +79,7 @@ stages:
 
           # Set the alpha version
           $alphaVersion = "v$major.$minor.$patch-alpha.$env:BUILD_BUILDID"
+          $alphaVersionMsi = "$major.$minor.$patch-alpha.$env:BUILD_BUILDID"
           Write-Host "##vso[task.setvariable variable=alphaVersion]$alphaVersion"
           Write-Host "Alpha Version: $alphaVersion"
 
@@ -138,7 +141,6 @@ stages:
         workingDirectory: $(Build.SourcesDirectory)
         targetType: 'inline'
         script: |
-          $alphaVersionMsi = "$(alphaVersion)".TrimStart('v')
           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
           foreach ($rid in $runtimeIdentifiers) {
             Write-Host "Generating the msi file for runtime: $rid"
@@ -148,7 +150,7 @@ stages:
             $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToBat = ").*?(?=" \?>)', "$(Build.SourcesDirectory)/build/wix/qala.bat"
             $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToProductResources = ").*?(?=" \?>)', "$(Build.SourcesDirectory)/build/wix/resources/"
             Set-Content -Path $(pathToTheWiXFile) -Value $wixFileContent
-            wix build $(pathToTheWiXFile) -d Version=$alphaVersionMsi -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller-$(alphaVersionMsi)-$rid.msi"
+            wix build $(pathToTheWiXFile) -d Version=$alphaVersionMsi -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller-$alphaVersionMsi-$rid.msi"
           }
 
     # Move all installers and executables to the artifact staging directory
@@ -158,7 +160,6 @@ stages:
       inputs:
         targetType: 'inline'
         script: |
-          $alphaVersionMsi = $(alphaVersion).TrimStart('v')
           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
           foreach ($rid in $runtimeIdentifiers) {
             Write-Host "Moving installer and executables for runtime: $rid"
