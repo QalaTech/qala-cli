@@ -55,7 +55,7 @@ stages:
         }
 
         # Extract the version from build.ps1
-        $versionMatch = Select-String -Path "$(Build.SourcesDirectory)/build/build.ps1" -Pattern "\$VERSION\s*=\s*'(\d+\.\d+\.\d+)'"
+        $versionMatch = Select-String -Path "$(Build.SourcesDirectory)/build/build.ps1" -Pattern "VERSION\s*=\s*'(\d+\.\d+\.\d+)'"
         # Debug output to see what Select-String returns
         Write-Host "Select-String output: $versionMatch"
         if ($versionMatch) {
