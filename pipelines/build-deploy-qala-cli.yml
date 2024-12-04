@@ -155,29 +155,6 @@ stages:
             wix build $(pathToTheWiXFile) -d Version=$(alphaVersionMsi) -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller-$(alphaVersionMsi)-$rid.msi"
           }
 
-    # Move all installers and executables to the artifact staging directory
-    - task: PowerShell@2
-      displayName: 'Move all installers and executables to the artifact staging directory'
-      condition: and(succeeded(),ne(variables['Build.Reason'], 'PullRequest'))
-      inputs:
-        targetType: 'inline'
-        script: |
-          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-          foreach ($rid in $runtimeIdentifiers) {
-            $sourcePath = "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller-$(alphaVersionMsi)-$rid.msi"
-            $destinationPath = "$(Build.ArtifactStagingDirectory)/alpha/$rid"
-            
-            Write-Host "Moving installer and executables for runtime: $rid"
-            Write-Host "Source Path: $sourcePath"
-            Write-Host "Destination Path: $destinationPath"
-            
-            if (Test-Path -Path $sourcePath) {
-              Move-Item -Path $sourcePath -Destination $destinationPath -Force
-            } else {
-              Write-Host "Error: Source path does not exist: $sourcePath"
-            }
-          }
-
     # Create GitHub Alpha Release
     - task: GithubRelease@1 
       displayName: 'Create GitHub Alpha Release'
