@@ -81,7 +81,7 @@ stages:
           $alphaVersion = "v$major.$minor.$patch-alpha.$env:BUILD_BUILDID"
           Write-Host "##vso[task.setvariable variable=alphaVersion]$alphaVersion"
           Write-Host "Alpha Version: $alphaVersion"
-          $alphaVersionMsi = "$major.$minor.$patch-alpha.$env:BUILD_BUILDID"
+          $alphaVersionMsi = "$major.$minor.$patch-alpha"
           Write-Host "##vso[task.setvariable variable=alphaVersionMsi]$alphaVersionMsi"
           Write-Host "Alpha Version for MSI: $alphaVersionMsi"
 
@@ -121,7 +121,7 @@ stages:
           }
           foreach ($rid in $runtimeIdentifiers) {
             Write-Host "Publishing Alpha version for runtime: $rid"
-            dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/alpha/$rid"
+            dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Build.SourcesDirectory)/alpha/$rid"
           }
 
     # Install WiX Toolset and UI extensions
@@ -152,7 +152,7 @@ stages:
             $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToBat = ").*?(?=" \?>)', "$(Build.SourcesDirectory)/build/wix/qala.bat"
             $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToProductResources = ").*?(?=" \?>)', "$(Build.SourcesDirectory)/build/wix/resources/"
             Set-Content -Path $(pathToTheWiXFile) -Value $wixFileContent
-            wix build $(pathToTheWiXFile) -d Version=$(alphaVersionMsi) -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller-$(alphaVersionMsi)-$rid.msi"
+            wix build $(pathToTheWiXFile) -d Version=$(alphaVersionMsi) -ext WixToolset.UI.wixext -o "$(Build.SourcesDirectory)/alpha/$rid/QalaCliInstaller-$(alphaVersionMsi)-$rid.msi"
           }
 
     # Move all installers and executables to the artifact staging directory
@@ -165,8 +165,8 @@ stages:
           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
           foreach ($rid in $runtimeIdentifiers) {
             Write-Host "Moving installer and executables for runtime: $rid"
-            Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller-$(alphaVersionMsi)-$rid.msi" -Destination "$(Build.ArtifactStagingDirectory)/alpha/$rid" -Force
-            Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/qala.exe" -Destination "$(Build.ArtifactStagingDirectory)/alpha/$rid" -Force
+            Move-Item -Path "$(Build.SourcesDirectory)/alpha/$rid/QalaCliInstaller-$(alphaVersionMsi)-$rid.msi" -Destination "$(Build.ArtifactStagingDirectory)/alpha/$rid" -Force
+            Move-Item -Path "$(Build.SourcesDirectory)/alpha/$rid/qala.exe" -Destination "$(Build.ArtifactStagingDirectory)/alpha/$rid" -Force
           }
 
     # Create GitHub Alpha Release
