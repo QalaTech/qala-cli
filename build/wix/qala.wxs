@@ -4,7 +4,9 @@
 <?define Name = "Qala Q-Flow CLI" ?>
 <?define Manufacturer = "Qala Technologies" ?>
 <?define UpgradeCode = "07419927-af16-4cca-8a32-0b2b58de68f5" ?>
-<?define ProductResources = ".\resources\" ?>
+<?define PathToProductResources = ".\resources\" ?>
+<?define PathToExecutable = "../qala.exe" ?>
+<?define PathToConfig = "../config.yaml" ?>
 
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
     <Package Name="$(var.Name)"
@@ -14,7 +16,7 @@
              Compressed="true"
              Scope="perMachine">
         <Media Id="1" Cabinet="setup.cab" EmbedCab="yes" />
-        <Icon Id="QalaIcon" SourceFile="$(var.ProductResources)logo.ico" />
+        <Icon Id="QalaIcon" SourceFile="$(var.PathToProductResources)logo.ico" />
 
         <Property Id="ARPPRODUCTICON" Value="QalaIcon" />
         <Property Id="ARPHELPLINK" Value="https://developers.qalatech.io/docs/q-flow/getting-started/" />
@@ -32,9 +34,9 @@
                 <Directory Id="INSTALLFOLDER" Name="$(Name)">
                     <!-- Create a single component which is the qala.exe file -->
                     <Component Id="ServiceExecutable">
-                        <File Id="QalaCliExe" Source="../qala.exe" KeyPath="yes" />
+                        <File Id="QalaCliExe" Source="$(var.PathToExecutable)" KeyPath="yes" />
                         <File Id="QalaCliBatchFile" Name="qala.bat" Source="qala.bat" KeyPath="no" />
-                        <File Id="QalaCliConfig" Source="../config.yaml" KeyPath="no" />
+                        <File Id="QalaCliConfig" Source="$(var.PathToConfig)" KeyPath="no" />
                         <!-- Add the installation directory to the PATH environment variable -->
                         <Environment Id="AddToPath" Name="PATH" Value="[INSTALLFOLDER]" Permanent="no" Part="last" Action="set" System="yes" />
                     </Component>
@@ -49,10 +51,10 @@
         <!-- UI Elements -->
         <ui:WixUI Id="WixUI_Minimal" />
         <!-- Define the license file -->
-        <WixVariable Id="WixUILicenseRtf" Value="$(var.ProductResources)CLI_LICENSE.rtf"/>
+        <WixVariable Id="WixUILicenseRtf" Value="$(var.PathToProductResources)CLI_LICENSE.rtf"/>
         <!-- Define the images -->
-        <WixVariable Id="WixUIDialogBmp" Value="$(var.ProductResources)Dialog.bmp" />
-        <WixVariable Id="WixUIBannerBmp" Value="$(var.ProductResources)Banner.bmp" />
+        <WixVariable Id="WixUIDialogBmp" Value="$(var.PathToProductResources)Dialog.bmp" />
+        <WixVariable Id="WixUIBannerBmp" Value="$(var.PathToProductResources)Banner.bmp" />
         <!-- Message at the end of the installation -->
         <Property Id="WIXUI_EXITDIALOGOPTIONALTEXT" Value="Please close and reopen any active terminal window to use Qala Q-Flow CLI." />
     </Package>
