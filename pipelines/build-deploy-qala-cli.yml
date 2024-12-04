@@ -167,4 +167,6 @@ stages:
         tag: "$(alphaVersion)"
         isPreRelease: true
         title: 'Alpha Release $(alphaVersion)'   
-        assets: $(Build.ArtifactStagingDirectory)/alpha/*
+        assets: |
+          $(Pipeline.Workspace)/alpha/**/*.msi
+          $(Pipeline.Workspace)/alpha/**/*.exe
