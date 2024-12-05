@@ -164,7 +164,7 @@ stages:
           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
           foreach ($rid in $runtimeIdentifiers) {
             Write-Host "Changing the name of the executable for runtime: $rid"
-            Rename-Item -Path "$(Pipeline.Workspace)/alpha/$rid/qala-$rid.exe" -NewName "qala-$rid-$(alphaVersion).exe"
+            Rename-Item -Path "$(Pipeline.Workspace)/alpha/$rid/qala.exe" -NewName "qala-$rid.exe"
           }
 
     # Create GitHub Alpha Release
