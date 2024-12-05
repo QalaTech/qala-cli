@@ -121,7 +121,7 @@ stages:
           }
           foreach ($rid in $runtimeIdentifiers) {
             Write-Host "Publishing Alpha version for runtime: $rid"
-            dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/alpha/$rid" -p:AssemblyName=qala-$rid
+            dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/alpha/$rid"
           }
 
     # Install WiX Toolset and UI extensions
@@ -153,6 +153,19 @@ stages:
             $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToProductResources = ").*?(?=" \?>)', "$(Build.SourcesDirectory)/build/wix/resources/"
             Set-Content -Path $(pathToTheWiXFile) -Value $wixFileContent
             wix build $(pathToTheWiXFile) -d Version=$(alphaVersionMsi) -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller-$(alphaVersionMsi)-$rid.msi"
+          }
+
+    # Change the names of the published executables so you have multiple versions in the same folder
+    - task: PowerShell@2
+      displayName: 'Change the names of the published executables'
+      condition: and(succeeded(),ne(variables['Build.Reason'], 'PullRequest'))
+      inputs:
+        targetType: 'inline'
+        script: |
+          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
+          foreach ($rid in $runtimeIdentifiers) {
+            Write-Host "Changing the name of the executable for runtime: $rid"
+            Rename-Item -Path "$(Pipeline.Workspace)/alpha/$rid/qala-$rid.exe" -NewName "qala-$rid-$(alphaVersion).exe"
           }
 
     # Create GitHub Alpha Release
