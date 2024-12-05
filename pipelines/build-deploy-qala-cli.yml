@@ -81,10 +81,6 @@ stages:
           Write-Host "##vso[task.setvariable variable=alphaVersionMsi]$alphaVersionMsi"
           Write-Host "Alpha Version for MSI: $alphaVersionMsi"
 
-          # Save the new version to a file for future reference
-          $newVersion = "$major.$minor.$patch"
-          # Set-Content -Path "$(Build.ArtifactStagingDirectory)/currentVersion.txt" -Value $newVersion
-
     # Install SDK Using global.json
     - task: UseDotNet@2
       displayName: 'Install SDK Using global.json'
