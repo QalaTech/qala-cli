@@ -25,8 +25,8 @@ pr:
 variables:
   pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj'
   major: 0
-  minor: $[counter(variables['major'], 1)]
-  patch: $[counter(variables['major'], 1)]
+  minor: $[counter(variables['major'], 0)]
+  patch: $[counter(format('{0}.{1}',variables['major'],variables['minor']),0)]
   runtimeIdentifiers: 'win-x64;win-arm64'
   gitHubConnection: 'github.com_release'
   repositoryName: 'QalaTech/qala-cli'
@@ -57,14 +57,11 @@ stages:
         targetType: 'inline'
         script: |
           # Fetch the previous version from a file or a variable
-          $previousVersion = "$(major).$(minor).$(patch)" # Default value if no previous version is found
-          Write-Host "Previous Version: $previousVersion"
-          # if (Test-Path "$(Build.ArtifactStagingDirectory)/previousVersion.txt") {
-          #   $previousVersion = Get-Content "$(Build.ArtifactStagingDirectory)/currentVersion.txt"
-          # }
+          $possibleVersion = "$(major).$(minor).$(patch)" # Default value if no previous version is found
+          Write-Host "Previous Version: $possibleVersion"
 
           # Split the previous version into major, minor, and patch
-          $versionParts = $previousVersion -split '\.'
+          $versionParts = $possibleVersion -split '\.'
           $major = [int]$versionParts[0]
           $minor = [int]$versionParts[1]
           $patch = [int]$versionParts[2]
@@ -73,12 +70,8 @@ stages:
           if ($env:BUILD_SOURCEBRANCHNAME -match '^hotfix' -or $env:BUILD_SOURCEBRANCHNAME -match '^HOTFIX') {
             # Increment the patch version
             $minor--
-            Write-Host "Hotfix: $(major).$(minor).$(patch)"
-          } else {
-            # Increment the minor version
-            $patch--
-            Write-Host "Minor: $(major).$(minor).$(patch)"
-          }
+            Write-Host "##vso[task.setvariable variable=minor]$minor"
+          } 
 
           # Set the alpha version
           $alphaVersion = "v$major.$minor.$patch-alpha.$env:BUILD_BUILDID"
