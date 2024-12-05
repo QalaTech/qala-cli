@@ -1,6 +1,8 @@
+using System.Net;
 using System.Net.Http.Json;
 using Qala.Cli.Data.Gateway.Interfaces;
 using Qala.Cli.Data.Models;
+using Qala.Cli.Data.Utils;
 
 namespace Qala.Cli.Data.Gateway;
 
@@ -14,13 +16,12 @@ public class EventTypeGateway(HttpClient client) : IEventTypeGateway
 
             if (!response.IsSuccessStatusCode)
             {
-                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-                if (data != null && data.Errors != null)
+                if (response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    throw new Exception("Failed to get event type:" + string.Join(", ", data.Errors.Select(x => x.Reason)));
+                    return null;
                 }
                 
-                throw new Exception("Failed to get event type");
+                await ExceptionsHandler.ThrowExceptionWithProblemDetails(response, "Failed to get event type");
             }
 
             return await response.Content.ReadFromJsonAsync<EventType>() ?? null;
@@ -39,13 +40,7 @@ public class EventTypeGateway(HttpClient client) : IEventTypeGateway
 
             if (!response.IsSuccessStatusCode)
             {
-                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-                if (data != null && data.Errors != null)
-                {
-                    throw new Exception("Failed to list event types:" + string.Join(", ", data.Errors.Select(x => x.Reason)));
-                }
-                
-                throw new Exception("Failed to list event types");
+                await ExceptionsHandler.ThrowExceptionWithProblemDetails(response, "Failed to list event types");
             }
 
             return await response.Content.ReadFromJsonAsync<EventType[]>() ?? [];

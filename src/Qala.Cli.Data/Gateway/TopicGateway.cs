@@ -1,7 +1,8 @@
-using System.Data;
+using System.Net;
 using System.Net.Http.Json;
 using Qala.Cli.Data.Gateway.Interfaces;
 using Qala.Cli.Data.Models;
+using Qala.Cli.Data.Utils;
 
 namespace Qala.Cli.Data.Gateway;
 
@@ -15,13 +16,7 @@ public class TopicGateway(HttpClient client) : ITopicGateway
 
             if (!response.IsSuccessStatusCode)
             {
-                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-                if (data != null && data.Errors != null)
-                {
-                    throw new Exception(string.Join(", ", data.Errors.Select(x => x.Reason)));
-                }
-                
-                throw new Exception("Failed to create topic");
+                await ExceptionsHandler.ThrowExceptionWithProblemDetails(response, "Failed to create topic");
             }
 
             var content = await response.Content.ReadFromJsonAsync<Topic>() ?? throw new Exception("Failed to create topic");
@@ -41,13 +36,12 @@ public class TopicGateway(HttpClient client) : ITopicGateway
 
             if (!response.IsSuccessStatusCode)
             {
-                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-                if (data != null && data.Errors != null)
+                if (response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    throw new Exception("Failed to get topic:" + string.Join(", ", data.Errors.Select(x => x.Reason)));
+                    return null;
                 }
                 
-                throw new Exception("Failed to get topic");
+                await ExceptionsHandler.ThrowExceptionWithProblemDetails(response, "Failed to get topic");
             }
 
             return await response.Content.ReadFromJsonAsync<Topic>() ?? null;
@@ -66,13 +60,7 @@ public class TopicGateway(HttpClient client) : ITopicGateway
 
             if (!response.IsSuccessStatusCode)
             {
-                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-                if (data != null && data.Errors != null)
-                {
-                    throw new Exception("Failed to list topics:" + string.Join(", ", data.Errors.Select(x => x.Reason)));
-                }
-                
-                throw new Exception("Failed to list topics");
+                await ExceptionsHandler.ThrowExceptionWithProblemDetails(response, "Failed to list topics");
             }
 
             return await response.Content.ReadFromJsonAsync<Topic[]>() ?? [];
@@ -91,13 +79,7 @@ public class TopicGateway(HttpClient client) : ITopicGateway
 
             if (!response.IsSuccessStatusCode)
             {
-                var data = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-                if (data != null && data.Errors != null)
-                {
-                    throw new Exception("Failed to update topic:" + string.Join(", ", data.Errors.Select(x => x.Reason)));
-                }
-                
-                throw new Exception("Failed to update topic");
+                await ExceptionsHandler.ThrowExceptionWithProblemDetails(response, "Failed to update topic");
             }
 
             var content = await response.Content.ReadFromJsonAsync<Topic>() ?? throw new Exception("Failed to update topic");
