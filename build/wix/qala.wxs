@@ -35,7 +35,7 @@
                 <Directory Id="INSTALLFOLDER" Name="$(Name)">
                     <!-- Create a single component which is the qala.exe file -->
                     <Component Id="ServiceExecutable">
-                        <File Id="QalaCliExe" Source="$(var.PathToExecutable)" KeyPath="yes" />
+                        <File Id="QalaCliExe" Source="$(var.PathToExecutable)" Name="qala.exe" KeyPath="yes" />
                         <File Id="QalaCliBatchFile" Name="qala.bat" Source="$(var.PathToBat)" KeyPath="no" />
                         <File Id="QalaCliConfig" Source="$(var.PathToConfig)" KeyPath="no" />
                         <!-- Add the installation directory to the PATH environment variable -->
