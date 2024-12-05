@@ -1,6 +1,7 @@
 using LanguageExt;
 using Qala.Cli.Commands.Subscriptions;
 using Qala.Cli.Data.Gateway.Interfaces;
+using Qala.Cli.Data.Models;
 using Qala.Cli.Services.Interfaces;
 
 namespace Qala.Cli.Services;
@@ -175,7 +176,7 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
         }
     }
 
-    public async Task<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>> UpdateSubscriptionAsync(string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts)
+    public async Task<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>> UpdateSubscriptionAsync(string topicName, Guid subscriptionId, string? name, string? description, string? webhookUrl, List<Guid?> eventTypeIds, int? maxDeliveryAttempts)
     {
         if (string.IsNullOrWhiteSpace(topicName))
         {
@@ -187,30 +188,45 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
             return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Subscription id is required"));
         }
 
-        if (string.IsNullOrWhiteSpace(name))
+        var subscription = await subscriptionGateway.GetSubscriptionAsync(topicName, subscriptionId);
+
+        if (!string.IsNullOrWhiteSpace(name))
         {
-            return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Name is required"));
+            subscription!.Name = name;
         }
 
-        if (string.IsNullOrWhiteSpace(webhookUrl))
+        if (!string.IsNullOrWhiteSpace(webhookUrl))
         {
-            return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Webhook url is required"));
+            subscription!.WebhookUrl = webhookUrl;
         }
 
-        if (eventTypeIds == null || eventTypeIds.Count == 0)
+        if (eventTypeIds != null || 
+            subscription!.EventTypes.Select(e => e.Id).ToList() != eventTypeIds!.Select(e => e!.Value).ToList())
         {
-            return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Event type ids are required"));
+            subscription!.EventTypes = eventTypeIds!.Select(e => new EventType { Id = e!.Value }).ToList();
         }
 
-        if (maxDeliveryAttempts <= 0)
+        if (maxDeliveryAttempts is not null)
         {
-            return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Max delivery attempts should be greater than 0"));
+            if (maxDeliveryAttempts <= 0 && maxDeliveryAttempts > 10)
+            {
+                return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Max delivery attempts should be a value between 0 and 10"));
+            }
+
+            subscription!.MaxDeliveryAttempts = maxDeliveryAttempts.Value;
         }
 
         try
         {
-            var subscription = await subscriptionGateway.UpdateSubscriptionAsync(topicName, subscriptionId, name, description, webhookUrl, eventTypeIds, maxDeliveryAttempts);
-            if (subscription == null)
+            var updatedSubscription = await subscriptionGateway.UpdateSubscriptionAsync(
+                topicName, 
+                subscriptionId, 
+                subscription.Name, 
+                subscription.Description, 
+                subscription.WebhookUrl, 
+                subscription.EventTypes.Select(e => e.Id).ToList(), 
+                subscription.MaxDeliveryAttempts);
+            if (updatedSubscription == null)
             {
                 return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Failed to update subscription"));
             }
