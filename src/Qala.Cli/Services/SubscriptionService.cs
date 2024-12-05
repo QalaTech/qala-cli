@@ -176,7 +176,7 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
         }
     }
 
-    public async Task<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>> UpdateSubscriptionAsync(string topicName, Guid subscriptionId, string? name, string? description, string? webhookUrl, List<Guid?> eventTypeIds, int? maxDeliveryAttempts)
+    public async Task<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>> UpdateSubscriptionAsync(string topicName, Guid subscriptionId, string? name, string? description, string? webhookUrl, List<Guid>? eventTypeIds, int? maxDeliveryAttempts)
     {
         if (string.IsNullOrWhiteSpace(topicName))
         {
@@ -206,9 +206,9 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
         }
 
         if (eventTypeIds != null && 
-            subscription.EventTypes.Select(e => e.Id).ToList() != eventTypeIds.Select(e => e!.Value).ToList())
+            subscription.EventTypes.Select(e => e.Id).ToList() != eventTypeIds)
         {
-            subscription.EventTypes = eventTypeIds.Select(e => new EventType { Id = e!.Value }).ToList();
+            subscription.EventTypes = eventTypeIds.Select(id => new EventType { Id = id }).ToList();
         }
 
         if (maxDeliveryAttempts is not null)

@@ -9,7 +9,7 @@ public class GetWebhookSecretArgument : CommandSettings
     [Description("The name of the topic.")]
     public string TopicName { get; set; } = string.Empty;
 
-    [CommandOption("-s|--subscription-id <SUBSCRIPTION_ID>")]
+    [CommandOption("-s|--subscription <SUBSCRIPTION_ID>")]
     [Description("The id of the subscription.")]
     public Guid SubscriptionId { get; set; } = Guid.Empty;
 }
