@@ -6,13 +6,13 @@ namespace Qala.Cli.Commands.Topics;
 
 public record UpdateTopicSuccessResponse(Data.Models.Topic Topic);
 public record UpdateTopicErrorResponse(string Message);
-public record UpdateTopicRequest(string Name, string Description, List<Guid> EventTypeIds) : IRequest<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>;
+public record UpdateTopicRequest(string Name, string? NewName, string? Description, List<Guid>? EventTypeIds) : IRequest<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>;
 
 public class UpdateTopicHandler(ITopicService topicService)
     : IRequestHandler<UpdateTopicRequest, Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>
 {
     public async Task<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>> Handle(UpdateTopicRequest request, CancellationToken cancellationToken)
-        => await topicService.UpdateTopicAsync(request.Name, request.Description, request.EventTypeIds)
+        => await topicService.UpdateTopicAsync(request.Name, request.NewName, request.Description, request.EventTypeIds)
             .ToAsync()
             .Case switch
             {

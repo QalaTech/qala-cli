@@ -190,20 +190,25 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
 
         var subscription = await subscriptionGateway.GetSubscriptionAsync(topicName, subscriptionId);
 
+        if (subscription == null)
+        {
+            return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Subscription not found"));
+        }
+
         if (!string.IsNullOrWhiteSpace(name))
         {
-            subscription!.Name = name;
+            subscription.Name = name;
         }
 
         if (!string.IsNullOrWhiteSpace(webhookUrl))
         {
-            subscription!.WebhookUrl = webhookUrl;
+            subscription.WebhookUrl = webhookUrl;
         }
 
-        if (eventTypeIds != null || 
-            subscription!.EventTypes.Select(e => e.Id).ToList() != eventTypeIds!.Select(e => e!.Value).ToList())
+        if (eventTypeIds != null && 
+            subscription.EventTypes.Select(e => e.Id).ToList() != eventTypeIds.Select(e => e!.Value).ToList())
         {
-            subscription!.EventTypes = eventTypeIds!.Select(e => new EventType { Id = e!.Value }).ToList();
+            subscription.EventTypes = eventTypeIds.Select(e => new EventType { Id = e!.Value }).ToList();
         }
 
         if (maxDeliveryAttempts is not null)
@@ -213,7 +218,7 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
                 return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Max delivery attempts should be a value between 0 and 10"));
             }
 
-            subscription!.MaxDeliveryAttempts = maxDeliveryAttempts.Value;
+            subscription.MaxDeliveryAttempts = maxDeliveryAttempts.Value;
         }
 
         try
@@ -231,7 +236,7 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
                 return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Failed to update subscription"));
             }
 
-            return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionSuccessResponse(subscription));
+            return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionSuccessResponse(updatedSubscription));
         }
         catch (Exception e)
         {

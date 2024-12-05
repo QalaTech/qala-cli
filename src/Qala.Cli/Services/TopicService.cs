@@ -1,6 +1,7 @@
 using LanguageExt;
 using Qala.Cli.Commands.Topics;
 using Qala.Cli.Data.Gateway.Interfaces;
+using Qala.Cli.Data.Models;
 using Qala.Cli.Services.Interfaces;
 
 namespace Qala.Cli.Services;
@@ -78,32 +79,49 @@ public class TopicService(ITopicGateway topicGateway) : ITopicService
         }
     }
 
-    public async Task<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>> UpdateTopicAsync(string name, string description, List<Guid> eventTypeIds)
+    public async Task<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>> UpdateTopicAsync(string name, string? newName, string? description, List<Guid>? eventTypeIds)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
             return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicErrorResponse("Name is required"));
         }
 
-        if (string.IsNullOrWhiteSpace(description))
+        var topic = await topicGateway.GetTopicAsync(name);
+
+        if (topic == null)
         {
-            return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicErrorResponse("Description is required"));
+            return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicErrorResponse("Topic not found"));
         }
 
-        if (eventTypeIds == null || eventTypeIds.Count == 0)
+        if (!string.IsNullOrWhiteSpace(newName))
         {
-            return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicErrorResponse("Event type ids are required"));
+            topic.Name = newName;
+        }
+
+        if (!string.IsNullOrWhiteSpace(description))
+        {
+            topic.Description = description;
+        }
+
+        if (eventTypeIds != null &&
+            topic.EventTypes.Select(e => e.Id).ToList() != eventTypeIds
+         )
+        {
+            topic.EventTypes = eventTypeIds.Select(id => new EventType { Id = id }).ToList();
         }
 
         try
         {
-            var topic = await topicGateway.UpdateTopicAsync(name, description, eventTypeIds);
-            if (topic == null)
+            var updatedTopic = await topicGateway.UpdateTopicAsync(
+                topic.Name, 
+                topic.Description, 
+                topic.EventTypes.Select(e => e.Id).ToList());
+            if (updatedTopic == null)
             {
                 return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicErrorResponse("Failed to update topic"));
             }
 
-            return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicSuccessResponse(topic));
+            return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicSuccessResponse(updatedTopic));
         }
         catch (Exception e)
         {

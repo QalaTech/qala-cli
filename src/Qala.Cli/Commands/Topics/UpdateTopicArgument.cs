@@ -10,6 +10,10 @@ public class UpdateTopicArgument : CommandSettings
     [Description("The name of the topic.")]
     public string Name { get; set; } = string.Empty;
 
+    [CommandOption("-n|--new-name <NEW_NAME>")]
+    [Description("The new name of the topic.")]
+    public string NewName { get; set; } = string.Empty;
+
     [CommandOption("-d|--description <DESCRIPTION>")]
     [Description("The description of the topic.")]
     public string Description { get; set; } = string.Empty;
