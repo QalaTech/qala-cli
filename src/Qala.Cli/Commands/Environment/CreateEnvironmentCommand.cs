@@ -64,7 +64,7 @@ public class CreateEnvironmentCommand(IMediator mediator, IAnsiConsole console) 
         {
             if (argument.Region.ToLower() is not "eu" and not "us")
             {
-                return ValidationResult.Error("Region must be either 'eu' or 'us'");
+                return ValidationResult.Error("Region must be either 'eu' for Europe or 'us' for United States");
             }
         }
 
