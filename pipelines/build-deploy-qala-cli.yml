@@ -71,10 +71,10 @@ stages:
           # Determine if the branch name starts with hotfix or HOTFIX
           if ($env:BUILD_SOURCEBRANCHNAME -match '^hotfix' -or $env:BUILD_SOURCEBRANCHNAME -match '^HOTFIX') {
             # Increment the patch version
-            $patch++
+            $patch = $[counter(variables['major'], 0)]
           } else {
             # Increment the minor version
-            $minor++
+            $minor = $[counter(variables['major'], 0)]
           }
 
           # Set the alpha version
