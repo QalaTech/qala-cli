@@ -25,8 +25,8 @@ pr:
 variables:
   pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj'
   major: 0
-  minor: 0
-  patch: 0
+  minor: $[counter(variables['major'], 0)]
+  patch: $[counter(variables['major'], 0)]
   runtimeIdentifiers: 'win-x64;win-arm64'
   gitHubConnection: 'github.com_release'
   repositoryName: 'QalaTech/qala-cli'
@@ -58,9 +58,10 @@ stages:
         script: |
           # Fetch the previous version from a file or a variable
           $previousVersion = "$(major).$(minor).$(patch)" # Default value if no previous version is found
-          if (Test-Path "$(Build.ArtifactStagingDirectory)/previousVersion.txt") {
-            $previousVersion = Get-Content "$(Build.ArtifactStagingDirectory)/currentVersion.txt"
-          }
+          Write-Host "Previous Version: $previousVersion"
+          # if (Test-Path "$(Build.ArtifactStagingDirectory)/previousVersion.txt") {
+          #   $previousVersion = Get-Content "$(Build.ArtifactStagingDirectory)/currentVersion.txt"
+          # }
 
           # Split the previous version into major, minor, and patch
           $versionParts = $previousVersion -split '\.'
@@ -71,10 +72,12 @@ stages:
           # Determine if the branch name starts with hotfix or HOTFIX
           if ($env:BUILD_SOURCEBRANCHNAME -match '^hotfix' -or $env:BUILD_SOURCEBRANCHNAME -match '^HOTFIX') {
             # Increment the patch version
-            $patch = $[counter(variables['major'], 0)]
+            $minor--
+            Write-Host "Hotfix: $(major).$(minor).$(patch)"
           } else {
             # Increment the minor version
-            $minor = $[counter(variables['major'], 0)]
+            $patch--
+            Write-Host "Minor: $(major).$(minor).$(patch)"
           }
 
           # Set the alpha version
@@ -87,7 +90,7 @@ stages:
 
           # Save the new version to a file for future reference
           $newVersion = "$major.$minor.$patch"
-          Set-Content -Path "$(Build.ArtifactStagingDirectory)/currentVersion.txt" -Value $newVersion
+          # Set-Content -Path "$(Build.ArtifactStagingDirectory)/currentVersion.txt" -Value $newVersion
 
     # Install SDK Using global.json
     - task: UseDotNet@2
