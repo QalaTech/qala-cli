@@ -60,11 +60,6 @@ public class UpdateSubscriptionCommand(IMediator mediator, IAnsiConsole console)
             return ValidationResult.Error("Topic name is required.");
         }
 
-        if (string.IsNullOrWhiteSpace(argument.Name))
-        {
-            return ValidationResult.Error("Subscription name is required.");
-        }
-
         return ValidationResult.Success();
     }
 }

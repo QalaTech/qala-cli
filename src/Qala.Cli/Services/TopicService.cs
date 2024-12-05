@@ -93,9 +93,9 @@ public class TopicService(ITopicGateway topicGateway) : ITopicService
             return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicErrorResponse("Topic not found"));
         }
 
-        if (!string.IsNullOrWhiteSpace(newName))
+        if (string.IsNullOrWhiteSpace(newName))
         {
-            topic.Name = newName;
+            newName = topic.Name;
         }
 
         if (!string.IsNullOrWhiteSpace(description))
@@ -103,7 +103,7 @@ public class TopicService(ITopicGateway topicGateway) : ITopicService
             topic.Description = description;
         }
 
-        if (eventTypeIds != null &&
+        if (eventTypeIds != null && eventTypeIds.Count > 0 &&
             topic.EventTypes.Select(e => e.Id).ToList() != eventTypeIds
          )
         {
@@ -114,6 +114,7 @@ public class TopicService(ITopicGateway topicGateway) : ITopicService
         {
             var updatedTopic = await topicGateway.UpdateTopicAsync(
                 topic.Name, 
+                newName,
                 topic.Description, 
                 topic.EventTypes.Select(e => e.Id).ToList());
             if (updatedTopic == null)

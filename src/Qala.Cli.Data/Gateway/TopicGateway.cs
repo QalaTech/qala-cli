@@ -83,11 +83,11 @@ public class TopicGateway(HttpClient client) : ITopicGateway
         }
     }
 
-    public async Task<Topic?> UpdateTopicAsync(string name, string description, List<Guid> eventTypeIds)
+    public async Task<Topic?> UpdateTopicAsync(string name, string newName, string description, List<Guid> eventTypeIds)
     {
         try
         {
-            var response = await client.PutAsJsonAsync($"topics/{name}", new { Name = name, Description = description, EventTypeIds = eventTypeIds });
+            var response = await client.PutAsJsonAsync($"topics/{name}", new { Name = newName, Description = description, EventTypeIds = eventTypeIds });
 
             if (!response.IsSuccessStatusCode)
             {

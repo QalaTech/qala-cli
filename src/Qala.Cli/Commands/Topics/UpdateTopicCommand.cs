@@ -58,16 +58,6 @@ public class UpdateTopicCommand(IMediator mediator, IAnsiConsole console) : Asyn
             return ValidationResult.Error("Topic name is required.");
         }
 
-        if (string.IsNullOrWhiteSpace(argument.Description))
-        {
-            return ValidationResult.Error("Topic description is required.");
-        }
-
-        if (argument.EventTypeIds.Count == 0)
-        {
-            return ValidationResult.Error("At least one event type id is required.");
-        }
-
         return ValidationResult.Success();
     }
 }

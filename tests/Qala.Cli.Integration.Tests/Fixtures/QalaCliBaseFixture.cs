@@ -164,12 +164,12 @@ public class QalaCliBaseFixture : IDisposable
                     });
 
         TopicGatewayMock.Setup(
-            t => t.UpdateTopicAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Guid>>()))
-                    .ReturnsAsync((string name, string description, List<Guid> eventTypeIds) => {
+            t => t.UpdateTopicAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Guid>>()))
+                    .ReturnsAsync((string name, string newName, string description, List<Guid> eventTypeIds) => {
                         var topic = AvailableTopics.FirstOrDefault(t => t.Name == name);
                         if (topic != null)
                         {
-                            topic.Name = name;
+                            topic.Name = newName;
                             topic.Description = description;
                             topic.ProvisioningState = "Provisioning";
                             topic.EventTypes = AvailableEventTypes.Where(et => eventTypeIds.Contains(et.Id)).ToList();

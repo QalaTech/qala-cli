@@ -35,7 +35,7 @@ app.Configure(config =>
 
     config.AddBranch("environment", env =>
     {
-        env.SetDescription("this command enables you to set, create or view your current enviornment.");
+        env.SetDescription("this command enables you to set, create or view your current environment.");
         env.AddCommand<CreateEnvironmentCommand>("create")
             .WithDescription("this command creates a new environment for the Qala CLI.")
             .WithExample("environment create -n <NAME> -r <REGION> -t <TYPE>");
@@ -50,7 +50,7 @@ app.Configure(config =>
 
     config.AddBranch("events", et =>
     {
-        et.SetDescription("this command enables you to list and inpsect event types.");
+        et.SetDescription("this command enables you to list and inspect event types.");
         et.AddCommand<ListEventTypesCommand>("list")
             .WithDescription("this command lists all the event types available in your environment.")
             .WithExample("events ls")
@@ -78,13 +78,13 @@ app.Configure(config =>
             .WithExample("topics create -n <NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS>");
         t.AddCommand<UpdateTopicCommand>("update")
             .WithDescription("this command updates an existing topic for the Qala CLI.")
-            .WithExample("topics update <NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS>");
+            .WithExample("topics update <NAME> -n <NEW_TOPIC_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS>");
     })
     .WithAlias("tp");
 
     config.AddBranch("subscriptions", s =>
     {
-        s.SetDescription("this command enables you to list, inspect, create, update, delete a subscription, along with inspecting and roating the subscription secret.");
+        s.SetDescription("this command enables you to list, inspect, create, update, delete a subscription, along with inspecting and rotating the subscription secret.");
         s.AddCommand<ListSubscriptionsCommand>("list")
             .WithDescription("this command lists all the subscriptions available in your environment.")
             .WithExample("qala subscriptions ls -t <TOPIC_NAME>")
@@ -98,7 +98,7 @@ app.Configure(config =>
             .WithExample("qala sub create -n <SUBSCRIPTION_NAME> -t <TOPIC_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS> -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>");
         s.AddCommand<UpdateSubscriptionCommand>("update")
             .WithDescription("this command updates an existing subscription for the Qala CLI.")
-            .WithExample("qala sub update <SUBSCRIPTION_ID> -t <TOPIC_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS> -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>");
+            .WithExample("qala sub update <SUBSCRIPTION_ID> -t <TOPIC_NAME> -n <SUBSCRIPTION_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS> -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>");
         s.AddCommand<DeleteSubscriptionCommand>("delete")
             .WithDescription("this command deletes the subscription with the specified ID.")
             .WithExample("qala sub delete -t <TOPIC_NAME> -s <SUBSCRIPTION_ID>");
