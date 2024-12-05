@@ -58,7 +58,6 @@ stages:
         script: |
           # Fetch the previous version from a file or a variable
           $possibleVersion = "$(major).$(minor).$(patch)" # Default value if no previous version is found
-          Write-Host "Previous Version: $possibleVersion"
 
           # Split the previous version into major, minor, and patch
           $versionParts = $possibleVersion -split '\.'
