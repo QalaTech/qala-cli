@@ -60,10 +60,24 @@ public class CreateEnvironmentCommand(IMediator mediator, IAnsiConsole console) 
         {
             return ValidationResult.Error("Region is required");
         }
+        else
+        {
+            if (argument.Region.ToLower() is not "eu" and not "us")
+            {
+                return ValidationResult.Error("Region must be either 'eu' or 'us'");
+            }
+        }
 
         if (string.IsNullOrWhiteSpace(argument.Type))
         {
             return ValidationResult.Error("Type is required");
+        }
+        else
+        {
+            if (argument.Type.ToLower() is not "development" and not "production")
+            {
+                return ValidationResult.Error("Environment Type must be either 'development' or 'production'");
+            }
         }
 
         return ValidationResult.Success();

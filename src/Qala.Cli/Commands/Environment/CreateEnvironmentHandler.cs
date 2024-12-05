@@ -12,7 +12,7 @@ public class CreateEnvironmentHandler(IEnvironmentService environmentService)
     : IRequestHandler<CreateEnvironmentRequest, Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>>
 {
     public async Task<Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>> Handle(CreateEnvironmentRequest request, CancellationToken cancellationToken)
-        => await environmentService.CreateEnvironmentAsync(request.Name, request.Region, request.Type)
+        => await environmentService.CreateEnvironmentAsync(request.Name, request.Region.ToLower(), request.Type.ToLower())
             .ToAsync()
             .Case switch
             {

@@ -10,7 +10,7 @@ public class UpdateTopicArgument : CommandSettings
     [Description("The name of the topic.")]
     public string Name { get; set; } = string.Empty;
 
-    [CommandOption("-n|--new-name <NEW_NAME>")]
+    [CommandOption("-n|--name <NEW_NAME>")]
     [Description("The new name of the topic.")]
     public string NewName { get; set; } = string.Empty;
 
@@ -18,7 +18,7 @@ public class UpdateTopicArgument : CommandSettings
     [Description("The description of the topic.")]
     public string Description { get; set; } = string.Empty;
 
-    [CommandOption("-e|--event-type-ids <EVENTS_COMMA_SEPERATED_IDS>")]
+    [CommandOption("-e|--events <EVENTS_COMMA_SEPERATED_IDS>")]
     [Description("The comma separated list of event type ids.")]
     [TypeConverter(typeof(CommaSeparatedGuidListConverter))]
     public List<Guid> EventTypeIds { get; set; } = new();
