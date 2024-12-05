@@ -200,6 +200,11 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
             subscription.Name = name;
         }
 
+        if(!string.IsNullOrWhiteSpace(description))
+        {
+            subscription.Description = description;
+        }
+
         if (!string.IsNullOrWhiteSpace(webhookUrl))
         {
             subscription.WebhookUrl = webhookUrl;
