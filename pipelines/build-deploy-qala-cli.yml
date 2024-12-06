@@ -190,111 +190,114 @@ stages:
 - stage: Final Release
   condition: in(variables['Build.SourceBranch'], 'refs/heads/master')
   displayName: "Deploy to Final Release"
-  steps:
-    # Install SDK Using global.json
-    - task: UseDotNet@2
-      displayName: 'Install SDK Using global.json'
-      inputs:
-        packageType: 'sdk'
-        useGlobalJson: true
-        workingDirectory: $(Pipeline.Workspace)/s
+  jobs:
+  # Build and Publish Final Release Executables and Installers
+  - job: BuildAndPublishRelease
+    displayName: "Build and Publish Final Release Executables and Installers"
+    steps:
+      # Install SDK Using global.json
+      - task: UseDotNet@2
+        displayName: 'Install SDK Using global.json'
+        inputs:
+          packageType: 'sdk'
+          useGlobalJson: true
+          workingDirectory: $(Pipeline.Workspace)/s
 
-    # Restore NuGet Packages
-    - task: DotNetCoreCLI@2
-      displayName: 'Restore NuGet Packages'
-      condition: succeeded()
-      inputs:
-        command: 'restore'
-        projects: '**/*.csproj'
+      # Restore NuGet Packages
+      - task: DotNetCoreCLI@2
+        displayName: 'Restore NuGet Packages'
+        condition: succeeded()
+        inputs:
+          command: 'restore'
+          projects: '**/*.csproj'
 
-    # Run tests
-    - task: DotNetCoreCLI@2
-      displayName: 'Run tests'
-      condition: succeeded()
-      inputs:
-        command: 'test'
-        projects: '**/*tests/*.csproj'
-        arguments: '--configuration $(BuildConfiguration)'
+      # Run tests
+      - task: DotNetCoreCLI@2
+        displayName: 'Run tests'
+        condition: succeeded()
+        inputs:
+          command: 'test'
+          projects: '**/*tests/*.csproj'
+          arguments: '--configuration $(BuildConfiguration)'
 
-    # Build and publish Final Release executables
-    - task: PowerShell@2
-      displayName: 'Build and publish Final Release executables'
-      condition: succeeded()
-      inputs:
-        targetType: 'inline'
-        workingDirectory: $(Build.SourcesDirectory)/src/Qala.Cli
-        script: |
-          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-          # Check if the pathToTheProjectFile file exists
-          if (Test-Path $(pathToTheProjectFile)) {
-              Write-Host "Qala.Cli.csproj file found."
-          } else {
-              Write-Host "Qala.Cli.csproj file not found."
-              exit 1
-          }
-          foreach ($rid in $runtimeIdentifiers) {
-            Write-Host "Publishing Final Release version for runtime: $rid"
-            dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/release/$rid"
-          }
+      # Build and publish Final Release executables
+      - task: PowerShell@2
+        displayName: 'Build and publish Final Release executables'
+        condition: succeeded()
+        inputs:
+          targetType: 'inline'
+          workingDirectory: $(Build.SourcesDirectory)/src/Qala.Cli
+          script: |
+            $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
+            # Check if the pathToTheProjectFile file exists
+            if (Test-Path $(pathToTheProjectFile)) {
+                Write-Host "Qala.Cli.csproj file found."
+            } else {
+                Write-Host "Qala.Cli.csproj file not found."
+                exit 1
+            }
+            foreach ($rid in $runtimeIdentifiers) {
+              Write-Host "Publishing Final Release version for runtime: $rid"
+              dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/release/$rid"
+            }
 
-    # Install WiX Toolset and UI extensions
-    - task: PowerShell@2
-      displayName: 'Install WiX Toolset and UI extensions'
-      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
-      inputs:
-        workingDirectory: $(Build.SourcesDirectory)
-        targetType: 'inline'
-        script: |
-          dotnet tool install --global wix
-          wix extension add WixToolset.UI.wixext
+      # Install WiX Toolset and UI extensions
+      - task: PowerShell@2
+        displayName: 'Install WiX Toolset and UI extensions'
+        condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+        inputs:
+          workingDirectory: $(Build.SourcesDirectory)
+          targetType: 'inline'
+          script: |
+            dotnet tool install --global wix
+            wix extension add WixToolset.UI.wixext
 
-    # Create installers for each runtime identifiers
-    - task: PowerShell@2
-      displayName: 'Create installers for each runtime identifiers'
-      condition: and(succeeded(),ne(variables['Build.Reason'], 'PullRequest'))
-      inputs:
-        workingDirectory: $(Build.SourcesDirectory)
-        targetType: 'inline'
-        script: |
-          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-          foreach ($rid in $runtimeIdentifiers) {
-            Write-Host "Generating the msi file for runtime: $rid"
-            $wixFileContent = Get-Content -Path $(pathToTheWiXFile)
-            $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToExecutable = ").*?(?=" \?>)', "$(Pipeline.Workspace)/release/$rid/qala.exe"
-            $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToBat = ").*?(?=" \?>)', "$(Build.SourcesDirectory)/build/wix/qala.bat"
-            $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToProductResources = ").*?(?=" \?>)', "$(Build.SourcesDirectory)/build/wix/resources/"
-            Set-Content -Path $(pathToTheWiXFile) -Value $wixFileContent
-            wix build $(pathToTheWiXFile) -d Version=$(releaseVersionMsi) -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/release/$rid/QalaCliInstaller-$(releaseVersionMsi)-$rid.msi"
-          }
+      # Create installers for each runtime identifiers
+      - task: PowerShell@2
+        displayName: 'Create installers for each runtime identifiers'
+        condition: and(succeeded(),ne(variables['Build.Reason'], 'PullRequest'))
+        inputs:
+          workingDirectory: $(Build.SourcesDirectory)
+          targetType: 'inline'
+          script: |
+            $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
+            foreach ($rid in $runtimeIdentifiers) {
+              Write-Host "Generating the msi file for runtime: $rid"
+              $wixFileContent = Get-Content -Path $(pathToTheWiXFile)
+              $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToExecutable = ").*?(?=" \?>)', "$(Pipeline.Workspace)/release/$rid/qala.exe"
+              $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToBat = ").*?(?=" \?>)', "$(Build.SourcesDirectory)/build/wix/qala.bat"
+              $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToProductResources = ").*?(?=" \?>)', "$(Build.SourcesDirectory)/build/wix/resources/"
+              Set-Content -Path $(pathToTheWiXFile) -Value $wixFileContent
+              wix build $(pathToTheWiXFile) -d Version=$(releaseVersionMsi) -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/release/$rid/QalaCliInstaller-$(releaseVersionMsi)-$rid.msi"
+            }
 
-    # Change the names of the published executables so you have multiple versions in the same folder
-    - task: PowerShell@2
-      displayName: 'Change the names of the published executables'
-      condition: and(succeeded(),ne(variables['Build.Reason'], 'PullRequest'))
-      inputs:
-        targetType: 'inline'
-        script: |
-          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-          foreach ($rid in $runtimeIdentifiers) {
-            Write-Host "Changing the name of the executable for runtime: $rid"
-            Rename-Item -Path "$(Pipeline.Workspace)/release/$rid/qala.exe" -NewName "qala-$rid.exe"
-          }
+      # Change the names of the published executables so you have multiple versions in the same folder
+      - task: PowerShell@2
+        displayName: 'Change the names of the published executables'
+        condition: and(succeeded(),ne(variables['Build.Reason'], 'PullRequest'))
+        inputs:
+          targetType: 'inline'
+          script: |
+            $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
+            foreach ($rid in $runtimeIdentifiers) {
+              Write-Host "Changing the name of the executable for runtime: $rid"
+              Rename-Item -Path "$(Pipeline.Workspace)/release/$rid/qala.exe" -NewName "qala-$rid.exe"
+            }
 
-    # Create GitHub Final Release
-    - task: GithubRelease@1 
-      displayName: 'Create GitHub Final Release'
-      condition: and(succeeded(),ne(variables['Build.Reason'], 'PullRequest'))
-      inputs:
-        gitHubConnection: '$(gitHubConnection)'
-        repositoryName: '$(repositoryName)'
-        target: '$(Build.SourceBranchName)'
-        tagSource: 'userSpecifiedTag'
-        tag: "$(releaseVersion)"
-        releaseNotesSource: 'inline'
-        releaseNotes: '$(releaseNotes)'
-        isPreRelease: false
-        title: 'Release $(releaseVersion)'   
-        assets: |
-          $(Pipeline.Workspace)/release/**/*.msi
-          $(Pipeline.Workspace)/release/**/*.exe
-
+      # Create GitHub Final Release
+      - task: GithubRelease@1 
+        displayName: 'Create GitHub Final Release'
+        condition: and(succeeded(),ne(variables['Build.Reason'], 'PullRequest'))
+        inputs:
+          gitHubConnection: '$(gitHubConnection)'
+          repositoryName: '$(repositoryName)'
+          target: '$(Build.SourceBranchName)'
+          tagSource: 'userSpecifiedTag'
+          tag: "$(releaseVersion)"
+          releaseNotesSource: 'inline'
+          releaseNotes: '$(releaseNotes)'
+          isPreRelease: false
+          title: 'Release $(releaseVersion)'   
+          assets: |
+            $(Pipeline.Workspace)/release/**/*.msi
+            $(Pipeline.Workspace)/release/**/*.exe
