@@ -38,13 +38,6 @@ variables:
   releaseVersion: ''
   releaseVersionMsi: ''
 
-parameters:
-- name: releaseNotes
-  displayName: 'Release Notes'
-  type: string
-  default: 'No release notes provided.'
-  required: false
-
 pool:
   vmImage: windows-latest
 
