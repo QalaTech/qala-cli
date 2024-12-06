@@ -5,11 +5,7 @@ resources:
   repositories:
     - repository: self
 
-trigger:
-  branches:
-    include:
-      - master
-      - development
+trigger: none
 
 variables:
   pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj'
@@ -34,10 +30,11 @@ stages:
 - stage: Alpha
   condition: in(variables['Build.SourceBranch'], 'refs/heads/development')
   displayName: "Deploy to Alpha"
+  environment: Dev
   jobs:
-  # Build and Publish Alpha Executables and Installers
-  - job: BuildAndPublishAlpha
-    displayName: "Build and Publish Alpha Executables and Installers"
+  # Build and execute tests
+  - job: BuildAndExecuteTests
+    displayName: "Build and execute tests"
     steps:
     # Install SDK Using global.json
     - task: UseDotNet@2
@@ -64,6 +61,10 @@ stages:
         projects: '**/*tests/*.csproj'
         arguments: '--configuration $(BuildConfiguration)'
 
+  # Build and Publish Alpha Executables
+  - job: BuildAndPublishAlpha
+    displayName: "Build and Publish Alpha Executables"
+    steps:
     # Set Version Number
     - task: PowerShell@2
       displayName: 'Set Alpha Version Number'
@@ -123,7 +124,11 @@ stages:
             Write-Host "Publishing Alpha version for runtime: $rid"
             dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/alpha/$rid"
           }
-
+ 
+  # Generate Alpha Installers
+  - job: GenerateInstallersAlpha
+    displayName: "Generate Alpha Installers"
+    steps:
     # Install WiX Toolset and UI extensions
     - task: PowerShell@2
       displayName: 'Install WiX Toolset and UI extensions'
@@ -167,6 +172,10 @@ stages:
             Rename-Item -Path "$(Pipeline.Workspace)/alpha/$rid/qala.exe" -NewName "qala-$rid.exe"
           }
 
+  # Generate Github Alpha Release
+  - job: GitHubAlphaRelease
+    displayName: "Generate Github Alpha Release"
+    steps:
     # Create GitHub Alpha Release
     - task: GithubRelease@1 
       displayName: 'Create GitHub Alpha Release'
@@ -189,11 +198,13 @@ stages:
 # Only run for master branch
 - stage: Release
   condition: in(variables['Build.SourceBranch'], 'refs/heads/master')
+  dependsOn: Alpha
   displayName: "Deploy to Final Release"
+  environment: Prod
   jobs:
-  # Build and Publish Final Release Executables and Installers
-  - job: BuildAndPublishRelease
-    displayName: "Build and Publish Final Release Executables and Installers"
+  # Build and execute tests
+  - job: BuildAndExecuteTests
+    displayName: "Build and execute tests"
     steps:
       # Install SDK Using global.json
       - task: UseDotNet@2
@@ -220,6 +231,10 @@ stages:
           projects: '**/*tests/*.csproj'
           arguments: '--configuration $(BuildConfiguration)'
 
+  # Build and Publish Release Executables
+  - job: BuildAndPublishRelease
+    displayName: "Build and Publish Release Executables"
+    steps:
       # Build and publish Final Release executables
       - task: PowerShell@2
         displayName: 'Build and publish Final Release executables'
@@ -241,6 +256,10 @@ stages:
               dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/release/$rid"
             }
 
+  # Generate Final Release Installers
+  - job: GenerateInstallersRelease
+    displayName: "Generate Release Installers"
+    steps:
       # Install WiX Toolset and UI extensions
       - task: PowerShell@2
         displayName: 'Install WiX Toolset and UI extensions'
@@ -284,6 +303,10 @@ stages:
               Rename-Item -Path "$(Pipeline.Workspace)/release/$rid/qala.exe" -NewName "qala-$rid.exe"
             }
 
+  # Generate Github Final Release
+  - job: GitHubRelease
+    displayName: "Generate Github Final Release"
+    steps:
       # Create GitHub Final Release
       - task: GithubRelease@1 
         displayName: 'Create GitHub Final Release'
