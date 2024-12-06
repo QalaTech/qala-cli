@@ -47,29 +47,32 @@ stages:
   displayName: "Pull Request Validation"
   condition: and(ne(variables['Build.Reason'], 'PullRequest'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/development'))
   jobs:
-    # Install SDK Using global.json
-    - task: UseDotNet@2
-      displayName: 'Install SDK Using global.json'
-      inputs:
-        packageType: 'sdk'
-        useGlobalJson: true
-        workingDirectory: $(Pipeline.Workspace)/s
+    - job: BuildAndExecuteTests
+      displayName: "Build and execute tests"
+      steps:
+      # Install SDK Using global.json
+      - task: UseDotNet@2
+        displayName: 'Install SDK Using global.json'
+        inputs:
+          packageType: 'sdk'
+          useGlobalJson: true
+          workingDirectory: $(Pipeline.Workspace)/s
 
-    # Restore NuGet Packages
-    - task: DotNetCoreCLI@2
-      displayName: 'Restore NuGet Packages'
-      condition: succeeded()
-      inputs:
-        command: 'restore'
-        projects: '**/*.csproj'
+      # Restore NuGet Packages
+      - task: DotNetCoreCLI@2
+        displayName: 'Restore NuGet Packages'
+        condition: succeeded()
+        inputs:
+          command: 'restore'
+          projects: '**/*.csproj'
 
-    # Run tests
-    - task: DotNetCoreCLI@2
-      displayName: 'Run tests'
-      inputs:
-        command: 'test'
-        projects: '**/*tests/*.csproj'
-        arguments: '--configuration $(BuildConfiguration)'
+      # Run tests
+      - task: DotNetCoreCLI@2
+        displayName: 'Run tests'
+        inputs:
+          command: 'test'
+          projects: '**/*tests/*.csproj'
+          arguments: '--configuration $(BuildConfiguration)'
 
 # Stage Alpha
 # Only run for development branch
