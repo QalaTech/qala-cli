@@ -187,7 +187,7 @@ stages:
 
 # Stage Final Release
 # Only run for master branch
-- stage: Final Release
+- stage: Release
   condition: in(variables['Build.SourceBranch'], 'refs/heads/master')
   displayName: "Deploy to Final Release"
   jobs:
