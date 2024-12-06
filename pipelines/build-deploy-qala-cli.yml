@@ -10,19 +10,6 @@ trigger:
     include:
       - master
       - development
-  paths:
-    include:
-      - src/Cli
-
-pr:
-  autoCancel: false
-  branches:
-    include:
-      - master
-      - development
-  paths:
-    exclude:
-      - tests/*
 
 variables:
   pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj'
@@ -42,38 +29,6 @@ pool:
   vmImage: windows-latest
 
 stages:
-# Stage PR Validation
-- stage: PRValidation
-  displayName: "Pull Request Validation"
-  condition: and(ne(variables['Build.Reason'], 'PullRequest'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/development'))
-  jobs:
-    - job: BuildAndExecuteTests
-      displayName: "Build and execute tests"
-      steps:
-      # Install SDK Using global.json
-      - task: UseDotNet@2
-        displayName: 'Install SDK Using global.json'
-        inputs:
-          packageType: 'sdk'
-          useGlobalJson: true
-          workingDirectory: $(Pipeline.Workspace)/s
-
-      # Restore NuGet Packages
-      - task: DotNetCoreCLI@2
-        displayName: 'Restore NuGet Packages'
-        condition: succeeded()
-        inputs:
-          command: 'restore'
-          projects: '**/*.csproj'
-
-      # Run tests
-      - task: DotNetCoreCLI@2
-        displayName: 'Run tests'
-        inputs:
-          command: 'test'
-          projects: '**/*tests/*.csproj'
-          arguments: '--configuration $(BuildConfiguration)'
-
 # Stage Alpha
 # Only run for development branch
 - stage: Alpha
@@ -84,7 +39,6 @@ stages:
   - job: BuildAndPublishAlpha
     displayName: "Build and Publish Alpha Executables and Installers"
     steps:
-
     # Install SDK Using global.json
     - task: UseDotNet@2
       displayName: 'Install SDK Using global.json'
@@ -101,7 +55,16 @@ stages:
         command: 'restore'
         projects: '**/*.csproj'
 
-    # Set Alpha Version Number
+    # Run tests
+    - task: DotNetCoreCLI@2
+      displayName: 'Run tests'
+      condition: succeeded()
+      inputs:
+        command: 'test'
+        projects: '**/*tests/*.csproj'
+        arguments: '--configuration $(BuildConfiguration)'
+
+    # Set Version Number
     - task: PowerShell@2
       displayName: 'Set Alpha Version Number'
       condition: succeeded()
@@ -131,6 +94,14 @@ stages:
           $alphaVersionMsi = "$major.$minor.$patch-alpha"
           Write-Host "##vso[task.setvariable variable=alphaVersionMsi]$alphaVersionMsi"
           Write-Host "Alpha Version for MSI: $alphaVersionMsi"
+
+          # Set the final release version
+          $releaseVersion = "v$major.$minor.$patch-alpha.$env:BUILD_BUILDID"
+          Write-Host "##vso[task.setvariable variable=releaseVersion]$releaseVersion"
+          Write-Host "Final Release Version: $releaseVersion"
+          $releaseVersionMsi = "$major.$minor.$patch-alpha"
+          Write-Host "##vso[task.setvariable variable=releaseVersionMsi]$releaseVersionMsi"
+          Write-Host "Final Release Version for MSI: $releaseVersionMsi"
 
     # Build and publish Alpha executables
     - task: PowerShell@2
@@ -206,10 +177,124 @@ stages:
         target: '$(Build.SourceBranchName)'
         tagSource: 'userSpecifiedTag'
         tag: "$(alphaVersion)"
-        releaseNotesSource: 'input'
+        releaseNotesSource: 'inline'
         releaseNotes: '$(releaseNotes)'
         isPreRelease: true
         title: 'Alpha Release $(alphaVersion)'   
         assets: |
           $(Pipeline.Workspace)/alpha/**/*.msi
           $(Pipeline.Workspace)/alpha/**/*.exe
+
+# Stage Final Release
+# Only run for master branch
+- stage: Final Release
+  condition: in(variables['Build.SourceBranch'], 'refs/heads/master')
+  displayName: "Deploy to Final Release"
+  steps:
+    # Install SDK Using global.json
+    - task: UseDotNet@2
+      displayName: 'Install SDK Using global.json'
+      inputs:
+        packageType: 'sdk'
+        useGlobalJson: true
+        workingDirectory: $(Pipeline.Workspace)/s
+
+    # Restore NuGet Packages
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore NuGet Packages'
+      condition: succeeded()
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+
+    # Run tests
+    - task: DotNetCoreCLI@2
+      displayName: 'Run tests'
+      condition: succeeded()
+      inputs:
+        command: 'test'
+        projects: '**/*tests/*.csproj'
+        arguments: '--configuration $(BuildConfiguration)'
+
+    # Build and publish Final Release executables
+    - task: PowerShell@2
+      displayName: 'Build and publish Final Release executables'
+      condition: succeeded()
+      inputs:
+        targetType: 'inline'
+        workingDirectory: $(Build.SourcesDirectory)/src/Qala.Cli
+        script: |
+          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
+          # Check if the pathToTheProjectFile file exists
+          if (Test-Path $(pathToTheProjectFile)) {
+              Write-Host "Qala.Cli.csproj file found."
+          } else {
+              Write-Host "Qala.Cli.csproj file not found."
+              exit 1
+          }
+          foreach ($rid in $runtimeIdentifiers) {
+            Write-Host "Publishing Final Release version for runtime: $rid"
+            dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/release/$rid"
+          }
+
+    # Install WiX Toolset and UI extensions
+    - task: PowerShell@2
+      displayName: 'Install WiX Toolset and UI extensions'
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+      inputs:
+        workingDirectory: $(Build.SourcesDirectory)
+        targetType: 'inline'
+        script: |
+          dotnet tool install --global wix
+          wix extension add WixToolset.UI.wixext
+
+    # Create installers for each runtime identifiers
+    - task: PowerShell@2
+      displayName: 'Create installers for each runtime identifiers'
+      condition: and(succeeded(),ne(variables['Build.Reason'], 'PullRequest'))
+      inputs:
+        workingDirectory: $(Build.SourcesDirectory)
+        targetType: 'inline'
+        script: |
+          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
+          foreach ($rid in $runtimeIdentifiers) {
+            Write-Host "Generating the msi file for runtime: $rid"
+            $wixFileContent = Get-Content -Path $(pathToTheWiXFile)
+            $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToExecutable = ").*?(?=" \?>)', "$(Pipeline.Workspace)/release/$rid/qala.exe"
+            $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToBat = ").*?(?=" \?>)', "$(Build.SourcesDirectory)/build/wix/qala.bat"
+            $wixFileContent = $wixFileContent -replace '(?<=<\?define PathToProductResources = ").*?(?=" \?>)', "$(Build.SourcesDirectory)/build/wix/resources/"
+            Set-Content -Path $(pathToTheWiXFile) -Value $wixFileContent
+            wix build $(pathToTheWiXFile) -d Version=$(releaseVersionMsi) -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/release/$rid/QalaCliInstaller-$(releaseVersionMsi)-$rid.msi"
+          }
+
+    # Change the names of the published executables so you have multiple versions in the same folder
+    - task: PowerShell@2
+      displayName: 'Change the names of the published executables'
+      condition: and(succeeded(),ne(variables['Build.Reason'], 'PullRequest'))
+      inputs:
+        targetType: 'inline'
+        script: |
+          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
+          foreach ($rid in $runtimeIdentifiers) {
+            Write-Host "Changing the name of the executable for runtime: $rid"
+            Rename-Item -Path "$(Pipeline.Workspace)/release/$rid/qala.exe" -NewName "qala-$rid.exe"
+          }
+
+    # Create GitHub Final Release
+    - task: GithubRelease@1 
+      displayName: 'Create GitHub Final Release'
+      condition: and(succeeded(),ne(variables['Build.Reason'], 'PullRequest'))
+      inputs:
+        gitHubConnection: '$(gitHubConnection)'
+        repositoryName: '$(repositoryName)'
+        target: '$(Build.SourceBranchName)'
+        tagSource: 'userSpecifiedTag'
+        tag: "$(releaseVersion)"
+        releaseNotesSource: 'inline'
+        releaseNotes: '$(releaseNotes)'
+        isPreRelease: false
+        title: 'Release $(releaseVersion)'   
+        assets: |
+          $(Pipeline.Workspace)/release/**/*.msi
+          $(Pipeline.Workspace)/release/**/*.exe
+

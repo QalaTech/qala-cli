@@ -1,0 +1,69 @@
+# Build and push an image to GitHub Releases and respective hub repositories
+name: $(Date:yyyy.MMdd).$(Rev:r)
+
+resources:
+  repositories:
+    - repository: self
+
+trigger:
+  branches:
+    include:
+      - master
+      - development
+
+pr:
+  autoCancel: false
+  branches:
+    include:
+      - master
+      - development
+
+variables:
+  pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj'
+  major: 0
+  minor: $[counter(variables['major'], 0)]
+  patch: $[counter(format('{0}.{1}',variables['major'],variables['minor']),0)]
+  runtimeIdentifiers: 'win-x64;win-arm64'
+  gitHubConnection: 'github.com_release'
+  repositoryName: 'QalaTech/qala-cli'
+  pathToTheWiXFile: '$(Build.SourcesDirectory)/build/wix/qala.wxs'
+  alphaVersion: ''
+  alphaVersionMsi: ''
+  releaseVersion: ''
+  releaseVersionMsi: ''
+
+pool:
+  vmImage: windows-latest
+
+stages:
+# Stage PR Validation
+- stage: PRValidation
+  displayName: "Pull Request Validation"
+  condition: and(ne(variables['Build.Reason'], 'PullRequest'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/development'))
+  jobs:
+    - job: BuildAndExecuteTests
+      displayName: "Build and execute tests"
+      steps:
+      # Install SDK Using global.json
+      - task: UseDotNet@2
+        displayName: 'Install SDK Using global.json'
+        inputs:
+          packageType: 'sdk'
+          useGlobalJson: true
+          workingDirectory: $(Pipeline.Workspace)/s
+
+      # Restore NuGet Packages
+      - task: DotNetCoreCLI@2
+        displayName: 'Restore NuGet Packages'
+        condition: succeeded()
+        inputs:
+          command: 'restore'
+          projects: '**/*.csproj'
+
+      # Run tests
+      - task: DotNetCoreCLI@2
+        displayName: 'Run tests'
+        inputs:
+          command: 'test'
+          projects: '**/*tests/*.csproj'
+          arguments: '--configuration $(BuildConfiguration)'
