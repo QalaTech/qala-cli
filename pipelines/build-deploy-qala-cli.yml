@@ -83,6 +83,7 @@ stages:
     # Install SDK Using global.json
     - task: UseDotNet@2
       displayName: 'Install SDK Using global.json'
+      condition: succeeded()
       inputs:
         packageType: 'sdk'
         useGlobalJson: true
@@ -91,13 +92,23 @@ stages:
     # Restore NuGet Packages
     - task: DotNetCoreCLI@2
       displayName: 'Restore NuGet Packages'
+      condition: succeeded()
       inputs:
         command: 'restore'
         projects: '**/*.csproj'
 
+    # Run tests
+    - task: DotNetCoreCLI@2
+      displayName: 'Run tests'
+      inputs:
+        command: 'test'
+        projects: '**/*tests/*.csproj'
+        arguments: '--configuration $(BuildConfiguration)'
+
     # Build and publish Alpha executables
     - task: PowerShell@2
       displayName: 'Build and publish Alpha executables'
+      condition: succeeded()
       inputs:
         targetType: 'inline'
         workingDirectory: $(Build.SourcesDirectory)/src/Qala.Cli
