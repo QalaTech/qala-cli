@@ -15,7 +15,7 @@ public class UpdateTopicCommand(IMediator mediator, IAnsiConsole console) : Asyn
             .SpinnerStyle(Style.Parse("yellow bold"))
             .StartAsync("Processing request...", async ctx => 
             {
-                return await mediator.Send(new UpdateTopicRequest(argument.Name, argument.NewName, argument.Description, argument.EventTypeIds))
+                return await mediator.Send(new UpdateTopicRequest(argument.Name, argument.NewName, argument.Description, argument.EventTypeNames))
                     .ToAsync()
                     .Match(
                         success =>

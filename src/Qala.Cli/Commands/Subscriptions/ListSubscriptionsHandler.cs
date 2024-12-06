@@ -5,7 +5,7 @@ using Qala.Cli.Services.Interfaces;
 
 namespace Qala.Cli.Commands.Subscriptions;
 
-public record ListSubscriptionsSuccessResponse(IEnumerable<Subscription> Subscriptions);
+public record ListSubscriptionsSuccessResponse(IEnumerable<Subscription?> Subscriptions);
 public record ListSubscriptionsErrorResponse(string Message);
 public record ListSubscriptionsRequest(string TopicName) : IRequest<Either<ListSubscriptionsErrorResponse, ListSubscriptionsSuccessResponse>>;
 

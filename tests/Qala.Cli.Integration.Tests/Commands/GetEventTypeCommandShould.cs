@@ -58,7 +58,7 @@ public class GetEventTypeCommandShould(QalaCliBaseFixture fixture) : IClassFixtu
             });
         
         // Act
-        var result = await command.ExecuteAsync(context, new GetEventTypeArgument() { Id = fixture.AvailableEventTypes.First().Id });
+        var result = await command.ExecuteAsync(context, new GetEventTypeArgument() { Name = fixture.AvailableEventTypes.First().Type });
 
         // Assert
         Assert.Equal(0, result);
@@ -87,11 +87,11 @@ public class GetEventTypeCommandShould(QalaCliBaseFixture fixture) : IClassFixtu
                     .Start("Processing request...", ctx => 
                     {
                 expectedOutput.MarkupLine("[red bold]Error during Event Type retrieval:[/]");
-                expectedOutput.MarkupLine("[red]Invalid id[/]");
+                expectedOutput.MarkupLine("[red]Invalid name[/]");
             });
         
         // Act
-        var result = await command.ExecuteAsync(context, new GetEventTypeArgument(){ Id = Guid.Empty });
+        var result = await command.ExecuteAsync(context, new GetEventTypeArgument(){ Name = string.Empty });
 
         // Assert
         Assert.NotEqual(0, result);

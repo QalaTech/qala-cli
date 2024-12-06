@@ -19,8 +19,9 @@ public class CreateTopicCommandShould(QalaCliBaseFixture fixture) : IClassFixtur
         var topicName = "NewlyCreatedTestTopic";
         var topicDescription = "newly-created-topic-description";
         var eventTypeIds = fixture.AvailableEventTypes.Select(et => et.Id).ToList();
+        var eventTypeNames = fixture.AvailableEventTypes.Select(et => et.Type).ToList();
         var command = new CreateTopicCommand(fixture.Mediator, console);
-        var arguments = new List<string> { "topic", "create", "-n", topicName, "-d", topicDescription, "-e", string.Join(",", eventTypeIds) };
+        var arguments = new List<string> { "topic", "create", "-n", topicName, "-d", topicDescription, "-e", string.Join(",", eventTypeNames) };
         var context = new CommandContext(arguments, _remainingArguments, "create", null);
         var expectedOutput = new TestConsole();
         expectedOutput.Status()
@@ -50,7 +51,7 @@ public class CreateTopicCommandShould(QalaCliBaseFixture fixture) : IClassFixtur
             });
                 
         // Act
-        var result = await command.ExecuteAsync(context, new CreateTopicArgument() { Name = topicName, Description = topicDescription, EventTypeIds = eventTypeIds });
+        var result = await command.ExecuteAsync(context, new CreateTopicArgument() { Name = topicName, Description = topicDescription, EventTypeNames = eventTypeNames });
         
         // Assert
         Assert.Equal(0, result);

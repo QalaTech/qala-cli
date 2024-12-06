@@ -7,16 +7,23 @@ namespace Qala.Cli.Services;
 
 public class EventTypeService(IEventTypeGateway eventTypeGateway) : IEventTypeService
 {
-    public async Task<Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>> GetEventTypeAsync(Guid id)
+    public async Task<Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>> GetEventTypeAsync(string name)
     {
-        if (id == Guid.Empty)
+        if (string.IsNullOrWhiteSpace(name))
         {
-            return await Task.FromResult<Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>>(new GetEventTypeErrorResponse("Invalid id"));
+            return await Task.FromResult<Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>>(new GetEventTypeErrorResponse("Invalid name"));
         }
         
         try
         {
-            var eventType = await eventTypeGateway.GetEventTypeAsync(id);
+            var eventTypes = await eventTypeGateway.ListEventTypesAsync();
+            if (eventTypes == null || !eventTypes.Any())
+            {
+                return await Task.FromResult<Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>>(new GetEventTypeErrorResponse("Event type not found"));
+            }
+
+            var eventType = eventTypes?.FirstOrDefault(x => x?.Type == name) ?? null;
+
             if (eventType == null)
             {
                 return await Task.FromResult<Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>>(new GetEventTypeErrorResponse("Event type not found"));

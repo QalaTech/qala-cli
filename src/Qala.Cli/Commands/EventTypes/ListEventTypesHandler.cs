@@ -4,7 +4,7 @@ using Qala.Cli.Services.Interfaces;
 
 namespace Qala.Cli.Commands.EventTypes;
 
-public record ListEventTypesSuccessResponse(IEnumerable<Data.Models.EventType> EventTypes);
+public record ListEventTypesSuccessResponse(IEnumerable<Data.Models.EventType?> EventTypes);
 public record ListEventTypesErrorResponse(string Message);
 public record ListEventTypesRequest : IRequest<Either<ListEventTypesErrorResponse, ListEventTypesSuccessResponse>>;
 

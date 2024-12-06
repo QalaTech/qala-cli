@@ -22,10 +22,10 @@ public class CreateSubscriptionArgument : CommandSettings
     [Description("The webhook url of the subscription.")]
     public string WebhookUrl { get; set; } = string.Empty;
 
-    [CommandOption("-e|--events <EVENTS_COMMA_SEPERATED_IDS>")]
-    [Description("The comma separated list of event type ids.")]
-    [TypeConverter(typeof(CommaSeparatedGuidListConverter))]
-    public List<Guid> EventTypeIds { get; set; } = [];
+    [CommandOption("-e|--events <EVENTS_COMMA_SEPERATED_NAMES>")]
+    [Description("The comma separated list of event type names.")]
+    [TypeConverter(typeof(CommaSeparatedStringListConverter))]
+    public List<string> EventTypeNames { get; set; } = [];
 
     [CommandOption("-m|--max-attempts <MAX_DELIVERY_ATTEMPTS>")]
     [Description("The maximum delivery attempts of the subscription.")]

@@ -6,9 +6,11 @@ using Qala.Cli.Services.Interfaces;
 
 namespace Qala.Cli.Services;
 
-public class TopicService(ITopicGateway topicGateway) : ITopicService
+public class TopicService(
+    ITopicGateway topicGateway,
+    IEventTypeGateway eventTypeGateway) : ITopicService
 {
-    public async Task<Either<CreateTopicErrorResponse, CreateTopicSuccessResponse>> CreateTopicAsync(string name, string description, List<Guid> eventTypeIds)
+    public async Task<Either<CreateTopicErrorResponse, CreateTopicSuccessResponse>> CreateTopicAsync(string name, string description, List<string> eventTypeNames)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -20,13 +22,32 @@ public class TopicService(ITopicGateway topicGateway) : ITopicService
             return await Task.FromResult<Either<CreateTopicErrorResponse, CreateTopicSuccessResponse>>(new CreateTopicErrorResponse("Description is required"));
         }
 
-        if (eventTypeIds == null || eventTypeIds.Count == 0)
+        if (eventTypeNames == null || eventTypeNames.Count == 0)
         {
             return await Task.FromResult<Either<CreateTopicErrorResponse, CreateTopicSuccessResponse>>(new CreateTopicErrorResponse("Event type ids are required"));
         }
 
         try
         {
+            var eventTypes = await eventTypeGateway.ListEventTypesAsync();
+
+            if (eventTypes == null || !eventTypes.Any())
+            {
+                return await Task.FromResult<Either<CreateTopicErrorResponse, CreateTopicSuccessResponse>>(new CreateTopicErrorResponse("Event types not found"));
+            }
+
+            List<Guid> eventTypeIds = eventTypes
+                .Where(e => e?.Type != null && eventTypeNames.Contains(e.Type))
+                .Select(e => e?.Id)
+                .Where(id => id.HasValue)
+                .Select(id => id.GetValueOrDefault())
+                .ToList();
+
+            if (eventTypeIds == null || eventTypeIds.Count == 0)
+            {
+                return await Task.FromResult<Either<CreateTopicErrorResponse, CreateTopicSuccessResponse>>(new CreateTopicErrorResponse("Event types not found"));
+            }
+
             var topic = await topicGateway.CreateTopicAsync(name, description, eventTypeIds);
             if (topic == null)
             {
@@ -79,7 +100,7 @@ public class TopicService(ITopicGateway topicGateway) : ITopicService
         }
     }
 
-    public async Task<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>> UpdateTopicAsync(string name, string? newName, string? description, List<Guid>? eventTypeIds)
+    public async Task<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>> UpdateTopicAsync(string name, string? newName, string? description, List<string>? eventTypeNames)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -103,11 +124,25 @@ public class TopicService(ITopicGateway topicGateway) : ITopicService
             topic.Description = description;
         }
 
-        if (eventTypeIds != null && eventTypeIds.Count > 0 &&
-            topic.EventTypes.Select(e => e.Id).ToList() != eventTypeIds
-         )
+        if (eventTypeNames != null && eventTypeNames.Count > 0)
         {
-            topic.EventTypes = eventTypeIds.Select(id => new EventType { Id = id }).ToList();
+            var eventTypes = await eventTypeGateway.ListEventTypesAsync();
+            if (eventTypes == null || !eventTypes.Any())
+            {
+                return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicErrorResponse("Event types not found"));
+            }
+
+            if(topic.EventTypes.Select(e => e.Type).ToList() != eventTypeNames)
+            {
+                var newEventTypeIds = eventTypes
+                    .Where(e => e?.Type != null && eventTypeNames.Contains(e.Type))
+                    .Select(e => e?.Id)
+                    .Where(id => id.HasValue)
+                    .Select(id => id.GetValueOrDefault())
+                    .ToList();
+
+                topic.EventTypes = newEventTypeIds.Select(id => new EventType { Id = id }).ToList();
+            }
         }
 
         try

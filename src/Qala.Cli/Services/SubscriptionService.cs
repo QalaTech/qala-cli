@@ -6,9 +6,11 @@ using Qala.Cli.Services.Interfaces;
 
 namespace Qala.Cli.Services;
 
-public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISubscriptionService
+public class SubscriptionService(
+    ISubscriptionGateway subscriptionGateway,
+    IEventTypeGateway eventTypeGateway) : ISubscriptionService
 {
-    public async Task<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>> CreateSubscriptionAsync(string topicName, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts)
+    public async Task<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>> CreateSubscriptionAsync(string topicName, string name, string description, string webhookUrl, List<string> eventTypeNames, int maxDeliveryAttempts)
     {
         if (string.IsNullOrWhiteSpace(topicName))
         {
@@ -25,9 +27,9 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
             return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Webhook url is required"));
         }
 
-        if (eventTypeIds == null || eventTypeIds.Count == 0)
+        if (eventTypeNames == null || !eventTypeNames.Any())
         {
-            return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Event type ids are required"));
+            return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Event type names are required"));
         }
 
         if (maxDeliveryAttempts <= 0)
@@ -37,6 +39,24 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
 
         try
         {
+            var eventTypes = await eventTypeGateway.ListEventTypesAsync();
+            if (eventTypes == null || !eventTypes.Any())
+            {
+                return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Event types not found"));
+            }
+
+            List<Guid> eventTypeIds = eventTypes
+                .Where(e => e?.Type != null && eventTypeNames.Contains(e.Type))
+                .Select(e => e?.Id)
+                .Where(id => id.HasValue)
+                .Select(id => id.GetValueOrDefault())
+                .ToList();
+                
+            if (eventTypeIds == null || eventTypeIds.Count == 0)
+            {
+                return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Event types not found"));
+            }
+
             var subscription = await subscriptionGateway.CreateSubscriptionAsync(topicName, name, description, webhookUrl, eventTypeIds, maxDeliveryAttempts);
             if (subscription == null)
             {
@@ -140,6 +160,7 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
         try
         {
             var subscriptions = await subscriptionGateway.ListSubscriptionsAsync(topicName);
+
             return await Task.FromResult<Either<ListSubscriptionsErrorResponse, ListSubscriptionsSuccessResponse>>(new ListSubscriptionsSuccessResponse(subscriptions));
         }
         catch (Exception e)
@@ -176,7 +197,7 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
         }
     }
 
-    public async Task<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>> UpdateSubscriptionAsync(string topicName, Guid subscriptionId, string? name, string? description, string? webhookUrl, List<Guid>? eventTypeIds, int? maxDeliveryAttempts)
+    public async Task<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>> UpdateSubscriptionAsync(string topicName, Guid subscriptionId, string? name, string? description, string? webhookUrl, List<string>? eventTypeNames, int? maxDeliveryAttempts)
     {
         if (string.IsNullOrWhiteSpace(topicName))
         {
@@ -210,10 +231,25 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway) : ISu
             subscription.WebhookUrl = webhookUrl;
         }
 
-        if (eventTypeIds != null && 
-            subscription.EventTypes.Select(e => e.Id).ToList() != eventTypeIds)
+        if (eventTypeNames != null && eventTypeNames.Count > 0)
         {
-            subscription.EventTypes = eventTypeIds.Select(id => new EventType { Id = id }).ToList();
+            var eventTypes = await eventTypeGateway.ListEventTypesAsync();
+            if (eventTypes == null || !eventTypes.Any())
+            {
+                return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Event types not found"));
+            }
+
+            if(subscription.EventTypes.Select(e => e.Type).ToList() != eventTypeNames)
+            {
+                var newEventTypeIds = eventTypes
+                    .Where(e => e?.Type != null && eventTypeNames.Contains(e.Type))
+                    .Select(e => e?.Id)
+                    .Where(id => id.HasValue)
+                    .Select(id => id.GetValueOrDefault())
+                    .ToList();
+
+                subscription.EventTypes = newEventTypeIds.Select(id => new EventType { Id = id }).ToList();
+            }
         }
 
         if (maxDeliveryAttempts is not null)

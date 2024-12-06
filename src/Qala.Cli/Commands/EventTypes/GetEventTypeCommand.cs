@@ -16,7 +16,7 @@ public class GetEventTypeCommand(IMediator mediator, IAnsiConsole console) : Asy
             .SpinnerStyle(Style.Parse("yellow bold"))
             .StartAsync("Processing request...", async ctx => 
             {
-                return await mediator.Send(new GetEventTypeRequest(argument.Id))
+                return await mediator.Send(new GetEventTypeRequest(argument.Name))
                     .ToAsync()
                     .Match(
                         success =>
@@ -65,9 +65,9 @@ public class GetEventTypeCommand(IMediator mediator, IAnsiConsole console) : Asy
 
     public override ValidationResult Validate(CommandContext context, GetEventTypeArgument argument)
     {
-        if (argument.Id == Guid.Empty)
+        if (string.IsNullOrWhiteSpace(argument.Name))
         {
-            return ValidationResult.Error("Event type ID is required");
+            return ValidationResult.Error("Event type Name is required");
         }
 
         return ValidationResult.Success();

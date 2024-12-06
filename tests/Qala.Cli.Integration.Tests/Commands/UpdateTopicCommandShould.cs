@@ -18,9 +18,10 @@ public class UpdateTopicCommandShould(QalaCliBaseFixture fixture): IClassFixture
         var console = new TestConsole();
         var topicName = fixture.AvailableTopics.First().Name;
         var topicDescription = "updated";
+        var eventTypeNames = fixture.AvailableEventTypes.Select(et => et.Type).ToList();
         var eventTypeIds = fixture.AvailableEventTypes.Select(et => et.Id).ToList();
         var command = new UpdateTopicCommand(fixture.Mediator, console);
-        var arguments = new List<string> { "topic", "update", topicName, "-d", topicDescription, "-e", string.Join(",", eventTypeIds) };
+        var arguments = new List<string> { "topic", "update", topicName, "-d", topicDescription, "-e", string.Join(",", eventTypeNames) };
         var context = new CommandContext(arguments, _remainingArguments, "update", null);
         var expectedOutput = new TestConsole();
         expectedOutput.Status()
@@ -50,7 +51,7 @@ public class UpdateTopicCommandShould(QalaCliBaseFixture fixture): IClassFixture
             });
                 
         // Act
-        var result = await command.ExecuteAsync(context, new UpdateTopicArgument() { Name = topicName, Description = topicDescription, EventTypeIds = eventTypeIds });
+        var result = await command.ExecuteAsync(context, new UpdateTopicArgument() { Name = topicName, Description = topicDescription, EventTypeNames = eventTypeNames });
         
         // Assert
         Assert.Equal(0, result);

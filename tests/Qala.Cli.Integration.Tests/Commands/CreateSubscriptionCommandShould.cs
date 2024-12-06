@@ -21,9 +21,10 @@ public class CreateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
         var subscriptionDescription = "newly-created-subscription-description";
         var webhookUrl = "https://newly-created-subscription-webhook.com";
         var eventTypeIds = fixture.AvailableEventTypes.Select(et => et.Id).ToList();
+        var eventTypeNames = fixture.AvailableEventTypes.Select(et => et.Type).ToList();
         var maxDeliveryAttempts = 5;
         var command = new CreateSubscriptionCommand(fixture.Mediator, console);
-        var arguments = new List<string> { "subscription", "create", topicName, "-n", subscriptionName, "-d", subscriptionDescription, "-w", webhookUrl, "-e", string.Join(",", eventTypeIds), "-m", maxDeliveryAttempts.ToString() };
+        var arguments = new List<string> { "subscription", "create", topicName, "-n", subscriptionName, "-d", subscriptionDescription, "-w", webhookUrl, "-e", string.Join(",", eventTypeNames), "-m", maxDeliveryAttempts.ToString() };
         var context = new CommandContext(arguments, _remainingArguments, "create", null);
 
         var expectedOutput = new TestConsole();
@@ -56,7 +57,7 @@ public class CreateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
             });
         
         // Act
-        var result = await command.ExecuteAsync(context, new CreateSubscriptionArgument() { TopicName = topicName, Name = subscriptionName, Description = subscriptionDescription, WebhookUrl = webhookUrl, EventTypeIds = eventTypeIds, MaxDeliveryAttempts = maxDeliveryAttempts });
+        var result = await command.ExecuteAsync(context, new CreateSubscriptionArgument() { TopicName = topicName, Name = subscriptionName, Description = subscriptionDescription, WebhookUrl = webhookUrl, EventTypeNames = eventTypeNames, MaxDeliveryAttempts = maxDeliveryAttempts });
 
         // Assert
         Assert.Equal(0, result);

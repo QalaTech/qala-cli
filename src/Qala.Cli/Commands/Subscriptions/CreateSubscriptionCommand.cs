@@ -15,7 +15,7 @@ public class CreateSubscriptionCommand(IMediator mediator, IAnsiConsole console)
             .SpinnerStyle(Style.Parse("yellow bold"))
             .StartAsync("Processing request...", async ctx => 
             {
-                return await mediator.Send(new CreateSubscriptionRequest(argument.TopicName, argument.Name, argument.Description, argument.WebhookUrl, argument.EventTypeIds, argument.MaxDeliveryAttempts))
+                return await mediator.Send(new CreateSubscriptionRequest(argument.TopicName, argument.Name, argument.Description, argument.WebhookUrl, argument.EventTypeNames, argument.MaxDeliveryAttempts))
                     .ToAsync()
                     .Match(
                         success =>
@@ -75,9 +75,9 @@ public class CreateSubscriptionCommand(IMediator mediator, IAnsiConsole console)
             return ValidationResult.Error("Webhook URL is required.");
         }
 
-        if (argument.EventTypeIds.Count == 0)
+        if (argument.EventTypeNames.Count == 0)
         {
-            return ValidationResult.Error("At least one event type id is required.");
+            return ValidationResult.Error("At least one event type name is required.");
         }
 
         return ValidationResult.Success();

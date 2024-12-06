@@ -5,7 +5,7 @@ using Qala.Cli.Services.Interfaces;
 
 namespace Qala.Cli.Commands.Topics;
 
-public record ListTopicsSuccessResponse(IEnumerable<Topic> Topics);
+public record ListTopicsSuccessResponse(IEnumerable<Topic?> Topics);
 public record ListTopicsErrorResponse(string Message);
 public record ListTopicRequest : IRequest<Either<ListTopicsErrorResponse, ListTopicsSuccessResponse>>;
 
