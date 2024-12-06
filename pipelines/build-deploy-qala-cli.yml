@@ -1,4 +1,6 @@
 # Build and push an image to GitHub Releases and respective hub repositories
+name: $(Date:yyyy.MMdd).$(Rev:r)
+
 resources:
   repositories:
     - repository: self
@@ -36,10 +38,46 @@ variables:
   releaseVersion: ''
   releaseVersionMsi: ''
 
+parameters:
+- name: releaseNotes
+  displayName: 'Release Notes'
+  type: string
+  default: 'No release notes provided.'
+  required: false
+
 pool:
   vmImage: windows-latest
 
 stages:
+# Stage PR Validation
+- stage: PRValidation
+  displayName: "Pull Request Validation"
+  condition: and(ne(variables['Build.Reason'], 'PullRequest'), in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/development'))
+  jobs:
+    # Install SDK Using global.json
+    - task: UseDotNet@2
+      displayName: 'Install SDK Using global.json'
+      inputs:
+        packageType: 'sdk'
+        useGlobalJson: true
+        workingDirectory: $(Pipeline.Workspace)/s
+
+    # Restore NuGet Packages
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore NuGet Packages'
+      condition: succeeded()
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+
+    # Run tests
+    - task: DotNetCoreCLI@2
+      displayName: 'Run tests'
+      inputs:
+        command: 'test'
+        projects: '**/*tests/*.csproj'
+        arguments: '--configuration $(BuildConfiguration)'
+
 # Stage Alpha
 # Only run for development branch
 - stage: Alpha
@@ -50,9 +88,27 @@ stages:
   - job: BuildAndPublishAlpha
     displayName: "Build and Publish Alpha Executables and Installers"
     steps:
+
+    # Install SDK Using global.json
+    - task: UseDotNet@2
+      displayName: 'Install SDK Using global.json'
+      inputs:
+        packageType: 'sdk'
+        useGlobalJson: true
+        workingDirectory: $(Pipeline.Workspace)/s
+
+    # Restore NuGet Packages
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore NuGet Packages'
+      condition: succeeded()
+      inputs:
+        command: 'restore'
+        projects: '**/*.csproj'
+
     # Set Alpha Version Number
     - task: PowerShell@2
       displayName: 'Set Alpha Version Number'
+      condition: succeeded()
       inputs:
         targetType: 'inline'
         script: |
@@ -79,31 +135,6 @@ stages:
           $alphaVersionMsi = "$major.$minor.$patch-alpha"
           Write-Host "##vso[task.setvariable variable=alphaVersionMsi]$alphaVersionMsi"
           Write-Host "Alpha Version for MSI: $alphaVersionMsi"
-
-    # Install SDK Using global.json
-    - task: UseDotNet@2
-      displayName: 'Install SDK Using global.json'
-      condition: succeeded()
-      inputs:
-        packageType: 'sdk'
-        useGlobalJson: true
-        workingDirectory: $(Pipeline.Workspace)/s
-
-    # Restore NuGet Packages
-    - task: DotNetCoreCLI@2
-      displayName: 'Restore NuGet Packages'
-      condition: succeeded()
-      inputs:
-        command: 'restore'
-        projects: '**/*.csproj'
-
-    # Run tests
-    - task: DotNetCoreCLI@2
-      displayName: 'Run tests'
-      inputs:
-        command: 'test'
-        projects: '**/*tests/*.csproj'
-        arguments: '--configuration $(BuildConfiguration)'
 
     # Build and publish Alpha executables
     - task: PowerShell@2
@@ -179,6 +210,8 @@ stages:
         target: '$(Build.SourceBranchName)'
         tagSource: 'userSpecifiedTag'
         tag: "$(alphaVersion)"
+        releaseNotesSource: 'input'
+        releaseNotes: '$(releaseNotes)'
         isPreRelease: true
         title: 'Alpha Release $(alphaVersion)'   
         assets: |
