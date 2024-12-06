@@ -7,6 +7,12 @@ resources:
 
 trigger: none
 
+parameter:
+- name: releaseNotes
+  displayName: 'Release Notes'
+  type: string
+  default: 'No release notes provided.'
+
 variables:
   pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj'
   major: 0
@@ -28,9 +34,8 @@ stages:
 # Stage Alpha
 # Only run for development branch
 - stage: Alpha
-  condition: in(variables['Build.SourceBranch'], 'refs/heads/development')
+  condition: in(variables['Build.SourceBranch'], 'refs/heads/development', 'refs/heads/master')
   displayName: "Deploy to Alpha"
-  environment: Dev
   jobs:
   # Build and execute tests
   - job: BuildAndExecuteTests
@@ -200,7 +205,7 @@ stages:
   condition: in(variables['Build.SourceBranch'], 'refs/heads/master')
   dependsOn: Alpha
   displayName: "Deploy to Final Release"
-  environment: Prod
+  trigger: manual
   jobs:
   # Build and execute tests
   - job: BuildAndExecuteTests
