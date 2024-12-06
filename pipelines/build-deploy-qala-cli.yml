@@ -202,8 +202,7 @@ stages:
 # Stage Final Release
 # Only run for master branch
 - stage: Release
-  condition: in(variables['Build.SourceBranch'], 'refs/heads/master')
-  dependsOn: Alpha
+  condition: and(succeeded(), in(variables['Build.SourceBranch'], 'refs/heads/master'))
   displayName: "Deploy to Final Release"
   trigger: manual
   jobs:
