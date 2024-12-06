@@ -68,7 +68,8 @@ stages:
 
   # Build and Publish Alpha Executables
   - job: BuildAndPublishAlpha
-    displayName: "Build and Publish Alpha Executables"
+    displayName: "Build and Publish Alpha Executables and Installers"
+    dependsOn: BuildAndExecuteTests
     steps:
     # Set Version Number
     - task: PowerShell@2
@@ -129,11 +130,7 @@ stages:
             Write-Host "Publishing Alpha version for runtime: $rid"
             dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/alpha/$rid"
           }
- 
-  # Generate Alpha Installers
-  - job: GenerateInstallersAlpha
-    displayName: "Generate Alpha Installers"
-    steps:
+
     # Install WiX Toolset and UI extensions
     - task: PowerShell@2
       displayName: 'Install WiX Toolset and UI extensions'
@@ -180,6 +177,7 @@ stages:
   # Generate Github Alpha Release
   - job: GitHubAlphaRelease
     displayName: "Generate Github Alpha Release"
+    dependsOn: BuildAndPublishAlpha
     steps:
     # Create GitHub Alpha Release
     - task: GithubRelease@1 
@@ -202,7 +200,7 @@ stages:
 # Stage Final Release
 # Only run for master branch
 - stage: Release
-  condition: and(succeeded(), in(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: in(variables['Build.SourceBranch'], 'refs/heads/master')
   displayName: "Deploy to Final Release"
   trigger: manual
   jobs:
@@ -237,7 +235,8 @@ stages:
 
   # Build and Publish Release Executables
   - job: BuildAndPublishRelease
-    displayName: "Build and Publish Release Executables"
+    displayName: "Build and Publish Release Executables and Installers"
+    dependsOn: BuildAndExecuteTests
     steps:
       # Build and publish Final Release executables
       - task: PowerShell@2
@@ -260,10 +259,6 @@ stages:
               dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/release/$rid"
             }
 
-  # Generate Final Release Installers
-  - job: GenerateInstallersRelease
-    displayName: "Generate Release Installers"
-    steps:
       # Install WiX Toolset and UI extensions
       - task: PowerShell@2
         displayName: 'Install WiX Toolset and UI extensions'
@@ -310,6 +305,7 @@ stages:
   # Generate Github Final Release
   - job: GitHubRelease
     displayName: "Generate Github Final Release"
+    dependsOn: BuildAndPublishRelease
     steps:
       # Create GitHub Final Release
       - task: GithubRelease@1 
