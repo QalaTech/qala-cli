@@ -38,8 +38,8 @@ stages:
   displayName: "Deploy to Alpha"
   jobs:
   # Build and execute tests
-  - job: BuildAndExecuteTests
-    displayName: "Build and execute tests"
+  - job: BuildTestPublishAlpha
+    displayName: "Build, test and publish alpha version"
     steps:
     # Install SDK Using global.json
     - task: UseDotNet@2
@@ -66,11 +66,6 @@ stages:
         projects: '**/*tests/*.csproj'
         arguments: '--configuration $(BuildConfiguration)'
 
-  # Build and Publish Alpha Executables
-  - job: BuildAndPublishAlpha
-    displayName: "Build and Publish Alpha Executables and Installers"
-    dependsOn: BuildAndExecuteTests
-    steps:
     # Set Version Number
     - task: PowerShell@2
       displayName: 'Set Alpha Version Number'
@@ -174,11 +169,6 @@ stages:
             Rename-Item -Path "$(Pipeline.Workspace)/alpha/$rid/qala.exe" -NewName "qala-$rid.exe"
           }
 
-  # Generate Github Alpha Release
-  - job: GitHubAlphaRelease
-    displayName: "Generate Github Alpha Release"
-    dependsOn: BuildAndPublishAlpha
-    steps:
     # Create GitHub Alpha Release
     - task: GithubRelease@1 
       displayName: 'Create GitHub Alpha Release'
@@ -201,11 +191,11 @@ stages:
 # Only run for master branch
 - stage: Release
   condition: in(variables['Build.SourceBranch'], 'refs/heads/master')
-  displayName: "Deploy to Final Release"
+  displayName: "Build, test and publish final release version"
   trigger: manual
   jobs:
   # Build and execute tests
-  - job: BuildAndExecuteTests
+  - job: BuildTestPublish
     displayName: "Build and execute tests"
     steps:
       # Install SDK Using global.json
@@ -233,11 +223,6 @@ stages:
           projects: '**/*tests/*.csproj'
           arguments: '--configuration $(BuildConfiguration)'
 
-  # Build and Publish Release Executables
-  - job: BuildAndPublishRelease
-    displayName: "Build and Publish Release Executables and Installers"
-    dependsOn: BuildAndExecuteTests
-    steps:
       # Build and publish Final Release executables
       - task: PowerShell@2
         displayName: 'Build and publish Final Release executables'
@@ -302,11 +287,6 @@ stages:
               Rename-Item -Path "$(Pipeline.Workspace)/release/$rid/qala.exe" -NewName "qala-$rid.exe"
             }
 
-  # Generate Github Final Release
-  - job: GitHubRelease
-    displayName: "Generate Github Final Release"
-    dependsOn: BuildAndPublishRelease
-    steps:
       # Create GitHub Final Release
       - task: GithubRelease@1 
         displayName: 'Create GitHub Final Release'
