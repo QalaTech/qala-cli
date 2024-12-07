@@ -18,8 +18,8 @@ public class GetSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClassFi
         var console = new TestConsole(); 
         var command = new GetSubscriptionCommand(fixture.Mediator, console);
         var topicName = fixture.AvailableSubscriptions.First().TopicName;
-        var subscriptionId = fixture.AvailableSubscriptions.First().Id;
-        var arguments = new List<string> { "subscriptions", "inspect", "-t", topicName, "-s", subscriptionId.ToString() };
+        var subscriptionName = fixture.AvailableSubscriptions.First().Name;
+        var arguments = new List<string> { "subscriptions", "inspect", "-t", topicName, "-s", subscriptionName };
         var context = new CommandContext(arguments, _remainingArguments, "name", null);
         var expectedOutput = new TestConsole();
         expectedOutput.Status()
@@ -57,7 +57,7 @@ public class GetSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClassFi
             });
         
         // Act
-        var result = await command.ExecuteAsync(context, new GetSubscriptionArgument() { TopicName = topicName, SubscriptionId = subscriptionId });
+        var result = await command.ExecuteAsync(context, new GetSubscriptionArgument() { TopicName = topicName, SubscriptionName = subscriptionName });
 
         // Assert
         Assert.Equal(0, result);
@@ -90,7 +90,7 @@ public class GetSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClassFi
             });
         
         // Act
-        var result = await command.ExecuteAsync(context, new GetSubscriptionArgument() { TopicName = string.Empty, SubscriptionId = Guid.Empty });
+        var result = await command.ExecuteAsync(context, new GetSubscriptionArgument() { TopicName = string.Empty, SubscriptionName = string.Empty });
 
         // Assert
         Assert.NotEqual(0, result);

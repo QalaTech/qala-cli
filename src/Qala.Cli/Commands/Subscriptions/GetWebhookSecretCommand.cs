@@ -15,7 +15,7 @@ public class GetWebhookSecretCommand(IMediator mediator, IAnsiConsole console) :
             .SpinnerStyle(Style.Parse("yellow bold"))
             .StartAsync("Processing request...", async ctx => 
             {
-                return await mediator.Send(new GetWebhookSecretRequest(settings.TopicName, settings.SubscriptionId))
+                return await mediator.Send(new GetWebhookSecretRequest(settings.TopicName, settings.SubscriptionName))
                     .ToAsync()
                     .Match(
                         success =>
@@ -42,9 +42,9 @@ public class GetWebhookSecretCommand(IMediator mediator, IAnsiConsole console) :
             return ValidationResult.Error("Topic name is required.");
         }
 
-        if (argument.SubscriptionId == Guid.Empty)
+        if (argument.SubscriptionName == string.Empty)
         {
-            return ValidationResult.Error("Subscription id is required.");
+            return ValidationResult.Error("Subscription name is required.");
         }
 
         return ValidationResult.Success();

@@ -91,27 +91,27 @@ app.Configure(config =>
             .WithAlias("ls");
         s.AddCommand<GetSubscriptionCommand>("inspect")
             .WithDescription("this command retrieves the subscription with the specified ID.")
-            .WithExample("qala subscriptions i -t <TOPIC_NAME> -s <SUBSCRIPTION_ID>")
+            .WithExample("qala subscriptions i -t <TOPIC_NAME> -s <SUBSCRIPTION_NAME>")
             .WithAlias("i");
         s.AddCommand<CreateSubscriptionCommand>("create")
             .WithDescription("this command creates a new subscription for the Qala CLI.")
             .WithExample("qala sub create -n <SUBSCRIPTION_NAME> -t <TOPIC_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>");
         s.AddCommand<UpdateSubscriptionCommand>("update")
             .WithDescription("this command updates an existing subscription for the Qala CLI.")
-            .WithExample("qala sub update <SUBSCRIPTION_ID> -t <TOPIC_NAME> -n <SUBSCRIPTION_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>");
+            .WithExample("qala sub update <SUBSCRIPTION_NAME> -t <TOPIC_NAME> -n <SUBSCRIPTION_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>");
         s.AddCommand<DeleteSubscriptionCommand>("delete")
             .WithDescription("this command deletes the subscription with the specified ID.")
-            .WithExample("qala sub delete -t <TOPIC_NAME> -s <SUBSCRIPTION_ID>");
+            .WithExample("qala sub delete -t <TOPIC_NAME> -s <SUBSCRIPTION_NAME>");
         s.AddBranch("secret", ws => 
         {
             ws.SetDescription("this command enables you to inspect and rotate the webhook secret for a subscription.");
             ws.AddCommand<GetWebhookSecretCommand>("inspect")
                 .WithDescription("this command retrieves the webhook secret for the subscription with the specified ID.")
-                .WithExample("qala sub secret i -t <TOPIC_NAME> -s <SUBSCRIPTION_ID>")
+                .WithExample("qala sub secret i -t <TOPIC_NAME> -s <SUBSCRIPTION_NAME>")
                 .WithAlias("i");
             ws.AddCommand<RotateWebhookSecretCommand>("rotate")
                 .WithDescription("this command rotates the webhook secret for the subscription with the specified ID.")
-                .WithExample("qala sub secret rotate -t <TOPIC_NAME> -s <SUBSCRIPTION_ID>")
+                .WithExample("qala sub secret rotate -t <TOPIC_NAME> -s <SUBSCRIPTION_NAME>")
                 .WithAlias("r");
         });
     })

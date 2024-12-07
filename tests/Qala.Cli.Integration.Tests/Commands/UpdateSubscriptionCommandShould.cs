@@ -18,14 +18,15 @@ public class UpdateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
         var console = new TestConsole();
         var topicName = "NewlyUpdatedTestTopic";
         var subscriptionId = fixture.AvailableSubscriptions.First().Id;
-        var subscriptionName = "NewlyUpdatedTestSubscription";
+        var subscriptionName = fixture.AvailableSubscriptions.First().Name;
+        var subscriptionNewName = "NewlyUpdatedTestSubscription";
         var subscriptionDescription = "updated";
         var webhookUrl = "https://newly-updated-subscription-webhook.com";
         var eventTypeNames = fixture.AvailableEventTypes.Select(x => x.Type).ToList();
         var eventTypeIds = fixture.AvailableEventTypes.Select(x => x.Id).ToList();
         var maxDeliveryAttempts = 5;
         var command = new UpdateSubscriptionCommand(fixture.Mediator, console);
-        var arguments = new List<string> { "subscription", "update", subscriptionId.ToString(), "-t", topicName, "-n", subscriptionName, "-d", subscriptionDescription, "-w", webhookUrl, "-e", string.Join(",", eventTypeNames), "-m", maxDeliveryAttempts.ToString() };
+        var arguments = new List<string> { "subscription", "update",subscriptionName, "-t", topicName, "-n", subscriptionNewName, "-d", subscriptionDescription, "-w", webhookUrl, "-e", string.Join(",", eventTypeNames), "-m", maxDeliveryAttempts.ToString() };
         var context = new CommandContext(arguments, _remainingArguments, "update", null);
         var expectedOutput = new TestConsole();
         expectedOutput.Status()
@@ -47,7 +48,7 @@ public class UpdateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
                     )
                     .AddRow(
                         new Text(subscriptionId.ToString()),
-                        new Text(subscriptionName),
+                        new Text(subscriptionNewName),
                         new Text(subscriptionDescription),
                         new Text(webhookUrl),
                         new Text(string.Join(", ", eventTypeNames)),
@@ -57,7 +58,7 @@ public class UpdateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
             });
         
         // Act
-        var result = await command.ExecuteAsync(context, new UpdateSubscriptionArgument() { TopicName = topicName, SubscriptionId = subscriptionId, Name = subscriptionName, Description = subscriptionDescription, WebhookUrl = webhookUrl, EventTypeNames = eventTypeNames, MaxDeliveryAttempts = maxDeliveryAttempts });
+        var result = await command.ExecuteAsync(context, new UpdateSubscriptionArgument() { TopicName = topicName, SubscriptionName = subscriptionName, NewName = subscriptionNewName, Description = subscriptionDescription, WebhookUrl = webhookUrl, EventTypeNames = eventTypeNames, MaxDeliveryAttempts = maxDeliveryAttempts });
 
         // Assert
         Assert.Equal(0, result);

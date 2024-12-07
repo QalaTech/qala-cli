@@ -18,7 +18,7 @@ public class GetWebhookSecretCommandShould(QalaCliBaseFixture fixture) : IClassF
         var console = new TestConsole(); 
         var command = new GetWebhookSecretCommand(fixture.Mediator, console);
         var subscription = fixture.AvailableSubscriptions.First();
-        var arguments = new List<string> { "subscriptions", "secret", "i", "-t", subscription.TopicName, "-s", subscription.Id.ToString() };
+        var arguments = new List<string> { "subscriptions", "secret", "i", "-t", subscription.TopicName, "-s", subscription.Name };
         var context = new CommandContext(arguments, _remainingArguments, "get-webhook-secret", null);
         var expectedOutput = new TestConsole();
         expectedOutput.Status()
@@ -32,7 +32,7 @@ public class GetWebhookSecretCommandShould(QalaCliBaseFixture fixture) : IClassF
             });
         
         // Act
-        var result = await command.ExecuteAsync(context, new GetWebhookSecretArgument() { TopicName = subscription.TopicName, SubscriptionId = subscription.Id });
+        var result = await command.ExecuteAsync(context, new GetWebhookSecretArgument() { TopicName = subscription.TopicName, SubscriptionName = subscription.Name });
 
         // Assert
         Assert.Equal(0, result);
@@ -51,7 +51,7 @@ public class GetWebhookSecretCommandShould(QalaCliBaseFixture fixture) : IClassF
         // Arrange
         var console = new TestConsole(); 
         var command = new GetWebhookSecretCommand(fixture.Mediator, console);
-        var arguments = new List<string> { "subscriptions", "secret", "i", "-t", "name", "-s", Guid.Empty.ToString() };
+        var arguments = new List<string> { "subscriptions", "secret", "i", "-t", "name", "-s", string.Empty };
         var context = new CommandContext(arguments, _remainingArguments, "get-webhook-secret", null);
         var expectedOutput = new TestConsole();
         expectedOutput.Status()
@@ -61,11 +61,11 @@ public class GetWebhookSecretCommandShould(QalaCliBaseFixture fixture) : IClassF
                     .Start("Processing request...", ctx => 
                     {
                 expectedOutput.MarkupLine("[red bold]Error during Webhook secret retrieval:[/]");
-                expectedOutput.MarkupLine("Subscription id is required");
+                expectedOutput.MarkupLine("Subscription name is required");
             });
         
         // Act
-        var result = await command.ExecuteAsync(context, new GetWebhookSecretArgument() { TopicName = "name", SubscriptionId = Guid.Empty });
+        var result = await command.ExecuteAsync(context, new GetWebhookSecretArgument() { TopicName = "name", SubscriptionName = string.Empty });
 
         // Assert
         Assert.NotEqual(0, result);

@@ -18,7 +18,7 @@ public class RotateWebhookSecretCommandShould(QalaCliBaseFixture fixture) : ICla
         var console = new TestConsole(); 
         var command = new RotateWebhookSecretCommand(fixture.Mediator, console);
         var subscription = fixture.AvailableSubscriptions.First();
-        var arguments = new List<string> { "subscriptions", "secret", "r", "-t", subscription.TopicName, "-s", subscription.Id.ToString() };
+        var arguments = new List<string> { "subscriptions", "secret", "r", "-t", subscription.TopicName, "-s", subscription.Name };
         var context = new CommandContext(arguments, _remainingArguments, "rotate-webhook-secret", null);
         var expectedOutput = new TestConsole();
         expectedOutput.Status()
@@ -32,7 +32,7 @@ public class RotateWebhookSecretCommandShould(QalaCliBaseFixture fixture) : ICla
             });
         
         // Act
-        var result = await command.ExecuteAsync(context, new RotateWebhookSecretArgument() { TopicName = subscription.TopicName, SubscriptionId = subscription.Id });
+        var result = await command.ExecuteAsync(context, new RotateWebhookSecretArgument() { TopicName = subscription.TopicName, SubscriptionName = subscription.Name });
 
         // Assert
         Assert.Equal(0, result);
@@ -65,7 +65,7 @@ public class RotateWebhookSecretCommandShould(QalaCliBaseFixture fixture) : ICla
             });
         
         // Act
-        var result = await command.ExecuteAsync(context, new RotateWebhookSecretArgument() { TopicName = "name", SubscriptionId = Guid.Empty });
+        var result = await command.ExecuteAsync(context, new RotateWebhookSecretArgument() { TopicName = "name", SubscriptionName = string.Empty });
 
         // Assert
         Assert.NotEqual(0, result);

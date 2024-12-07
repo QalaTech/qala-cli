@@ -17,9 +17,9 @@ public class DeleteSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
         // Arrange
         var console = new TestConsole();
         var topicName = fixture.AvailableSubscriptions.First().TopicName;
-        var subscriptionId = fixture.AvailableSubscriptions.First().Id;
+        var subscriptionName = fixture.AvailableSubscriptions.First().Name;
         var command = new DeleteSubscriptionCommand(fixture.Mediator, console);
-        var arguments = new List<string> { "subscription", "delete", "-t", topicName, "-s", subscriptionId.ToString() };
+        var arguments = new List<string> { "subscription", "delete", "-t", topicName, "-s", subscriptionName };
         var context = new CommandContext(arguments, _remainingArguments, "delete", null);
         var expectedOutput = new TestConsole();
         expectedOutput.Status()
@@ -32,7 +32,7 @@ public class DeleteSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
             });
                 
         // Act
-        var result = await command.ExecuteAsync(context, new DeleteSubscriptionArgument() { TopicName = topicName, SubscriptionId = subscriptionId });
+        var result = await command.ExecuteAsync(context, new DeleteSubscriptionArgument() { TopicName = topicName, SubscriptionName = subscriptionName });
         
         // Assert
         Assert.Equal(0, result);

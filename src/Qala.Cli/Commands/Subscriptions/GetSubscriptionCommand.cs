@@ -15,7 +15,7 @@ public class GetSubscriptionCommand(IMediator mediator, IAnsiConsole console) : 
             .SpinnerStyle(Style.Parse("yellow bold"))
             .StartAsync("Processing request...", async ctx => 
             {
-                return await mediator.Send(new GetSubscriptionRequest(arguments.TopicName, arguments.SubscriptionId))
+                return await mediator.Send(new GetSubscriptionRequest(arguments.TopicName, arguments.SubscriptionName))
                     .ToAsync()
                     .Match(
                         success => 
@@ -66,9 +66,9 @@ public class GetSubscriptionCommand(IMediator mediator, IAnsiConsole console) : 
             return ValidationResult.Error("Topic name is required.");
         }
 
-        if (arguments.SubscriptionId == Guid.Empty)
+        if (arguments.SubscriptionName == string.Empty)
         {
-            return ValidationResult.Error("Subscription id is required.");
+            return ValidationResult.Error("Subscription name is required.");
         }
 
         return ValidationResult.Success();

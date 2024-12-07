@@ -6,17 +6,17 @@ namespace Qala.Cli.Commands.Subscriptions;
 
 public class UpdateSubscriptionArgument : CommandSettings
 {
-    [CommandArgument(0, "<SUBSCRIPTION_ID>")]
-    [Description("The id of the subscription.")]
-    public Guid SubscriptionId { get; set; } = Guid.Empty;
+    [CommandArgument(0, "<SUBSCRIPTION_NAME>")]
+    [Description("The name of the subscription.")]
+    public string SubscriptionName { get; set; } = string.Empty;
 
     [CommandOption("-t|--topic <TOPIC_NAME>")]
     [Description("The name of the topic.")]
     public string TopicName { get; set; } = string.Empty;
 
-    [CommandOption("-n|--name <NAME>")]
-    [Description("The name of the subscription.")]
-    public string Name { get; set; } = string.Empty;
+    [CommandOption("-n|--name <NEW_NAME>")]
+    [Description("The new name of the subscription.")]
+    public string NewName { get; set; } = string.Empty;
 
     [CommandOption("-d|--description <DESCRIPTION>")]
     [Description("The description of the subscription.")]
