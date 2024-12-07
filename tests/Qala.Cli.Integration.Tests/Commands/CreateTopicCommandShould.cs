@@ -45,7 +45,7 @@ public class CreateTopicCommandShould(QalaCliBaseFixture fixture) : IClassFixtur
                         new Text(topicName),
                         new Text(topicDescription),
                         new Text("Provisioning"),
-                        new Text(string.Join(", ", eventTypeIds.Select(et => et.ToString())))
+                        new Text(string.Join(", ", eventTypeNames))
                     )
                 );
             });

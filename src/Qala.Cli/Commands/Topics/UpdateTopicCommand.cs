@@ -35,7 +35,7 @@ public class UpdateTopicCommand(IMediator mediator, IAnsiConsole console) : Asyn
                                     new Text(success.Topic.Name),
                                     new Text(success.Topic.Description),
                                     new Text(success.Topic.ProvisioningState),
-                                    new Text(string.Join(", ", success.Topic.EventTypes.Select(et => et.Id.ToString())))
+                                    new Text(string.Join(", ", success.Topic.EventTypes.Select(et => et.Type)))
                                 )
                             );
 

@@ -45,7 +45,7 @@ public class UpdateTopicCommandShould(QalaCliBaseFixture fixture): IClassFixture
                         new Text(topicName),
                         new Text(topicDescription),
                         new Text(fixture.AvailableTopics.First().ProvisioningState),
-                        new Text(string.Join(", ", eventTypeIds.Select(et => et.ToString())))
+                        new Text(string.Join(", ",eventTypeNames))
                     )
                 );
             });

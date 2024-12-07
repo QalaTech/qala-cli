@@ -36,7 +36,7 @@ public class UpdateSubscriptionCommand(IMediator mediator, IAnsiConsole console)
                                     new Text(success.Subscription.Name),
                                     new Text(success.Subscription.Description),
                                     new Text(success.Subscription.WebhookUrl),
-                                    new Text(string.Join(", ", success.Subscription.EventTypes.Select(et => et.Id.ToString()))),
+                                    new Text(string.Join(", ", success.Subscription.EventTypes.Select(et => et.Type))),
                                     new Text(success.Subscription.MaxDeliveryAttempts.ToString())
                                 )
                             );

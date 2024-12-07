@@ -50,7 +50,7 @@ public class UpdateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
                         new Text(subscriptionName),
                         new Text(subscriptionDescription),
                         new Text(webhookUrl),
-                        new Text(string.Join(", ", eventTypeIds.Select(et => et.ToString()))),
+                        new Text(string.Join(", ", eventTypeNames)),
                         new Text(maxDeliveryAttempts.ToString())
                     )
                 );
