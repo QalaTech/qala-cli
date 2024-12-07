@@ -33,6 +33,11 @@ public class ListSubscriptionsCommand(IMediator mediator, IAnsiConsole console) 
 
                             foreach (var subscription in success.Subscriptions)
                             {
+                                if (subscription == null)
+                                {
+                                    continue;
+                                }
+                                
                                 grid.AddRow(
                                     new Text(subscription.Id.ToString()),
                                     new Text(subscription.Name),

@@ -33,6 +33,11 @@ public class ListTopicsCommand(IMediator mediator, IAnsiConsole console) : Async
 
                             foreach (var topic in success.Topics)
                             {
+                                if (topic == null)
+                                {
+                                    continue;
+                                }
+                                
                                 grid.AddRow(
                                     new Text(topic.Id.ToString()),
                                     new Text(topic.Name),

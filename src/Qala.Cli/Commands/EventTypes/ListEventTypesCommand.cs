@@ -32,6 +32,11 @@ public class ListEventTypesCommand(IMediator mediator, IAnsiConsole console) : A
 
                                 foreach (var eventType in success.EventTypes)
                                 {
+                                    if (eventType == null)
+                                    {
+                                        continue;
+                                    }
+                                    
                                     grid.AddRow(
                                         new Text(eventType.Id.ToString()),
                                         new Text(eventType.Type),
