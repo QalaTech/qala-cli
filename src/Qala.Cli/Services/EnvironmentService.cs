@@ -9,22 +9,22 @@ namespace Qala.Cli.Services;
 
 public class EnvironmentService(
     IEnvironmentGateway environmentGateway,
-    IOrganizationGateway organizationGateway, 
+    IOrganizationGateway organizationGateway,
     ILocalEnvironments localEnvironments) : IEnvironmentService
 {
-    public async Task<Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>> CreateEnvironmentAsync(string name, string region, string type)
+    public async Task<Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>> CreateEnvironmentAsync(string name, string region, string type, bool disableSchemaValidation)
     {
-        if(string.IsNullOrEmpty(name))
+        if (string.IsNullOrEmpty(name))
         {
             return await Task.FromResult<Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>>(new CreateEnvironmentErrorResponse("Name is required"));
         }
 
-        if(string.IsNullOrEmpty(region))
+        if (string.IsNullOrEmpty(region))
         {
             return await Task.FromResult<Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>>(new CreateEnvironmentErrorResponse("Region is required"));
         }
 
-        if(string.IsNullOrEmpty(type))
+        if (string.IsNullOrEmpty(type))
         {
             return await Task.FromResult<Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>>(new CreateEnvironmentErrorResponse("Type is required"));
         }
@@ -35,12 +35,13 @@ public class EnvironmentService(
             {
                 Name = name,
                 Region = region,
-                EnvironmentType = type
+                EnvironmentType = type,
+                IsSchemaValidationEnabled = !disableSchemaValidation
             };
 
             var environmentCreated = await environmentGateway.CreateEnvironmentAsync(newEnvironment);
 
-            if(environmentCreated is null)
+            if (environmentCreated is null)
             {
                 return await Task.FromResult<Either<CreateEnvironmentErrorResponse, CreateEnvironmentSuccessResponse>>(new CreateEnvironmentErrorResponse("Failed to create environment"));
             }
@@ -56,7 +57,7 @@ public class EnvironmentService(
     public async Task<Either<GetEnvironmentErrorResponse, GetEnvironemntSuccessResponse>> GetEnvironmentAsync()
     {
         var environmentId = localEnvironments.GetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID]);
-        if(string.IsNullOrEmpty(environmentId))
+        if (string.IsNullOrEmpty(environmentId))
         {
             return await Task.FromResult<Either<GetEnvironmentErrorResponse, GetEnvironemntSuccessResponse>>(new GetEnvironmentErrorResponse("No environment was set found"));
         }
@@ -70,7 +71,7 @@ public class EnvironmentService(
             }
 
             var environment = organization.Environments.FirstOrDefault(e => e.Id == new Guid(environmentId));
-            if(environment is null)
+            if (environment is null)
             {
                 return await Task.FromResult<Either<GetEnvironmentErrorResponse, GetEnvironemntSuccessResponse>>(new GetEnvironmentErrorResponse("Environment not found"));
             }
@@ -93,7 +94,7 @@ public class EnvironmentService(
                 return await Task.FromResult<Either<SetEnvironmentErrorResponse, SetEnvironmentSuccessResponse>>(new SetEnvironmentErrorResponse("Organization not found"));
             }
 
-            if(!organization.Environments.Any(e => e.Id == environmentId))
+            if (!organization.Environments.Any(e => e.Id == environmentId))
             {
                 return await Task.FromResult<Either<SetEnvironmentErrorResponse, SetEnvironmentSuccessResponse>>(new SetEnvironmentErrorResponse("Environment not valid"));
             }

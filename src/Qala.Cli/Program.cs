@@ -36,7 +36,7 @@ app.Configure(config =>
     {
         env.AddCommand<CreateEnvironmentCommand>("create")
             .WithDescription("this command creates a new environment for the Qala CLI.")
-            .WithExample("environment create -n <NAME> -r <REGION> -t <TYPE>");
+            .WithExample("environment create -n <NAME> -r <REGION> -t <TYPE> --disableSchemaValidation");
         env.AddCommand<GetEnvironmentCommand>("current")
             .WithDescription("this command retrieves the current environment for the Qala CLI.")
             .WithExample("environment current");
@@ -56,27 +56,27 @@ app.Configure(config =>
             .WithDescription("this command retrieves the event type with the specified ID.")
             .WithExample("events inspect <EVENT_TYPE_ID>")
             .WithAlias("i");
-    }) 
-    .WithAlias("ev");  
-
-     config.AddBranch("topics", t =>
-    {
-        t.AddCommand<ListTopicsCommand>("list")
-            .WithDescription("this command lists all the topics available in your environment.")
-            .WithExample("topics ls")
-            .WithAlias("ls");
-        t.AddCommand<GetTopicCommand>("name")
-            .WithDescription("this command retrieves the topic with the specified NAME.")
-            .WithExample("topics inspect <NAME>")
-            .WithAlias("n");
-        t.AddCommand<CreateTopicCommand>("create")
-            .WithDescription("this command creates a new topic for the Qala CLI.")
-            .WithExample("topics create -n <NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS>");
-        t.AddCommand<UpdateTopicCommand>("update")
-            .WithDescription("this command updates an existing topic for the Qala CLI.")
-            .WithExample("topics update <NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS>");
     })
-    .WithAlias("tp");
+    .WithAlias("ev");
+
+    config.AddBranch("topics", t =>
+   {
+       t.AddCommand<ListTopicsCommand>("list")
+           .WithDescription("this command lists all the topics available in your environment.")
+           .WithExample("topics ls")
+           .WithAlias("ls");
+       t.AddCommand<GetTopicCommand>("name")
+           .WithDescription("this command retrieves the topic with the specified NAME.")
+           .WithExample("topics inspect <NAME>")
+           .WithAlias("n");
+       t.AddCommand<CreateTopicCommand>("create")
+           .WithDescription("this command creates a new topic for the Qala CLI.")
+           .WithExample("topics create -n <NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS>");
+       t.AddCommand<UpdateTopicCommand>("update")
+           .WithDescription("this command updates an existing topic for the Qala CLI.")
+           .WithExample("topics update <NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS>");
+   })
+   .WithAlias("tp");
 
     config.AddBranch("subscriptions", s =>
     {
@@ -97,7 +97,7 @@ app.Configure(config =>
         s.AddCommand<DeleteSubscriptionCommand>("delete")
             .WithDescription("this command deletes the subscription with the specified ID.")
             .WithExample("qala sub delete -t <TOPIC_NAME> -s <SUBSCRIPTION_ID>");
-        s.AddBranch("secret", ws => 
+        s.AddBranch("secret", ws =>
         {
             ws.AddCommand<GetWebhookSecretCommand>("inspect")
                 .WithDescription("this command retrieves the webhook secret for the subscription with the specified ID.")
