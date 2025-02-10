@@ -41,11 +41,11 @@ public class Services
 
         client.BaseAddress = new Uri(baseUrl);
 
-        var key = System.Environment.GetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_API_KEY], EnvironmentVariableTarget.User);
+        var key = System.Environment.GetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_API_KEY], EnvironmentVariableTarget.Process);
 
         if (string.IsNullOrEmpty(key))
         {
-            var token = System.Environment.GetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_AUTH_TOKEN], EnvironmentVariableTarget.User);
+            var token = System.Environment.GetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_AUTH_TOKEN], EnvironmentVariableTarget.Process);
             if (string.IsNullOrEmpty(token))
             {
                 return;
@@ -58,7 +58,7 @@ public class Services
             client.DefaultRequestHeaders.Add("x-auth-token", key);
         }
 
-        var environmentId = System.Environment.GetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID], EnvironmentVariableTarget.User);
+        var environmentId = System.Environment.GetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID], EnvironmentVariableTarget.Process);
         if (!string.IsNullOrEmpty(environmentId))
         {
             client.DefaultRequestHeaders.Add("x-environment-id", environmentId);

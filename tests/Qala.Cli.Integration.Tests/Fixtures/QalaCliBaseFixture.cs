@@ -123,6 +123,19 @@ public class QalaCliBaseFixture : IDisposable
 
                         return newEnvironment;
                     });
+
+        EnvironmentGatewayMock.Setup(
+            e => e.UpdateEnvironmentAsync(It.IsAny<Guid>(), It.IsAny<bool>()))
+                    .ReturnsAsync((Guid environmentId, bool disableSchemaValidation) =>
+                    {
+                        var environment = AvailableEnvironments.FirstOrDefault(e => e.Id == environmentId);
+                        if (environment != null)
+                        {
+                            environment.IsSchemaValidationEnabled = !disableSchemaValidation;
+                        }
+
+                        return environment;
+                    });
     }
 
     private void InitializeEventTypeGatewayMock()
@@ -283,6 +296,7 @@ public class QalaCliBaseFixture : IDisposable
         services.AddTransient<IRequestHandler<DeleteSubscriptionRequest, Either<DeleteSubscriptionErrorResponse, DeleteSubscriptionSuccessResponse>>, DeleteSubscriptionHandler>();
         services.AddTransient<IRequestHandler<GetWebhookSecretRequest, Either<GetWebhookSecretErrorResponse, GetWebhookSecretSuccessResponse>>, GetWebhookSecretHandler>();
         services.AddTransient<IRequestHandler<RotateWebhookSecretRequest, Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>>, RotateWebhookSecretHandler>();
+        services.AddTransient<IRequestHandler<UpdateEnvironmentRequest, Either<UpdateEnvironmentErrorResponse, UpdateEnvironmentSuccessResponse>>, UpdateEnvironmentHandler>();
     }
 
     private static void InitializeServices(IServiceCollection services)

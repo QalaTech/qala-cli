@@ -43,6 +43,9 @@ app.Configure(config =>
         env.AddCommand<SetEnvironmentCommand>("set")
             .WithDescription("this command sets the current environment for the Qala CLI.")
             .WithExample("environment set -e <ENVIRONMENT_ID>");
+        env.AddCommand<UpdateEnvironmentCommand>("update")
+            .WithDescription("this command updates the current environment for the Qala CLI.")
+            .WithExample("environment update --disableSchemaValidation");
     })
     .WithAlias("env");
 

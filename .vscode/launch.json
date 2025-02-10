@@ -97,6 +97,18 @@
             "stopAtEntry": false
         },
         {
+            "name": "Update Environment",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
+            "args": [
+                "environment",
+                "update",
+                "--disableSchemaValidation"
+            ],
+        },
+        {
             "name": "List Event Types",
             "type": "coreclr",
             "request": "launch",

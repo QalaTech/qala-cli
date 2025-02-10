@@ -107,4 +107,41 @@ public class EnvironmentService(
         localEnvironments.SetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID], environmentId.ToString());
         return await Task.FromResult<Either<SetEnvironmentErrorResponse, SetEnvironmentSuccessResponse>>(new SetEnvironmentSuccessResponse(environmentId));
     }
+
+    public async Task<Either<UpdateEnvironmentErrorResponse, UpdateEnvironmentSuccessResponse>> UpdateEnvironmentAsync(bool disableSchemaValidation)
+    {
+        var environmentId = localEnvironments.GetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID]);
+        if (string.IsNullOrEmpty(environmentId))
+        {
+            return await Task.FromResult<Either<UpdateEnvironmentErrorResponse, UpdateEnvironmentSuccessResponse>>(new UpdateEnvironmentErrorResponse("No environment was set found"));
+        }
+
+        try
+        {
+            var organization = await organizationGateway.GetOrganizationAsync();
+            if (organization is null)
+            {
+                return await Task.FromResult<Either<UpdateEnvironmentErrorResponse, UpdateEnvironmentSuccessResponse>>(new UpdateEnvironmentErrorResponse("Organization not found"));
+            }
+
+            var environmentToUpdate = organization.Environments.FirstOrDefault(e => e.Id == new Guid(environmentId));
+            if (environmentToUpdate is null)
+            {
+                return await Task.FromResult<Either<UpdateEnvironmentErrorResponse, UpdateEnvironmentSuccessResponse>>(new UpdateEnvironmentErrorResponse("Environment not found"));
+            }
+
+            var environmentUpdated = await environmentGateway.UpdateEnvironmentAsync(new Guid(environmentId), environmentToUpdate.Name, disableSchemaValidation);
+            if (environmentUpdated is null)
+            {
+                return await Task.FromResult<Either<UpdateEnvironmentErrorResponse, UpdateEnvironmentSuccessResponse>>(new UpdateEnvironmentErrorResponse("Failed to update environment"));
+            }
+
+            return await Task.FromResult<Either<UpdateEnvironmentErrorResponse, UpdateEnvironmentSuccessResponse>>(new UpdateEnvironmentSuccessResponse(environmentUpdated));
+
+        }
+        catch (Exception ex)
+        {
+            return await Task.FromResult<Either<UpdateEnvironmentErrorResponse, UpdateEnvironmentSuccessResponse>>(new UpdateEnvironmentErrorResponse(ex.Message));
+        }
+    }
 }
