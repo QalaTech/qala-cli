@@ -6,7 +6,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/qala.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
             "args": [
                 "${input:command}",
                 "--help"
@@ -20,7 +20,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/qala.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
             "args": [
                 "login"
             ],
@@ -33,7 +33,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/qala.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
             "args": [
                 "config",
                 "-k",
@@ -50,7 +50,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/qala.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
             "args": [
                 "environment",
                 "set",
@@ -66,7 +66,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/qala.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
             "args": [
                 "environment",
                 "current"
@@ -80,7 +80,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/qala.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
             "args": [
                 "environment",
                 "create",
@@ -89,18 +89,31 @@
                 "-r",
                 "${input:environmentRegion}",
                 "-t",
-                "${input:environmentType}"
+                "${input:environmentType}",
+                "-d"            
             ],
             "cwd": "${workspaceFolder}",
             "console": "integratedTerminal",
             "stopAtEntry": false
         },
         {
+            "name": "Update Environment",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
+            "args": [
+                "environment",
+                "update",
+                "--disableSchemaValidation"
+            ],
+        },
+        {
             "name": "List Event Types",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/qala.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
             "args": [
                 "events",
                 "ls"
@@ -114,7 +127,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/qala.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
             "args": [
                 "events",
                 "i",
@@ -129,7 +142,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/qala.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
             "args": [
                 "topics",
                 "ls"
@@ -143,7 +156,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/qala.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
             "args": [
                 "topics",
                 "n",
@@ -158,7 +171,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/qala.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
             "args": [
                 "topics",
                 "create",
@@ -178,7 +191,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/qala.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
             "args": [
                 "topics",
                 "update",
@@ -197,7 +210,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/qala.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
             "args": [
                 "subscriptions",
                 "ls",
@@ -213,7 +226,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/qala.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
             "args": [
                 "subscriptions",
                 "i",
@@ -231,7 +244,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/qala.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
             "args": [
                 "subscriptions",
                 "create",
@@ -257,7 +270,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/qala.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
             "args": [
                 "subscriptions",
                 "update",
@@ -284,7 +297,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/qala.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
             "args": [
                 "subscriptions",
                 "delete",
@@ -302,7 +315,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/qala.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
             "args": [
                 "subscriptions",
                 "secret",
@@ -321,7 +334,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/win-x64/qala.dll",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
             "args": [
                 "subscriptions",
                 "secret",
@@ -449,6 +462,25 @@
                 {
                     "label": "subscriptions",
                     "value": "subscriptions"
+                }
+            ]
+        },
+        {
+            "id": "runtime",
+            "type": "pickString",
+            "description": "Select the runtime",
+            "options": [
+                {
+                    "label": "Windows",
+                    "value": "win-x64"
+                },
+                {
+                    "label": "Linux",
+                    "value": "linux-x64"
+                },
+                {
+                    "label": "macOS",
+                    "value": "osx-arm64"
                 }
             ]
         }

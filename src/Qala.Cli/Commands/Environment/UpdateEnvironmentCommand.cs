@@ -5,9 +5,9 @@ using Spectre.Console.Cli;
 
 namespace Qala.Cli.Commands.Environment;
 
-public class CreateEnvironmentCommand(IMediator mediator, IAnsiConsole console) : AsyncCommand<CreateEnvironmentArgument>
+public class UpdateEnvironmentCommand(IMediator mediator, IAnsiConsole console) : AsyncCommand<UpdateEnvironmentArgument>
 {
-    public override async Task<int> ExecuteAsync(CommandContext context, CreateEnvironmentArgument argument)
+    public override async Task<int> ExecuteAsync(CommandContext context, UpdateEnvironmentArgument argument)
     {
         return await console.Status()
             .AutoRefresh(true)
@@ -15,12 +15,12 @@ public class CreateEnvironmentCommand(IMediator mediator, IAnsiConsole console) 
             .SpinnerStyle(Style.Parse("yellow bold"))
             .StartAsync("Processing request...", async ctx =>
             {
-                return await mediator.Send(new CreateEnvironmentRequest(argument.Name, argument.Region, argument.Type, argument.DisableSchemaValidation))
+                return await mediator.Send(new UpdateEnvironmentRequest(argument.DisableSchemaValidation))
                 .ToAsync()
                 .Match(
                     success =>
                     {
-                        BaseCommands.DisplaySuccessMessage("Environment", BaseCommands.CommandAction.Create, console);
+                        BaseCommands.DisplaySuccessMessage("Environment", BaseCommands.CommandAction.Update, console);
                         console.Write(new Grid()
                             .AddColumns(5)
                             .AddRow(
@@ -43,7 +43,7 @@ public class CreateEnvironmentCommand(IMediator mediator, IAnsiConsole console) 
                     },
                     error =>
                     {
-                        BaseCommands.DisplayErrorMessage("Environment", BaseCommands.CommandAction.Create, error.Message, console);
+                        BaseCommands.DisplayErrorMessage("Environment", BaseCommands.CommandAction.Update, error.Message, console);
 
                         return -1;
                     }
@@ -51,23 +51,8 @@ public class CreateEnvironmentCommand(IMediator mediator, IAnsiConsole console) 
             });
     }
 
-    public override ValidationResult Validate(CommandContext context, CreateEnvironmentArgument argument)
+    public override ValidationResult Validate(CommandContext context, UpdateEnvironmentArgument argument)
     {
-        if (string.IsNullOrWhiteSpace(argument.Name))
-        {
-            return ValidationResult.Error("Name is required");
-        }
-
-        if (string.IsNullOrWhiteSpace(argument.Region))
-        {
-            return ValidationResult.Error("Region is required");
-        }
-
-        if (string.IsNullOrWhiteSpace(argument.Type))
-        {
-            return ValidationResult.Error("Type is required");
-        }
-
         return ValidationResult.Success();
     }
 }

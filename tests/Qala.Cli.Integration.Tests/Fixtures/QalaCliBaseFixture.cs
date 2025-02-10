@@ -21,9 +21,9 @@ public class QalaCliBaseFixture : IDisposable
 {
     public readonly List<Data.Models.Environment> AvailableEnvironments =
     [
-        new() { Id = Guid.NewGuid(), Name = "TestEnv", Region = "us-east-1", EnvironmentType = "dev" },
-        new() { Id = Guid.NewGuid(), Name = "TestEnv2", Region = "us-east-2", EnvironmentType = "prod" },
-        new() { Id = Guid.NewGuid(), Name = "TestEnv3", Region = "us-east-3", EnvironmentType = "prod" }
+        new() { Id = Guid.NewGuid(), Name = "TestEnv", Region = "us-east-1", EnvironmentType = "dev", IsSchemaValidationEnabled = false },
+        new() { Id = Guid.NewGuid(), Name = "TestEnv2", Region = "us-east-2", EnvironmentType = "prod", IsSchemaValidationEnabled = true  },
+        new() { Id = Guid.NewGuid(), Name = "TestEnv3", Region = "us-east-3", EnvironmentType = "prod", IsSchemaValidationEnabled = true  }
     ];
 
     public readonly List<EventType> AvailableEventTypes =
@@ -96,11 +96,11 @@ public class QalaCliBaseFixture : IDisposable
     {
         OrganizationServiceMock.Setup(
             o => o.GetOrganizationAsync())
-                    .ReturnsAsync(new Organization 
-                    { 
-                        Name = "TestOrg", 
-                        SubDomain = "testorg", 
-                        Environments = AvailableEnvironments 
+                    .ReturnsAsync(new Organization
+                    {
+                        Name = "TestOrg",
+                        SubDomain = "testorg",
+                        Environments = AvailableEnvironments
                     });
     }
 
@@ -108,18 +108,33 @@ public class QalaCliBaseFixture : IDisposable
     {
         EnvironmentGatewayMock.Setup(
             e => e.CreateEnvironmentAsync(It.IsAny<Data.Models.Environment>()))
-                    .ReturnsAsync(() => {
+                    .ReturnsAsync((Data.Models.Environment inputEnvironment) =>
+                    {
                         var newEnvironment = new Data.Models.Environment
                         {
                             Id = new Guid("60ef03bb-f5a7-4c81-addf-38e2b360bff5"),
                             Name = "NewlyCreatedTestEnv",
                             Region = "newly-region",
-                            EnvironmentType = "newly-env-type"
+                            EnvironmentType = "newly-env-type",
+                            IsSchemaValidationEnabled = inputEnvironment.IsSchemaValidationEnabled
                         };
 
                         AvailableEnvironments.Add(newEnvironment);
 
                         return newEnvironment;
+                    });
+
+        EnvironmentGatewayMock.Setup(
+            e => e.UpdateEnvironmentAsync(It.IsAny<Guid>(), It.IsAny<bool>()))
+                    .ReturnsAsync((Guid environmentId, bool disableSchemaValidation) =>
+                    {
+                        var environment = AvailableEnvironments.FirstOrDefault(e => e.Id == environmentId);
+                        if (environment != null)
+                        {
+                            environment.IsSchemaValidationEnabled = !disableSchemaValidation;
+                        }
+
+                        return environment;
                     });
     }
 
@@ -128,7 +143,7 @@ public class QalaCliBaseFixture : IDisposable
         EventTypeGatewayMock.Setup(
             e => e.ListEventTypesAsync())
                     .ReturnsAsync(AvailableEventTypes);
-        
+
         EventTypeGatewayMock.Setup(
             e => e.GetEventTypeAsync(It.IsAny<Guid>()))
                     .ReturnsAsync((Guid id) => AvailableEventTypes.FirstOrDefault(et => et.Id == id));
@@ -141,14 +156,15 @@ public class QalaCliBaseFixture : IDisposable
         TopicGatewayMock.Setup(
             t => t.ListTopicsAsync())
                     .ReturnsAsync(AvailableTopics);
-        
+
         TopicGatewayMock.Setup(
             t => t.GetTopicAsync(It.IsAny<string>()))
                     .ReturnsAsync((string name) => AvailableTopics.FirstOrDefault(t => t.Name == name));
 
         TopicGatewayMock.Setup(
             t => t.CreateTopicAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Guid>>()))
-                    .ReturnsAsync((string name, string description, List<Guid> eventTypeIds) => {
+                    .ReturnsAsync((string name, string description, List<Guid> eventTypeIds) =>
+                    {
                         var newTopic = new Topic
                         {
                             Id = new Guid("60ef03bb-f5a7-4c81-addf-38e2b360bff5"),
@@ -165,7 +181,8 @@ public class QalaCliBaseFixture : IDisposable
 
         TopicGatewayMock.Setup(
             t => t.UpdateTopicAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Guid>>()))
-                    .ReturnsAsync((string name, string description, List<Guid> eventTypeIds) => {
+                    .ReturnsAsync((string name, string description, List<Guid> eventTypeIds) =>
+                    {
                         var topic = AvailableTopics.FirstOrDefault(t => t.Name == name);
                         if (topic != null)
                         {
@@ -186,14 +203,15 @@ public class QalaCliBaseFixture : IDisposable
         SubscriptionGatewayMock.Setup(
             s => s.ListSubscriptionsAsync(It.IsAny<string>()))
                     .ReturnsAsync(AvailableSubscriptions);
-        
+
         SubscriptionGatewayMock.Setup(
             s => s.GetSubscriptionAsync(It.IsAny<string>(), It.IsAny<Guid>()))
                     .ReturnsAsync((string topicName, Guid subscriptionId) => AvailableSubscriptions.FirstOrDefault(s => s.Id == subscriptionId));
 
         SubscriptionGatewayMock.Setup(
             s => s.CreateSubscriptionAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Guid>>(), It.IsAny<int>()))
-                    .ReturnsAsync((string topicName, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts) => {
+                    .ReturnsAsync((string topicName, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts) =>
+                    {
                         var newSubscription = new Subscription
                         {
                             Id = new Guid("60ef03bb-f5a7-4c81-addf-38e2b360bff5"),
@@ -213,7 +231,8 @@ public class QalaCliBaseFixture : IDisposable
 
         SubscriptionGatewayMock.Setup(
             s => s.UpdateSubscriptionAsync(It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Guid>>(), It.IsAny<int>()))
-                    .ReturnsAsync((string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts) => {
+                    .ReturnsAsync((string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts) =>
+                    {
                         var subscription = AvailableSubscriptions.FirstOrDefault(s => s.Id == subscriptionId);
                         if (subscription != null)
                         {
@@ -230,7 +249,8 @@ public class QalaCliBaseFixture : IDisposable
 
         SubscriptionGatewayMock.Setup(
             s => s.DeleteSubscriptionAsync(It.IsAny<string>(), It.IsAny<Guid>()))
-                    .Callback((string topicName, Guid subscriptionId) => {
+                    .Callback((string topicName, Guid subscriptionId) =>
+                    {
                         var subscription = AvailableSubscriptions.FirstOrDefault(s => s.Id == subscriptionId);
                         if (subscription != null)
                         {
@@ -244,7 +264,8 @@ public class QalaCliBaseFixture : IDisposable
 
         SubscriptionGatewayMock.Setup(
             s => s.RotateWebhookSecretAsync(It.IsAny<string>(), It.IsAny<Guid>()))
-                    .ReturnsAsync((string topicName, Guid subscriptionId) => {
+                    .ReturnsAsync((string topicName, Guid subscriptionId) =>
+                    {
                         var subscription = AvailableSubscriptions.FirstOrDefault(s => s.Id == subscriptionId);
                         if (subscription != null)
                         {
@@ -275,6 +296,7 @@ public class QalaCliBaseFixture : IDisposable
         services.AddTransient<IRequestHandler<DeleteSubscriptionRequest, Either<DeleteSubscriptionErrorResponse, DeleteSubscriptionSuccessResponse>>, DeleteSubscriptionHandler>();
         services.AddTransient<IRequestHandler<GetWebhookSecretRequest, Either<GetWebhookSecretErrorResponse, GetWebhookSecretSuccessResponse>>, GetWebhookSecretHandler>();
         services.AddTransient<IRequestHandler<RotateWebhookSecretRequest, Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>>, RotateWebhookSecretHandler>();
+        services.AddTransient<IRequestHandler<UpdateEnvironmentRequest, Either<UpdateEnvironmentErrorResponse, UpdateEnvironmentSuccessResponse>>, UpdateEnvironmentHandler>();
     }
 
     private static void InitializeServices(IServiceCollection services)

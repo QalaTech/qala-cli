@@ -14,4 +14,8 @@ public class CreateEnvironmentArgument : CommandSettings
     [CommandOption("-t|--type <TYPE>")]
     [Description("The type of the environment.")]
     public string Type { get; set; } = string.Empty;
+    [CommandOption("--disableSchemaValidation")]
+    [Description("Disable schema validation.")]
+    [DefaultValue(false)]
+    public bool DisableSchemaValidation { get; set; }
 }
