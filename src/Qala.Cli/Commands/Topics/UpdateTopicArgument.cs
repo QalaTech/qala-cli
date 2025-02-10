@@ -17,5 +17,5 @@ public class UpdateTopicArgument : CommandSettings
     [CommandOption("-e|--event-type-ids <EVENTS_COMMA_SEPERATED_IDS>")]
     [Description("The comma separated list of event type ids.")]
     [TypeConverter(typeof(CommaSeparatedGuidListConverter))]
-    public List<Guid> EventTypeIds { get; set; } = new();
+    public List<Guid> EventTypeIds { get; set; } = [];
 }

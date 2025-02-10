@@ -206,6 +206,90 @@
             "stopAtEntry": false
         },
         {
+            "name": "List Sources",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
+            "args": [
+                "sources",
+                "ls"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Get Source",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
+            "args": [
+                "sources",
+                "n",
+                "${input:sourceName}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Create Source",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
+            "args": [
+                "sources",
+                "create",
+                "-n",
+                "${input:sourceName}",
+                "-d",
+                "${input:sourceDescription}",
+                "${input:optionalArgs}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Update Source",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
+            "args": [
+                "sources",
+                "${input:sourceName}",
+                "update",
+                "-n",
+                "${input:sourceNewName}",
+                "-d",
+                "${input:sourceDescription}",
+                "${input:optionalArgs}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Delete Source",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/Qala.Cli/bin/Debug/net8.0/${input:runtime}/qala.dll",
+            "args": [
+                "sources",
+                "delete",
+                "-n",
+                "${input:sourceName}"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopAtEntry": false
+        },
+        {
             "name": "List Subscriptions",
             "type": "coreclr",
             "request": "launch",
@@ -401,6 +485,21 @@
             "description": "Enter the topic description"
         },
         {
+            "id": "sourceName",
+            "type": "promptString",
+            "description": "Enter the source name"
+        },
+        {
+            "id": "sourceNewName",
+            "type": "promptString",
+            "description": "Enter the source new name"
+        },
+        {
+            "id": "sourceDescription",
+            "type": "promptString",
+            "description": "Enter the source description"
+        },
+        {
             "id": "subscriptionId",
             "type": "promptString",
             "description": "Enter the subscription ID"
@@ -431,6 +530,11 @@
             "description": "Enter the subscription max delivery attempts"
         },
         {
+            "id": "optionalArgs",
+            "type": "promptString",
+            "description": "Enter the optional arguments (leave blank if not needed)"
+        },
+        {
             "id": "command",
             "type": "pickString",
             "description": "Select the command",
@@ -458,6 +562,10 @@
                 {
                     "label": "topics",
                     "value": "topics"
+                },
+                {
+                    "label": "sources",
+                    "value": "sources"
                 },
                 {
                     "label": "subscriptions",

@@ -8,6 +8,7 @@ using Qala.Cli.Commands.EventTypes;
 using Qala.Cli.Commands.Topics;
 using Qala.Cli.Commands.Subscriptions;
 using Spectre.Console;
+using Qala.Cli.Commands.Sources;
 
 var services = new ServiceCollection();
 var configuration = Configurations.SetupConfiguration();
@@ -70,7 +71,7 @@ app.Configure(config =>
            .WithAlias("ls");
        t.AddCommand<GetTopicCommand>("name")
            .WithDescription("this command retrieves the topic with the specified NAME.")
-           .WithExample("topics inspect <NAME>")
+           .WithExample("topics name <NAME>")
            .WithAlias("n");
        t.AddCommand<CreateTopicCommand>("create")
            .WithDescription("this command creates a new topic for the Qala CLI.")
@@ -80,6 +81,28 @@ app.Configure(config =>
            .WithExample("topics update <NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS>");
    })
    .WithAlias("tp");
+
+    config.AddBranch("sources", s =>
+    {
+        s.AddCommand<ListSourcesCommand>("list")
+           .WithDescription("this command lists all the sources available in your environment.")
+           .WithExample("qala sources ls")
+           .WithAlias("ls");
+        s.AddCommand<GetSourceCommand>("name")
+           .WithDescription("this command retrieves the source with the specified NAME.")
+           .WithExample("qala sources name <NAME>")
+           .WithAlias("n");
+        s.AddCommand<CreateSourceCommand>("create")
+           .WithDescription("this command creates a new source for the Qala CLI.")
+           .WithExample("qala sources create -n <NAME> -d <DESCRIPTION> -m <METHODS_COMMA_SEPERATED> -i <IP_WHITELISTING_COMMA_SEPERATED> -a <AUTHENTICATION_TYPE>");
+        s.AddCommand<UpdateSourceCommand>("update")
+           .WithDescription("this command updates an existing source for the Qala CLI.")
+           .WithExample("qala sources update <NAME> -d <DESCRIPTION> -m <METHODS_COMMA_SEPERATED> -i <IP_WHITELISTING_COMMA_SEPERATED> -a <AUTHENTICATION_TYPE>");
+        s.AddCommand<DeleteSourceCommand>("delete")
+           .WithDescription("this command deletes the source with the specified NAME.")
+           .WithExample("qala sources delete -n <NAME>");
+    })
+     .WithAlias("sr");
 
     config.AddBranch("subscriptions", s =>
     {

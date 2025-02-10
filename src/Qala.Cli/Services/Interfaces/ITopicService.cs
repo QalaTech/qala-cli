@@ -1,4 +1,3 @@
-using System;
 using LanguageExt;
 using Qala.Cli.Commands.Topics;
 
