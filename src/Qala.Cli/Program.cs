@@ -112,12 +112,14 @@ app.Configure(config =>
     config.AddBranch("subscriptions", s =>
     {
         s.AddCommand<ListSubscriptionsCommand>("list")
-            .WithDescription("this command lists all the subscriptions available in your environment.")
-            .WithExample("qala subscriptions ls -t <TOPIC_NAME>")
+            .WithDescription("this command lists all the subscriptions available in your environment for a specific topic or source.")
+            .WithExample("qala subscriptions ls --topic <TOPIC_NAME>")
+            .WithExample("qala subscriptions ls --source <SOURCE_NAME>")
             .WithAlias("ls");
         s.AddCommand<GetSubscriptionCommand>("inspect")
             .WithDescription("this command retrieves the subscription with the specified ID.")
-            .WithExample("qala subscriptions i -t <TOPIC_NAME> -s <SUBSCRIPTION_ID>")
+            .WithExample("qala subscriptions i --topic <TOPIC_NAME> -s <SUBSCRIPTION_ID>")
+            .WithExample("qala subscriptions i --source <SOURCE_NAME> -s <SUBSCRIPTION_ID>")
             .WithAlias("i");
         s.AddCommand<CreateSubscriptionCommand>("create")
             .WithDescription("this command creates a new subscription for the Qala CLI.")

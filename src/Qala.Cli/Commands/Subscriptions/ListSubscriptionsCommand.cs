@@ -13,12 +13,12 @@ public class ListSubscriptionsCommand(IMediator mediator, IAnsiConsole console) 
             .AutoRefresh(true)
             .Spinner(Spinner.Known.Star2)
             .SpinnerStyle(Style.Parse("yellow bold"))
-            .StartAsync("Processing request...", async ctx => 
+            .StartAsync("Processing request...", async ctx =>
             {
-                return await mediator.Send(new ListSubscriptionsRequest(arguments.TopicName))
+                return await mediator.Send(new ListSubscriptionsRequest(arguments.TopicName, arguments.SourceName))
                     .ToAsync()
                     .Match(
-                        success => 
+                        success =>
                         {
                             BaseCommands.DisplaySuccessMessage("Subscriptions", BaseCommands.CommandAction.List, console);
                             var grid = new Grid()
@@ -58,9 +58,9 @@ public class ListSubscriptionsCommand(IMediator mediator, IAnsiConsole console) 
 
     public override ValidationResult Validate(CommandContext context, ListSubscriptionsArgument arguments)
     {
-        if (string.IsNullOrWhiteSpace(arguments.TopicName))
+        if (string.IsNullOrWhiteSpace(arguments.TopicName) && string.IsNullOrWhiteSpace(arguments.SourceName))
         {
-            return ValidationResult.Error("Topic name is required.");
+            return ValidationResult.Error("Either Topic name or Source name must be provided.");
         }
 
         return ValidationResult.Success();

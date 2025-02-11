@@ -7,15 +7,15 @@ namespace Qala.Cli.Commands.Subscriptions;
 
 public class GetWebhookSecretCommand(IMediator mediator, IAnsiConsole console) : AsyncCommand<GetWebhookSecretArgument>
 {
-    public override async Task<int> ExecuteAsync(CommandContext context, GetWebhookSecretArgument settings)
+    public override async Task<int> ExecuteAsync(CommandContext context, GetWebhookSecretArgument arguments)
     {
         return await console.Status()
             .AutoRefresh(true)
             .Spinner(Spinner.Known.Star2)
             .SpinnerStyle(Style.Parse("yellow bold"))
-            .StartAsync("Processing request...", async ctx => 
+            .StartAsync("Processing request...", async ctx =>
             {
-                return await mediator.Send(new GetWebhookSecretRequest(settings.TopicName, settings.SubscriptionId))
+                return await mediator.Send(new GetWebhookSecretRequest(arguments.TopicName, arguments.SourceName, arguments.SubscriptionId))
                     .ToAsync()
                     .Match(
                         success =>

@@ -306,16 +306,18 @@ qala sources delete -n <NAME>
 ### `list`
 
 **Description:** this command lists all the subscriptions available in your 
-environment.
+environment for a specific topic or source.
 
 ### Options:
 | Option | Description |
 |--------|-------------|
-| `t` / `topic` | No description. |
+| `source` | No description. |
+| `topic` | No description. |
 
 ### Examples:
 ```sh
-qala subscriptions ls -t <TOPIC_NAME>
+qala subscriptions ls --topic <TOPIC_NAME>
+qala subscriptions ls --source  <SOURCE_NAME>
 ```
 
 ### `inspect`
@@ -326,12 +328,14 @@ ID.
 ### Options:
 | Option | Description |
 |--------|-------------|
-| `s` / `subscription` | No description. |
-| `t` / `topic` | No description. |
+| `source` | The name of the source. |
+| `s` / `subscription` | The id of the subscription. |
+| `topic` | The name of the topic. |
 
 ### Examples:
 ```sh
-qala subscriptions i -t <TOPIC_NAME> -s  <SUBSCRIPTION_ID>
+qala subscriptions i --topic <TOPIC_NAME> -s <SUBSCRIPTION_ID>
+qala subscriptions i --source <SOURCE_NAME>  -s <SUBSCRIPTION_ID>
 ```
 
 ### `create`
@@ -347,7 +351,8 @@ CLI.
 | `m` / `max-attempts` | The maximum delivery attempts of the 
 subscription. |
 | `n` / `name` | The name of the subscription. |
-| `t` / `topic` | The name of the topic. |
+| `source` | No description. |
+| `topic` | The name of the topic. |
 | `u` / `url` | The webhook url of the subscription. |
 
 ### Examples:
@@ -368,7 +373,8 @@ CLI.
 | `m` / `max-attempts` | The maximum delivery attempts of the 
 subscription. |
 | `n` / `name` | The name of the subscription. |
-| `t` / `topic` | The name of the topic. |
+| `source` | The name of the source. |
+| `topic` | The name of the topic. |
 | `u` / `url` | The webhook url of the subscription. |
 
 ### Examples:
@@ -384,6 +390,7 @@ ID.
 ### Options:
 | Option | Description |
 |--------|-------------|
+| `source` | The name of the source. |
 | `s` / `subscription` | The id of the subscription. |
 | `t` / `topic` | The name of the topic. |
 
@@ -404,6 +411,7 @@ subscription with the specified ID.
 ### Options:
 | Option | Description |
 |--------|-------------|
+| `source` | The name of the source. |
 | `s` / `subscription-id` | The id of the subscription. |
 | `t` / `topic` | The name of the topic. |
 
@@ -420,6 +428,7 @@ subscription with the specified ID.
 ### Options:
 | Option | Description |
 |--------|-------------|
+| `source` | The name of the source. |
 | `s` / `subscription-id` | The id of the subscription. |
 | `t` / `topic` | The name of the topic. |
 

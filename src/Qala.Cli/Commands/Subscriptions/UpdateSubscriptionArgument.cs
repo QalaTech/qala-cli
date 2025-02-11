@@ -10,9 +10,13 @@ public class UpdateSubscriptionArgument : CommandSettings
     [Description("The id of the subscription.")]
     public Guid SubscriptionId { get; set; } = Guid.Empty;
 
-    [CommandOption("-t|--topic <TOPIC_NAME>")]
+    [CommandOption("--topic <TOPIC_NAME>")]
     [Description("The name of the topic.")]
     public string TopicName { get; set; } = string.Empty;
+
+    [CommandOption("--source <SOURCE_NAME>")]
+    [Description("The name of the source.")]
+    public string SourceName { get; set; } = string.Empty;
 
     [CommandOption("-n|--name <NAME>")]
     [Description("The name of the subscription.")]

@@ -6,18 +6,27 @@ namespace Qala.Cli.Commands.Subscriptions;
 
 public record RotateWebhookSecretSuccessResponse(string WebhookSecret);
 public record RotateWebhookSecretErrorResponse(string Message);
-public record RotateWebhookSecretRequest(string TopicName, Guid SubscriptionId) : IRequest<Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>>;
+public record RotateWebhookSecretRequest(string? TopicName, string? SourceName, Guid SubscriptionId) : IRequest<Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>>;
 
 public class RotateWebhookSecretHandler(ISubscriptionService subscriptionService)
     : IRequestHandler<RotateWebhookSecretRequest, Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>>
 {
     public async Task<Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>> Handle(RotateWebhookSecretRequest request, CancellationToken cancellationToken)
-        => await subscriptionService.RotateWebhookSecretAsync(request.TopicName, request.SubscriptionId)
-            .ToAsync()
-            .Case switch
-            {
-                RotateWebhookSecretSuccessResponse success => success,
-                RotateWebhookSecretErrorResponse error => error,
-                _ => throw new NotImplementedException()
-            };
+    {
+        if (request.TopicName is null && request.SourceName is null)
+        {
+            return new RotateWebhookSecretErrorResponse("Either Topic name or Source name must be provided.");
+        }
+
+        var topicName = request.TopicName ?? request.SourceName;
+
+        return await subscriptionService.RotateWebhookSecretAsync(topicName!, request.SubscriptionId)
+                .ToAsync()
+                .Case switch
+        {
+            RotateWebhookSecretSuccessResponse success => success,
+            RotateWebhookSecretErrorResponse error => error,
+            _ => throw new NotImplementedException()
+        };
+    }
 }

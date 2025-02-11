@@ -453,13 +453,18 @@ Settings="Spectre.Console.Cli.CommandSettings">
 ClrType="Qala.Cli.Commands.Subscriptions.ListSubscriptionsCommand" 
 Settings="Qala.Cli.Commands.Subscriptions.ListSubscriptionsArgument">
       <Description>this command lists all the subscriptions available in your 
-environment.</Description>
+environment for a specific topic or source.</Description>
       <Parameters>
-        <Option Short="t" Long="topic" Value="TOPIC_NAME" Required="false" 
+        <Option Short="" Long="source" Value="SOURCE_NAME" Required="false" 
+Kind="scalar" ClrType="System.String" />
+        <Option Short="" Long="topic" Value="TOPIC_NAME" Required="false" 
 Kind="scalar" ClrType="System.String" />
       </Parameters>
       <Examples>
-        <Example commandLine="qala subscriptions ls -t &lt;TOPIC_NAME&gt;" />
+        <Example commandLine="qala subscriptions ls --topic &lt;TOPIC_NAME&gt;" 
+/>
+        <Example commandLine="qala subscriptions ls --source 
+&lt;SOURCE_NAME&gt;" />
       </Examples>
     </Command>
     <!--INSPECT-->
@@ -469,14 +474,24 @@ Settings="Qala.Cli.Commands.Subscriptions.GetSubscriptionArgument">
       <Description>this command retrieves the subscription with the specified 
 ID.</Description>
       <Parameters>
+        <Option Short="" Long="source" Value="SOURCE_NAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The name of the source.</Description>
+        </Option>
         <Option Short="s" Long="subscription" Value="SUBSCRIPTION_ID" 
-Required="false" Kind="scalar" ClrType="System.Guid" />
-        <Option Short="t" Long="topic" Value="TOPIC_NAME" Required="false" 
-Kind="scalar" ClrType="System.String" />
+Required="false" Kind="scalar" ClrType="System.Guid">
+          <Description>The id of the subscription.</Description>
+        </Option>
+        <Option Short="" Long="topic" Value="TOPIC_NAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The name of the topic.</Description>
+        </Option>
       </Parameters>
       <Examples>
-        <Example commandLine="qala subscriptions i -t &lt;TOPIC_NAME&gt; -s 
+        <Example commandLine="qala subscriptions i --topic &lt;TOPIC_NAME&gt; -s
 &lt;SUBSCRIPTION_ID&gt;" />
+        <Example commandLine="qala subscriptions i --source &lt;SOURCE_NAME&gt; 
+-s &lt;SUBSCRIPTION_ID&gt;" />
       </Examples>
     </Command>
     <!--CREATE-->
@@ -505,7 +520,9 @@ subscription.</Description>
 Kind="scalar" ClrType="System.String">
           <Description>The name of the subscription.</Description>
         </Option>
-        <Option Short="t" Long="topic" Value="TOPIC_NAME" Required="false" 
+        <Option Short="" Long="source" Value="SOURCE_NAME" Required="false" 
+Kind="scalar" ClrType="System.String" />
+        <Option Short="" Long="topic" Value="TOPIC_NAME" Required="false" 
 Kind="scalar" ClrType="System.String">
           <Description>The name of the topic.</Description>
         </Option>
@@ -550,7 +567,11 @@ subscription.</Description>
 Kind="scalar" ClrType="System.String">
           <Description>The name of the subscription.</Description>
         </Option>
-        <Option Short="t" Long="topic" Value="TOPIC_NAME" Required="false" 
+        <Option Short="" Long="source" Value="SOURCE_NAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The name of the source.</Description>
+        </Option>
+        <Option Short="" Long="topic" Value="TOPIC_NAME" Required="false" 
 Kind="scalar" ClrType="System.String">
           <Description>The name of the topic.</Description>
         </Option>
@@ -572,6 +593,10 @@ Settings="Qala.Cli.Commands.Subscriptions.DeleteSubscriptionArgument">
       <Description>this command deletes the subscription with the specified 
 ID.</Description>
       <Parameters>
+        <Option Short="" Long="source" Value="SOURCE_NAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The name of the source.</Description>
+        </Option>
         <Option Short="s" Long="subscription" Value="SUBSCRIPTION_ID" 
 Required="false" Kind="scalar" ClrType="System.Guid">
           <Description>The id of the subscription.</Description>
@@ -596,6 +621,10 @@ Settings="Qala.Cli.Commands.Subscriptions.GetWebhookSecretArgument">
         <Description>this command retrieves the webhook secret for the 
 subscription with the specified ID.</Description>
         <Parameters>
+          <Option Short="" Long="source" Value="SOURCE_NAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+            <Description>The name of the source.</Description>
+          </Option>
           <Option Short="s" Long="subscription-id" Value="SUBSCRIPTION_ID" 
 Required="false" Kind="scalar" ClrType="System.Guid">
             <Description>The id of the subscription.</Description>
@@ -617,6 +646,10 @@ Settings="Qala.Cli.Commands.Subscriptions.RotateWebhookSecretArgument">
         <Description>this command rotates the webhook secret for the 
 subscription with the specified ID.</Description>
         <Parameters>
+          <Option Short="" Long="source" Value="SOURCE_NAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+            <Description>The name of the source.</Description>
+          </Option>
           <Option Short="s" Long="subscription-id" Value="SUBSCRIPTION_ID" 
 Required="false" Kind="scalar" ClrType="System.Guid">
             <Description>The id of the subscription.</Description>

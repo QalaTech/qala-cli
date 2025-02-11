@@ -13,9 +13,9 @@ public class CreateSubscriptionCommand(IMediator mediator, IAnsiConsole console)
             .AutoRefresh(true)
             .Spinner(Spinner.Known.Star2)
             .SpinnerStyle(Style.Parse("yellow bold"))
-            .StartAsync("Processing request...", async ctx => 
+            .StartAsync("Processing request...", async ctx =>
             {
-                return await mediator.Send(new CreateSubscriptionRequest(argument.TopicName, argument.Name, argument.Description, argument.WebhookUrl, argument.EventTypeIds, argument.MaxDeliveryAttempts))
+                return await mediator.Send(new CreateSubscriptionRequest(argument.TopicName, argument.SourceName, argument.Name, argument.Description, argument.WebhookUrl, argument.EventTypeIds, argument.MaxDeliveryAttempts))
                     .ToAsync()
                     .Match(
                         success =>

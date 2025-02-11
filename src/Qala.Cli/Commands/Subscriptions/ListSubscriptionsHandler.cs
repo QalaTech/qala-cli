@@ -7,18 +7,27 @@ namespace Qala.Cli.Commands.Subscriptions;
 
 public record ListSubscriptionsSuccessResponse(IEnumerable<Subscription> Subscriptions);
 public record ListSubscriptionsErrorResponse(string Message);
-public record ListSubscriptionsRequest(string TopicName) : IRequest<Either<ListSubscriptionsErrorResponse, ListSubscriptionsSuccessResponse>>;
+public record ListSubscriptionsRequest(string? TopicName, string? SourceName) : IRequest<Either<ListSubscriptionsErrorResponse, ListSubscriptionsSuccessResponse>>;
 
 public class ListSubscriptionsHandler(ISubscriptionService subscriptionService)
     : IRequestHandler<ListSubscriptionsRequest, Either<ListSubscriptionsErrorResponse, ListSubscriptionsSuccessResponse>>
 {
     public async Task<Either<ListSubscriptionsErrorResponse, ListSubscriptionsSuccessResponse>> Handle(ListSubscriptionsRequest request, CancellationToken cancellationToken)
-        => await subscriptionService.ListSubscriptionsAsync(request.TopicName)
-            .ToAsync()
-            .Case switch
-            {
-                ListSubscriptionsSuccessResponse success => success,
-                ListSubscriptionsErrorResponse error => error,
-                _ => throw new NotImplementedException()
-            };
+    {
+        if (request.TopicName is null && request.SourceName is null)
+        {
+            return new ListSubscriptionsErrorResponse("Either Topic name or Source name must be provided.");
+        }
+
+        var topicName = request.TopicName ?? request.SourceName;
+
+        return await subscriptionService.ListSubscriptionsAsync(topicName!)
+                .ToAsync()
+                .Case switch
+        {
+            ListSubscriptionsSuccessResponse success => success,
+            ListSubscriptionsErrorResponse error => error,
+            _ => throw new NotImplementedException()
+        };
+    }
 }
