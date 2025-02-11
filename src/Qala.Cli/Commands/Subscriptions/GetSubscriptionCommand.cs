@@ -13,12 +13,12 @@ public class GetSubscriptionCommand(IMediator mediator, IAnsiConsole console) : 
             .AutoRefresh(true)
             .Spinner(Spinner.Known.Star2)
             .SpinnerStyle(Style.Parse("yellow bold"))
-            .StartAsync("Processing request...", async ctx => 
+            .StartAsync("Processing request...", async ctx =>
             {
-                return await mediator.Send(new GetSubscriptionRequest(arguments.TopicName, arguments.SubscriptionId))
+                return await mediator.Send(new GetSubscriptionRequest(arguments.TopicName, arguments.SourceName, arguments.SubscriptionId))
                     .ToAsync()
                     .Match(
-                        success => 
+                        success =>
                         {
                             BaseCommands.DisplaySuccessMessage("Subscription", BaseCommands.CommandAction.Get, console);
                             var grid = new Grid()
@@ -61,9 +61,9 @@ public class GetSubscriptionCommand(IMediator mediator, IAnsiConsole console) : 
 
     public override ValidationResult Validate(CommandContext context, GetSubscriptionArgument arguments)
     {
-        if (string.IsNullOrWhiteSpace(arguments.TopicName))
+        if (string.IsNullOrWhiteSpace(arguments.TopicName) && string.IsNullOrWhiteSpace(arguments.SourceName))
         {
-            return ValidationResult.Error("Topic name is required.");
+            return ValidationResult.Error("Either Topic name or Source name must be provided.");
         }
 
         if (arguments.SubscriptionId == Guid.Empty)

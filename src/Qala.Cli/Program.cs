@@ -8,6 +8,8 @@ using Qala.Cli.Commands.EventTypes;
 using Qala.Cli.Commands.Topics;
 using Qala.Cli.Commands.Subscriptions;
 using Spectre.Console;
+using Qala.Cli.Commands.Sources;
+using Qala.Cli.Commands.GenerateMarkdown;
 
 var services = new ServiceCollection();
 var configuration = Configurations.SetupConfiguration();
@@ -23,6 +25,10 @@ var app = new CommandApp(registrar);
 app.Configure(config =>
 {
     config.SetApplicationName("qala");
+
+    config.AddCommand<GenerateMarkdownCommand>("markdown")
+        .WithDescription("Generates Markdown documentation from the XML documentation file.")
+        .IsHidden();
 
     config.AddCommand<LoginCommand>("login")
         .WithDescription("this commands initiates the process for the user to login.")
@@ -70,7 +76,7 @@ app.Configure(config =>
            .WithAlias("ls");
        t.AddCommand<GetTopicCommand>("name")
            .WithDescription("this command retrieves the topic with the specified NAME.")
-           .WithExample("topics inspect <NAME>")
+           .WithExample("topics name <NAME>")
            .WithAlias("n");
        t.AddCommand<CreateTopicCommand>("create")
            .WithDescription("this command creates a new topic for the Qala CLI.")
@@ -81,15 +87,39 @@ app.Configure(config =>
    })
    .WithAlias("tp");
 
+    config.AddBranch("sources", s =>
+    {
+        s.AddCommand<ListSourcesCommand>("list")
+           .WithDescription("this command lists all the sources available in your environment.")
+           .WithExample("qala sources ls")
+           .WithAlias("ls");
+        s.AddCommand<GetSourceCommand>("name")
+           .WithDescription("this command retrieves the source with the specified NAME.")
+           .WithExample("qala sources name <NAME>")
+           .WithAlias("n");
+        s.AddCommand<CreateSourceCommand>("create")
+           .WithDescription("this command creates a new source for the Qala CLI.")
+           .WithExample("qala sources create -n <NAME> -d <DESCRIPTION> -m <METHODS_COMMA_SEPERATED> -i <IP_WHITELISTING_COMMA_SEPERATED> -a <AUTHENTICATION_TYPE>");
+        s.AddCommand<UpdateSourceCommand>("update")
+           .WithDescription("this command updates an existing source for the Qala CLI.")
+           .WithExample("qala sources update <NAME> -d <DESCRIPTION> -m <METHODS_COMMA_SEPERATED> -i <IP_WHITELISTING_COMMA_SEPERATED> -a <AUTHENTICATION_TYPE>");
+        s.AddCommand<DeleteSourceCommand>("delete")
+           .WithDescription("this command deletes the source with the specified NAME.")
+           .WithExample("qala sources delete -n <NAME>");
+    })
+     .WithAlias("sr");
+
     config.AddBranch("subscriptions", s =>
     {
         s.AddCommand<ListSubscriptionsCommand>("list")
-            .WithDescription("this command lists all the subscriptions available in your environment.")
-            .WithExample("qala subscriptions ls -t <TOPIC_NAME>")
+            .WithDescription("this command lists all the subscriptions available in your environment for a specific topic or source.")
+            .WithExample("qala subscriptions ls --topic <TOPIC_NAME>")
+            .WithExample("qala subscriptions ls --source <SOURCE_NAME>")
             .WithAlias("ls");
         s.AddCommand<GetSubscriptionCommand>("inspect")
             .WithDescription("this command retrieves the subscription with the specified ID.")
-            .WithExample("qala subscriptions i -t <TOPIC_NAME> -s <SUBSCRIPTION_ID>")
+            .WithExample("qala subscriptions i --topic <TOPIC_NAME> -s <SUBSCRIPTION_ID>")
+            .WithExample("qala subscriptions i --source <SOURCE_NAME> -s <SUBSCRIPTION_ID>")
             .WithAlias("i");
         s.AddCommand<CreateSubscriptionCommand>("create")
             .WithDescription("this command creates a new subscription for the Qala CLI.")

@@ -6,9 +6,12 @@ namespace Qala.Cli.Commands.Subscriptions;
 
 public class CreateSubscriptionArgument : CommandSettings
 {
-    [CommandOption("-t|--topic <TOPIC_NAME>")]
+    [CommandOption("--topic <TOPIC_NAME>")]
     [Description("The name of the topic.")]
     public string TopicName { get; set; } = string.Empty;
+
+    [CommandOption("--source <SOURCE_NAME>")]
+    public string SourceName { get; set; } = string.Empty;
 
     [CommandOption("-n|--name <NAME>")]
     [Description("The name of the subscription.")]

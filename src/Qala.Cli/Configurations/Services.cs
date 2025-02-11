@@ -3,7 +3,6 @@ using Qala.Cli.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Qala.Cli.Gateway;
 using Qala.Cli.Data.Repository.Interfaces;
-using Qala.Cli.Data.Repository;
 using Qala.Cli.Data.Gateway.Interfaces;
 using Qala.Cli.Utils;
 using Qala.Cli.Data.Gateway;
@@ -23,6 +22,7 @@ public class Services
         services.AddSingleton<IEventTypeService, EventTypeService>();
         services.AddSingleton<ITopicService, TopicService>();
         services.AddSingleton<ISubscriptionService, SubscriptionService>();
+        services.AddSingleton<ISourceService, SourceService>();
     }
 
     public static void RegisterDataServices(IServiceCollection services, IConfiguration configuration)
@@ -33,6 +33,7 @@ public class Services
         services.AddHttpClient<IEventTypeGateway, EventTypeGateway>(client => BuildHttpClient(client, configuration));
         services.AddHttpClient<ITopicGateway, TopicGateway>(client => BuildHttpClient(client, configuration));
         services.AddHttpClient<ISubscriptionGateway, SubscriptionGateway>(client => BuildHttpClient(client, configuration));
+        services.AddHttpClient<ISourceGateway, SourceGateway>(client => BuildHttpClient(client, configuration));
     }
 
     private static void BuildHttpClient(HttpClient client, IConfiguration configuration)

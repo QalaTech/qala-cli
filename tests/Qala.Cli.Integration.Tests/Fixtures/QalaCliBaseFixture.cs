@@ -14,6 +14,10 @@ using Qala.Cli.Services.Interfaces;
 using Qala.Cli.Commands.EventTypes;
 using Qala.Cli.Commands.Topics;
 using Qala.Cli.Commands.Subscriptions;
+using Qala.Cli.Commands.Sources;
+using System.Text.Json;
+using Qala.Cli.Data.Utils;
+using System.Text.Json.Serialization;
 
 namespace Qala.Cli.Integration.Tests.Fixtures;
 
@@ -40,6 +44,15 @@ public class QalaCliBaseFixture : IDisposable
         new() { Id = Guid.NewGuid(), Name = "TestTopic3", Description = "Test Topic Description 3", ProvisioningState = "Provisioned" }
     ];
 
+    public List<Source> AvailableSources =
+    [
+        new () { Id = Guid.NewGuid(), Name = "TestSource", Description = "Test Source Description", SourceType = SourceType.Http, Configuration = new SourceConfiguration { AllowedMethods = [Data.Models.HttpMethod.Get, Data.Models.HttpMethod.Post], AuthenticationScheme = new NoAuthenticationScheme(), WhitelistedIpRanges = ["102.0.0.1"]}},
+        new () { Id = Guid.NewGuid(), Name = "TestSource2", Description = "Test Source Description 2", SourceType = SourceType.Http, Configuration = new SourceConfiguration { AllowedMethods = [Data.Models.HttpMethod.Put, Data.Models.HttpMethod.Post], AuthenticationScheme = new BasicAuthenticationScheme() { Password = "password_ref", Username = "username" }, WhitelistedIpRanges = ["127.0.0.1, 127.0.0.2"]}},
+        new () { Id = Guid.NewGuid(), Name = "TestSource3", Description = "Test Source Description 3", SourceType = SourceType.Http, Configuration = new SourceConfiguration { AllowedMethods = [Data.Models.HttpMethod.Delete, Data.Models.HttpMethod.Post], AuthenticationScheme = new ApiKeyAuthenticationScheme() { ApiKeyName = "key", ApiKeyValue = "value" }, WhitelistedIpRanges = ["102.0.0.1/24"]}},
+        new () { Id = Guid.NewGuid(), Name = "TestSource4", Description = "Test Source Description 4", SourceType = SourceType.Http, Configuration = new SourceConfiguration { AllowedMethods = [Data.Models.HttpMethod.Get, Data.Models.HttpMethod.Post], AuthenticationScheme = new JwtAuthenticationScheme() { Algorithm = Algorithm.RSA, PublicKey = "public_key" }, WhitelistedIpRanges = ["102.0.0.1/24"]}},
+        new () { Id = Guid.NewGuid(), Name = "TestSource5", Description = "Test Source Description 5", SourceType = SourceType.Http, Configuration = new SourceConfiguration { AllowedMethods = [Data.Models.HttpMethod.Get, Data.Models.HttpMethod.Post], AuthenticationScheme = new JwtAuthenticationScheme() { Algorithm = Algorithm.HSA, Secret = "public_key" }, WhitelistedIpRanges = ["102.0.0.1/24, 127.0.0.1, 127.0.0.2"]}}
+    ];
+
     public List<Subscription> AvailableSubscriptions =
     [
         new() { Id = Guid.NewGuid(), Name = "TestSubscription", Description = "Test Subscription Description", ProvisioningState = "Provisioning", MaxDeliveryAttempts = 3, DeadletterCount = 1, WebhookSecret = Guid.NewGuid().ToString() },
@@ -56,6 +69,8 @@ public class QalaCliBaseFixture : IDisposable
     public Mock<ITopicGateway> TopicGatewayMock = new();
     public Mock<ISubscriptionGateway> SubscriptionGatewayMock = new();
 
+    public Mock<ISourceGateway> SourceGatewayMock = new();
+
     public required IMediator Mediator { get; init; }
 
     public QalaCliBaseFixture()
@@ -65,6 +80,7 @@ public class QalaCliBaseFixture : IDisposable
         InitializeEnvironmentGatewayMock();
         InitializeEventTypeGatewayMock();
         InitializeTopicGatewayMock();
+        InitializeSourcesGatewayMock();
         InitializeSubscriptionGatewayMock();
 
         var services = new ServiceCollection();
@@ -125,12 +141,13 @@ public class QalaCliBaseFixture : IDisposable
                     });
 
         EnvironmentGatewayMock.Setup(
-            e => e.UpdateEnvironmentAsync(It.IsAny<Guid>(), It.IsAny<bool>()))
-                    .ReturnsAsync((Guid environmentId, bool disableSchemaValidation) =>
+            e => e.UpdateEnvironmentAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<bool>()))
+                    .ReturnsAsync((Guid environmentId, string environmentName, bool disableSchemaValidation) =>
                     {
                         var environment = AvailableEnvironments.FirstOrDefault(e => e.Id == environmentId);
                         if (environment != null)
                         {
+                            environment.Name = environmentName;
                             environment.IsSchemaValidationEnabled = !disableSchemaValidation;
                         }
 
@@ -193,6 +210,76 @@ public class QalaCliBaseFixture : IDisposable
                         }
 
                         return topic;
+                    });
+    }
+
+    private void InitializeSourcesGatewayMock()
+    {
+        SourceGatewayMock.Setup(
+            s => s.ListSourcesAsync())
+                    .ReturnsAsync(AvailableSources);
+
+        SourceGatewayMock.Setup(
+            s => s.GetSourceAsync(It.IsAny<string>()))
+                    .ReturnsAsync((string name) => AvailableSources.FirstOrDefault(t => t.Name == name));
+
+        SourceGatewayMock.Setup(
+            s => s.DeleteSourceAsync(It.IsAny<string>()))
+                    .Callback((string sourceName) =>
+                    {
+                        var source = AvailableSources.FirstOrDefault(s => s.Name == sourceName);
+                        if (source != null)
+                        {
+                            AvailableSources.Remove(source);
+                        }
+                    });
+
+        SourceGatewayMock.Setup(
+            s => s.CreateSourceAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SourceType>(), It.IsAny<string>()))
+                    .ReturnsAsync((string name, string description, SourceType sourceType, string configuration) =>
+                    {
+                        var options = new JsonSerializerOptions
+                        {
+                            Converters = { new AuthenticationSchemeConverter(), new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+                        };
+
+                        var sourceConfiguration = JsonSerializer.Deserialize<SourceConfiguration>(configuration, options);
+
+                        var newSource = new Source
+                        {
+                            Id = new Guid("60ef03bb-f5a7-4c81-addf-38e2b360bff5"),
+                            Name = name,
+                            Description = description,
+                            SourceType = sourceType,
+                            Configuration = sourceConfiguration ?? throw new ArgumentNullException(nameof(sourceConfiguration)),
+                        };
+
+                        AvailableSources.Add(newSource);
+
+                        return newSource;
+                    });
+
+        SourceGatewayMock.Setup(
+            s => s.UpdateSourceAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SourceType>(), It.IsAny<string>()))
+                    .ReturnsAsync((string sourceName, string name, string description, SourceType sourceType, string configuration) =>
+                    {
+                        var options = new JsonSerializerOptions
+                        {
+                            Converters = { new AuthenticationSchemeConverter(), new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+                        };
+
+                        var source = AvailableSources.FirstOrDefault(t => t.Name == sourceName);
+
+                        var sourceConfiguration = JsonSerializer.Deserialize<SourceConfiguration>(configuration, options);
+
+                        if (source != null)
+                        {
+                            source.Name = name;
+                            source.Description = description;
+                            source.Configuration = sourceConfiguration ?? throw new ArgumentNullException(nameof(sourceConfiguration));
+                        }
+
+                        return source;
                     });
     }
 
@@ -297,6 +384,11 @@ public class QalaCliBaseFixture : IDisposable
         services.AddTransient<IRequestHandler<GetWebhookSecretRequest, Either<GetWebhookSecretErrorResponse, GetWebhookSecretSuccessResponse>>, GetWebhookSecretHandler>();
         services.AddTransient<IRequestHandler<RotateWebhookSecretRequest, Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>>, RotateWebhookSecretHandler>();
         services.AddTransient<IRequestHandler<UpdateEnvironmentRequest, Either<UpdateEnvironmentErrorResponse, UpdateEnvironmentSuccessResponse>>, UpdateEnvironmentHandler>();
+        services.AddTransient<IRequestHandler<CreateSourceRequest, Either<CreateSourceErrorResponse, CreateSourceSuccessResponse>>, CreateSourceHandler>();
+        services.AddTransient<IRequestHandler<ListSourcesRequest, Either<ListSourcesErrorResponse, ListSourcesSuccessResponse>>, ListSourcesHandler>();
+        services.AddTransient<IRequestHandler<GetSourceRequest, Either<GetSourceErrorResponse, GetSourceSuccessResponse>>, GetSourceHandler>();
+        services.AddTransient<IRequestHandler<UpdateSourceRequest, Either<UpdateSourceErrorResponse, UpdateSourceSuccessResponse>>, UpdateSourceHandler>();
+        services.AddTransient<IRequestHandler<DeleteSourceRequest, Either<DeleteSourceErrorResponse, DeleteSourceSuccessResponse>>, DeleteSourceHandler>();
     }
 
     private static void InitializeServices(IServiceCollection services)
@@ -307,6 +399,7 @@ public class QalaCliBaseFixture : IDisposable
         services.AddTransient<IEventTypeService, EventTypeService>();
         services.AddTransient<ITopicService, TopicService>();
         services.AddTransient<ISubscriptionService, SubscriptionService>();
+        services.AddTransient<ISourceService, SourceService>();
     }
 
     private void InitializeDataServices(IServiceCollection services)
@@ -317,5 +410,6 @@ public class QalaCliBaseFixture : IDisposable
         services.AddSingleton<IEventTypeGateway>(EventTypeGatewayMock.Object);
         services.AddSingleton<ITopicGateway>(TopicGatewayMock.Object);
         services.AddSingleton<ISubscriptionGateway>(SubscriptionGatewayMock.Object);
+        services.AddSingleton<ISourceGateway>(SourceGatewayMock.Object);
     }
 }

@@ -59,4 +59,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <Target Name="RenderQalaCliDocumentation" AfterTargets="Build" Condition="$(DesignTimeBuild) != 'true'" >
+     <WriteLinesToFile Lines="" Overwrite="true" File="qala-cli-xmldoc.xml" />
+     <Exec Command="dotnet run --no-build -- cli xmldoc &gt;&gt; qala-cli-xmldoc.xml" 
+           EnvironmentVariables="NO_COLOR=true" />
+     <Exec Command="dotnet run --no-build -- markdown" />
+   </Target>
 </Project>
