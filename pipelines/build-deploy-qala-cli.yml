@@ -44,6 +44,17 @@ stages:
   # Build and Test
   - job: BuildAndTest
     displayName: "Build and Test"
+    strategy:
+      matrix:
+        Windows:
+          vmImage: 'windows-latest'
+          runtimeIdentifiers: 'win-x64, win-arm64'
+        Linux:
+          vmImage: 'ubuntu-latest'
+          runtimeIdentifiers: 'linux-x64'
+        macOS:
+          vmImage: 'macOS-latest'
+          runtimeIdentifiers: 'osx-arm64'
     steps:
     # Install SDK Using global.json
     - task: UseDotNet@2
