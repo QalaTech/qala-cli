@@ -1,4 +1,10 @@
-# Qala CLI Documentation
+import HeroBanner from '../../src/components/HeroBanner/HeroBanner'
+
+<HeroBanner
+    title="Qala CLI Documentation"
+    tagline="Qala CLI is a command-line interface that enables you to manage the Q-Flow solution via the terminal. It is suitable for integration into deployment pipelines or for automating certain tasks, such as creating a new environment upon the onboarding of a new tenant."
+    backgroundColor='transparent'
+/>
 
 ## `login`
 

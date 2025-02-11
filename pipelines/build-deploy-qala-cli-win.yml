@@ -1,3 +1,4 @@
+# Build and push an image to GitHub Releases and respective hub repositories
 resources:
   repositories:
     - repository: self
@@ -5,24 +6,23 @@ resources:
 trigger:
   branches:
     include:
-      - release/*
+      - master
   paths:
     include:
-      - src/Qala.Cli.Data
-      - src/Qala.Cli
+      - src/Cli
 
 pr:
   autoCancel: false
   branches:
     include:
       - master
+      - development
   paths:
     exclude:
       - tests/*
 
 variables:
   pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj' 
-  pathToTheProjectTestFile: '$(Build.SourcesDirectory)/tests/Qala.Cli.Integration.Tests/Qala.Cli.Integration.Tests.csproj' 
   major: 1
   minor: 0
   patch: $[counter(variables['major'], 0)]
@@ -33,66 +33,18 @@ variables:
   releaseVersion: ''
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: windows-latest
 
 stages:
-# Stage Build and Test (only for PRs from feature and hotfix branches)
-- stage: BuildAndTest
-  condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
-  displayName: "Build and Test"
-  jobs:
-  # Build and Test
-  - job: BuildAndTest
-    displayName: "Build and Test"
-    steps:
-    # Install SDK Using global.json
-    - task: UseDotNet@2
-      displayName: 'Install SDK Using global.json'
-      inputs:
-        packageType: 'sdk'
-        useGlobalJson: true
-        workingDirectory: $(Pipeline.Workspace)/s
-
-    # Restore NuGet Packages
-    - task: DotNetCoreCLI@2
-      displayName: 'Restore NuGet Packages'
-      inputs:
-        command: 'restore'
-        projects: '**/*.csproj'
-
-    # Build the project
-    - task: DotNetCoreCLI@2
-      inputs:
-        command: 'build'
-        projects: '$(pathToTheProjectFile)'
-
-    # Run tests
-    - task: DotNetCoreCLI@2
-      inputs:
-        command: 'test'
-        projects: '$(pathToTheProjectTestFile)'
-
-# Stage Alpha Build And Publish (only for merged from hotfix to release branches and feature to master branches)
+# Stage Alpha
+# Only run for development branch
 - stage: Alpha
-  condition: and(succeeded(), or(and(eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'))), and(eq(variables['Build.Reason'], 'Manual'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/master'))))
-  displayName: "Build and Publish Alpha Version"
+  condition: in(variables['Build.SourceBranch'], 'refs/heads/development')
+  displayName: "Deploy to Alpha"
   jobs:
   # Build and Publish Alpha Executables and Installers
   - job: BuildAndPublishAlpha
     displayName: "Build and Publish Alpha Executables and Installers"
-    strategy:
-      matrix:
-        Windows:
-          vmImage: 'windows-latest'
-          runtimeIdentifiers: 'win-x64, win-arm64'
-        Linux:
-          vmImage: 'ubuntu-latest'
-          runtimeIdentifiers: 'linux-x64'
-        macOS:
-          vmImage: 'macOS-latest'
-          runtimeIdentifiers: 'osx-arm64'
-    pool: 
-      vmImage: $('vmImage')
     steps:
     # Set Alpha Version Number
     - task: PowerShell@2
@@ -129,7 +81,15 @@ stages:
           # Save the new version to a file for future reference
           $newVersion = "$major.$minor.$patch"
           Set-Content -Path "$(Build.ArtifactStagingDirectory)/currentVersion.txt" -Value $newVersion
-    
+
+    # Install SDK Using global.json
+    - task: UseDotNet@2
+      displayName: 'Install SDK Using global.json'
+      inputs:
+        packageType: 'sdk'
+        useGlobalJson: true
+        workingDirectory: $(Pipeline.Workspace)/s
+
     # Restore NuGet Packages
     - task: DotNetCoreCLI@2
       displayName: 'Restore NuGet Packages'
@@ -157,10 +117,10 @@ stages:
             dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/alpha/$rid"
           }
 
-    # If Windows, install WiX Toolset and UI extensions
+    # Install WiX Toolset and UI extensions
     - task: PowerShell@2
       displayName: 'Install WiX Toolset and UI extensions'
-      condition: eq(variables['vmImage'], 'windows-latest')
+      condition: ne(variables['Build.Reason'], 'PullRequest')
       inputs:
         workingDirectory: $(Build.SourcesDirectory)
         targetType: 'inline'
@@ -171,7 +131,7 @@ stages:
     # Create installers for each runtime identifiers
     - task: PowerShell@2
       displayName: 'Create installers for each runtime identifiers'
-      condition: eq(variables['vmImage'], 'windows-latest')
+      condition: ne(variables['Build.Reason'], 'PullRequest')
       inputs:
         workingDirectory: $(Build.SourcesDirectory)
         targetType: 'inline'
@@ -185,7 +145,7 @@ stages:
     # Move all installers and executables to the artifact staging directory
     - task: PowerShell@2
       displayName: 'Move all installers and executables to the artifact staging directory'
-      condition: eq(variables['vmImage'], 'windows-latest')
+      condition: ne(variables['Build.Reason'], 'PullRequest')
       inputs:
         targetType: 'inline'
         script: |
@@ -199,7 +159,7 @@ stages:
     # Create GitHub Alpha Release
     - task: GithubRelease@1 
       displayName: 'Create GitHub Alpha Release'
-      condition: eq(variables['vmImage'], 'windows-latest')     
+      condition: ne(variables['Build.Reason'], 'PullRequest')      
       inputs:
         gitHubConnection: '$(gitHubConnection)'
         repositoryName: '$(repositoryName)'
