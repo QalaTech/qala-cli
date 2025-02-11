@@ -9,6 +9,7 @@ using Qala.Cli.Commands.Topics;
 using Qala.Cli.Commands.Subscriptions;
 using Spectre.Console;
 using Qala.Cli.Commands.Sources;
+using Qala.Cli.Commands.GenerateMarkdown;
 
 var services = new ServiceCollection();
 var configuration = Configurations.SetupConfiguration();
@@ -24,6 +25,10 @@ var app = new CommandApp(registrar);
 app.Configure(config =>
 {
     config.SetApplicationName("qala");
+
+    config.AddCommand<GenerateMarkdownCommand>("markdown")
+        .WithDescription("Generates Markdown documentation from the XML documentation file.")
+        .IsHidden();
 
     config.AddCommand<LoginCommand>("login")
         .WithDescription("this commands initiates the process for the user to login.")

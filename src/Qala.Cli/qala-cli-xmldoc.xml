@@ -1,0 +1,636 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Model>
+  <!--LOGIN-->
+  <Command Name="login" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Login.LoginCommand" 
+Settings="Qala.Cli.Commands.Login.LoginArgument">
+    <Description>this commands initiates the process for the user to 
+login.</Description>
+    <Examples>
+      <Example commandLine="login" />
+    </Examples>
+  </Command>
+  <!--CONFIG-->
+  <Command Name="config" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Config.ConfigCommand" 
+Settings="Qala.Cli.Commands.Config.ConfigArgument">
+    <Description>this command creates enables the configuration of the Qala CLI 
+(for automation purposes).</Description>
+    <Parameters>
+      <Option Short="e" Long="env" Value="ENVIRONMENT_ID" Required="false" 
+Kind="scalar" ClrType="System.Guid">
+        <Description>The environment ID to use for the request.</Description>
+      </Option>
+      <Option Short="k" Long="key" Value="API_KEY" Required="false" 
+Kind="scalar" ClrType="System.String">
+        <Description>The API key to use for the request.</Description>
+      </Option>
+    </Parameters>
+    <Examples>
+      <Example commandLine="config -k &lt;API_KEY&gt; -e &lt;ENV_ID&gt;" />
+    </Examples>
+  </Command>
+  <!--ENVIRONMENT-->
+  <Command Name="environment" IsBranch="true" 
+Settings="Spectre.Console.Cli.CommandSettings">
+    <!--CREATE-->
+    <Command Name="create" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Environment.CreateEnvironmentCommand" 
+Settings="Qala.Cli.Commands.Environment.CreateEnvironmentArgument">
+      <Description>this command creates a new environment for the Qala 
+CLI.</Description>
+      <Parameters>
+        <Option Short="" Long="disableSchemaValidation" Value="NULL" 
+Required="false" Kind="flag" ClrType="System.Boolean">
+          <Description>Disable schema validation.</Description>
+        </Option>
+        <Option Short="n" Long="name" Value="NAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The name of the environment.</Description>
+        </Option>
+        <Option Short="r" Long="region" Value="REGION" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The region of the environment.</Description>
+        </Option>
+        <Option Short="t" Long="type" Value="TYPE" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The type of the environment.</Description>
+        </Option>
+      </Parameters>
+      <Examples>
+        <Example commandLine="environment create -n &lt;NAME&gt; -r 
+&lt;REGION&gt; -t &lt;TYPE&gt; --disableSchemaValidation" />
+      </Examples>
+    </Command>
+    <!--CURRENT-->
+    <Command Name="current" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Environment.GetEnvironmentCommand" 
+Settings="Qala.Cli.Commands.Environment.GetEnvironmentArgument">
+      <Description>this command retrieves the current environment for the Qala 
+CLI.</Description>
+      <Examples>
+        <Example commandLine="environment current" />
+      </Examples>
+    </Command>
+    <!--SET-->
+    <Command Name="set" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Environment.SetEnvironmentCommand" 
+Settings="Qala.Cli.Commands.Environment.SetEnvironmentArgument">
+      <Description>this command sets the current environment for the Qala 
+CLI.</Description>
+      <Parameters>
+        <Option Short="e" Long="environmentId" Value="ENVIRONMENT_ID" 
+Required="false" Kind="scalar" ClrType="System.Guid">
+          <Description>The id of the environment.</Description>
+        </Option>
+      </Parameters>
+      <Examples>
+        <Example commandLine="environment set -e &lt;ENVIRONMENT_ID&gt;" />
+      </Examples>
+    </Command>
+    <!--UPDATE-->
+    <Command Name="update" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Environment.UpdateEnvironmentCommand" 
+Settings="Qala.Cli.Commands.Environment.UpdateEnvironmentArgument">
+      <Description>this command updates the current environment for the Qala 
+CLI.</Description>
+      <Parameters>
+        <Option Short="" Long="disableSchemaValidation" Value="NULL" 
+Required="false" Kind="flag" ClrType="System.Boolean">
+          <Description>Disable schema validation.</Description>
+        </Option>
+      </Parameters>
+      <Examples>
+        <Example commandLine="environment update --disableSchemaValidation" />
+      </Examples>
+    </Command>
+  </Command>
+  <!--EVENTS-->
+  <Command Name="events" IsBranch="true" 
+Settings="Spectre.Console.Cli.CommandSettings">
+    <!--LIST-->
+    <Command Name="list" IsBranch="false" 
+ClrType="Qala.Cli.Commands.EventTypes.ListEventTypesCommand" 
+Settings="Qala.Cli.Commands.EventTypes.ListEventTypesArgument">
+      <Description>this command lists all the event types available in your 
+environment.</Description>
+      <Examples>
+        <Example commandLine="events ls" />
+      </Examples>
+    </Command>
+    <!--INSPECT-->
+    <Command Name="inspect" IsBranch="false" 
+ClrType="Qala.Cli.Commands.EventTypes.GetEventTypeCommand" 
+Settings="Qala.Cli.Commands.EventTypes.GetEventTypeArgument">
+      <Description>this command retrieves the event type with the specified 
+ID.</Description>
+      <Parameters>
+        <Argument Name="EVENT_TYPE_ID" Position="0" Required="true" 
+Kind="scalar" ClrType="System.Guid">
+          <Description>The ID of the event type to retrieve.</Description>
+        </Argument>
+      </Parameters>
+      <Examples>
+        <Example commandLine="events inspect &lt;EVENT_TYPE_ID&gt;" />
+      </Examples>
+    </Command>
+  </Command>
+  <!--TOPICS-->
+  <Command Name="topics" IsBranch="true" 
+Settings="Spectre.Console.Cli.CommandSettings">
+    <!--LIST-->
+    <Command Name="list" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Topics.ListTopicsCommand" 
+Settings="Qala.Cli.Commands.Topics.ListTopicsArgument">
+      <Description>this command lists all the topics available in your 
+environment.</Description>
+      <Examples>
+        <Example commandLine="topics ls" />
+      </Examples>
+    </Command>
+    <!--NAME-->
+    <Command Name="name" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Topics.GetTopicCommand" 
+Settings="Qala.Cli.Commands.Topics.GetTopicArgument">
+      <Description>this command retrieves the topic with the specified 
+NAME.</Description>
+      <Parameters>
+        <Argument Name="TOPIC_NAME" Position="0" Required="true" Kind="scalar" 
+ClrType="System.String">
+          <Description>The Name of the topic to retrieve.</Description>
+        </Argument>
+      </Parameters>
+      <Examples>
+        <Example commandLine="topics name &lt;NAME&gt;" />
+      </Examples>
+    </Command>
+    <!--CREATE-->
+    <Command Name="create" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Topics.CreateTopicCommand" 
+Settings="Qala.Cli.Commands.Topics.CreateTopicArgument">
+      <Description>this command creates a new topic for the Qala 
+CLI.</Description>
+      <Parameters>
+        <Option Short="d" Long="description" Value="DESCRIPTION" 
+Required="false" Kind="scalar" ClrType="System.String">
+          <Description>The description of the topic.</Description>
+        </Option>
+        <Option Short="e" Long="event-type-ids" 
+Value="EVENTS_COMMA_SEPERATED_IDS" Required="false" Kind="scalar" 
+ClrType="System.Collections.Generic.List`1[[System.Guid, System.Private.CoreLib,
+Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]">
+          <Description>The comma separated list of event type ids.</Description>
+        </Option>
+        <Option Short="n" Long="name" Value="NAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The name of the topic.</Description>
+        </Option>
+      </Parameters>
+      <Examples>
+        <Example commandLine="topics create -n &lt;NAME&gt; -d 
+&lt;DESCRIPTION&gt; -e &lt;EVENTS_COMMA_SEPERATED_IDS&gt;" />
+      </Examples>
+    </Command>
+    <!--UPDATE-->
+    <Command Name="update" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Topics.UpdateTopicCommand" 
+Settings="Qala.Cli.Commands.Topics.UpdateTopicArgument">
+      <Description>this command updates an existing topic for the Qala 
+CLI.</Description>
+      <Parameters>
+        <Argument Name="NAME" Position="0" Required="true" Kind="scalar" 
+ClrType="System.String">
+          <Description>The name of the topic.</Description>
+        </Argument>
+        <Option Short="d" Long="description" Value="DESCRIPTION" 
+Required="false" Kind="scalar" ClrType="System.String">
+          <Description>The description of the topic.</Description>
+        </Option>
+        <Option Short="e" Long="event-type-ids" 
+Value="EVENTS_COMMA_SEPERATED_IDS" Required="false" Kind="scalar" 
+ClrType="System.Collections.Generic.List`1[[System.Guid, System.Private.CoreLib,
+Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]">
+          <Description>The comma separated list of event type ids.</Description>
+        </Option>
+      </Parameters>
+      <Examples>
+        <Example commandLine="topics update &lt;NAME&gt; -d &lt;DESCRIPTION&gt; 
+-e &lt;EVENTS_COMMA_SEPERATED_IDS&gt;" />
+      </Examples>
+    </Command>
+  </Command>
+  <!--SOURCES-->
+  <Command Name="sources" IsBranch="true" 
+Settings="Spectre.Console.Cli.CommandSettings">
+    <!--LIST-->
+    <Command Name="list" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Sources.ListSourcesCommand" 
+Settings="Qala.Cli.Commands.Sources.ListSourcesArgument">
+      <Description>this command lists all the sources available in your 
+environment.</Description>
+      <Examples>
+        <Example commandLine="qala sources ls" />
+      </Examples>
+    </Command>
+    <!--NAME-->
+    <Command Name="name" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Sources.GetSourceCommand" 
+Settings="Qala.Cli.Commands.Sources.GetSourceArgument">
+      <Description>this command retrieves the source with the specified 
+NAME.</Description>
+      <Parameters>
+        <Argument Name="SOURCE_NAME" Position="0" Required="true" Kind="scalar" 
+ClrType="System.String">
+          <Description>The Name of the source to retrieve.</Description>
+        </Argument>
+      </Parameters>
+      <Examples>
+        <Example commandLine="qala sources name &lt;NAME&gt;" />
+      </Examples>
+    </Command>
+    <!--CREATE-->
+    <Command Name="create" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Sources.CreateSourceCommand" 
+Settings="Qala.Cli.Commands.Sources.CreateSourceArgument">
+      <Description>this command creates a new source for the Qala 
+CLI.</Description>
+      <Parameters>
+        <Option Short="" Long="algorithm" Value="ALGORITHM" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The algorithm of the source when authentication type is 
+jwt (RSA or HSA).</Description>
+        </Option>
+        <Option Short="" Long="apiKeyName" Value="API_KEY_NAME" Required="false"
+Kind="scalar" ClrType="System.String">
+          <Description>The name of the api key when authentication type is api 
+key.</Description>
+        </Option>
+        <Option Short="" Long="apiKeyValue" Value="API_KEY_VALUE" 
+Required="false" Kind="scalar" ClrType="System.String">
+          <Description>The value of the api key when authentication type is api 
+key.</Description>
+        </Option>
+        <Option Short="" Long="audience" Value="AUDIENCE" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The audience of the source when authentication type is 
+jwt.</Description>
+        </Option>
+        <Option Short="a" Long="authenticationType" Value="AUTHENTICATION_TYPE" 
+Required="false" Kind="scalar" ClrType="System.String">
+          <Description>The authentication type of the source (Basic, ApiKey or 
+JWT).</Description>
+        </Option>
+        <Option Short="d" Long="description" Value="DESCRIPTION" 
+Required="false" Kind="scalar" ClrType="System.String">
+          <Description>The description of the source.</Description>
+        </Option>
+        <Option Short="i" Long="ip-whitelisting" 
+Value="COMMA_SEPERATED_IPS_WHITELISTING" Required="false" Kind="scalar" 
+ClrType="System.Collections.Generic.List`1[[System.String, 
+System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, 
+PublicKeyToken=7cec85d7bea7798e]]">
+          <Description>The comma separated list of the ips allowed to access the
+source.</Description>
+        </Option>
+        <Option Short="" Long="issuer" Value="ISSUER" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The issuer of the source when authentication type is 
+jwt.</Description>
+        </Option>
+        <Option Short="m" Long="methods" Value="COMMA_SEPERATED_HTTP_METHODS" 
+Required="false" Kind="scalar" 
+ClrType="System.Collections.Generic.List`1[[System.String, 
+System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, 
+PublicKeyToken=7cec85d7bea7798e]]">
+          <Description>The comma separated list of the http methods available to
+the source.</Description>
+        </Option>
+        <Option Short="n" Long="name" Value="NAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The Name of the source.</Description>
+        </Option>
+        <Option Short="" Long="password" Value="PASSWORD" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The password of the source when authentication type is 
+basic.</Description>
+        </Option>
+        <Option Short="" Long="publicKey" Value="PUBLIC_KEY" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The public key of the source when authentication type is 
+jwt and algorithm is RSA.</Description>
+        </Option>
+        <Option Short="" Long="secret" Value="SECRET" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The secret of the source when authentication type is jwt 
+and algorithm is HSA.</Description>
+        </Option>
+        <Option Short="" Long="username" Value="USERNAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The username of the source when authentication type is 
+basic.</Description>
+        </Option>
+      </Parameters>
+      <Examples>
+        <Example commandLine="qala sources create -n &lt;NAME&gt; -d 
+&lt;DESCRIPTION&gt; -m &lt;METHODS_COMMA_SEPERATED&gt; -i 
+&lt;IP_WHITELISTING_COMMA_SEPERATED&gt; -a &lt;AUTHENTICATION_TYPE&gt;" />
+      </Examples>
+    </Command>
+    <!--UPDATE-->
+    <Command Name="update" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Sources.UpdateSourceCommand" 
+Settings="Qala.Cli.Commands.Sources.UpdateSourceArgument">
+      <Description>this command updates an existing source for the Qala 
+CLI.</Description>
+      <Parameters>
+        <Argument Name="SOURCE_NAME" Position="0" Required="true" Kind="scalar" 
+ClrType="System.String">
+          <Description>The Name of the source to update.</Description>
+        </Argument>
+        <Option Short="" Long="algorithm" Value="ALGORITHM" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The algorithm of the source when authentication type is 
+jwt (RSA or HSA).</Description>
+        </Option>
+        <Option Short="" Long="apiKeyName" Value="API_KEY_NAME" Required="false"
+Kind="scalar" ClrType="System.String">
+          <Description>The name of the api key when authentication type is api 
+key.</Description>
+        </Option>
+        <Option Short="" Long="apiKeyValue" Value="API_KEY_VALUE" 
+Required="false" Kind="scalar" ClrType="System.String">
+          <Description>The value of the api key when authentication type is api 
+key.</Description>
+        </Option>
+        <Option Short="" Long="audience" Value="AUDIENCE" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The audience of the source when authentication type is 
+jwt.</Description>
+        </Option>
+        <Option Short="a" Long="authenticationType" Value="AUTHENTICATION_TYPE" 
+Required="false" Kind="scalar" ClrType="System.String">
+          <Description>The authentication type of the source (Basic, ApiKey or 
+JWT).</Description>
+        </Option>
+        <Option Short="d" Long="description" Value="DESCRIPTION" 
+Required="false" Kind="scalar" ClrType="System.String">
+          <Description>The description of the source.</Description>
+        </Option>
+        <Option Short="i" Long="ip-whitelisting" 
+Value="COMMA_SEPERATED_IPS_WHITELISTING" Required="false" Kind="scalar" 
+ClrType="System.Collections.Generic.List`1[[System.String, 
+System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, 
+PublicKeyToken=7cec85d7bea7798e]]">
+          <Description>The comma separated list of the ips allowed to access the
+source.</Description>
+        </Option>
+        <Option Short="" Long="issuer" Value="ISSUER" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The issuer of the source when authentication type is 
+jwt.</Description>
+        </Option>
+        <Option Short="m" Long="methods" Value="COMMA_SEPERATED_HTTP_METHODS" 
+Required="false" Kind="scalar" 
+ClrType="System.Collections.Generic.List`1[[System.String, 
+System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, 
+PublicKeyToken=7cec85d7bea7798e]]">
+          <Description>The comma separated list of the http methods available to
+the source.</Description>
+        </Option>
+        <Option Short="n" Long="name" Value="NEW_NAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The new name of the source.</Description>
+        </Option>
+        <Option Short="" Long="password" Value="PASSWORD" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The password of the source when authentication type is 
+basic.</Description>
+        </Option>
+        <Option Short="" Long="publicKey" Value="PUBLIC_KEY" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The public key of the source when authentication type is 
+jwt and algorithm is RSA.</Description>
+        </Option>
+        <Option Short="" Long="secret" Value="SECRET" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The secret of the source when authentication type is jwt 
+and algorithm is HSA.</Description>
+        </Option>
+        <Option Short="" Long="username" Value="USERNAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The username of the source when authentication type is 
+basic.</Description>
+        </Option>
+      </Parameters>
+      <Examples>
+        <Example commandLine="qala sources update &lt;NAME&gt; -d 
+&lt;DESCRIPTION&gt; -m &lt;METHODS_COMMA_SEPERATED&gt; -i 
+&lt;IP_WHITELISTING_COMMA_SEPERATED&gt; -a &lt;AUTHENTICATION_TYPE&gt;" />
+      </Examples>
+    </Command>
+    <!--DELETE-->
+    <Command Name="delete" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Sources.DeleteSourceCommand" 
+Settings="Qala.Cli.Commands.Sources.DeleteSourceArgument">
+      <Description>this command deletes the source with the specified 
+NAME.</Description>
+      <Parameters>
+        <Argument Name="SOURCE_NAME" Position="0" Required="true" Kind="scalar" 
+ClrType="System.String">
+          <Description>The Name of the source to delete.</Description>
+        </Argument>
+      </Parameters>
+      <Examples>
+        <Example commandLine="qala sources delete -n &lt;NAME&gt;" />
+      </Examples>
+    </Command>
+  </Command>
+  <!--SUBSCRIPTIONS-->
+  <Command Name="subscriptions" IsBranch="true" 
+Settings="Spectre.Console.Cli.CommandSettings">
+    <!--LIST-->
+    <Command Name="list" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Subscriptions.ListSubscriptionsCommand" 
+Settings="Qala.Cli.Commands.Subscriptions.ListSubscriptionsArgument">
+      <Description>this command lists all the subscriptions available in your 
+environment.</Description>
+      <Parameters>
+        <Option Short="t" Long="topic" Value="TOPIC_NAME" Required="false" 
+Kind="scalar" ClrType="System.String" />
+      </Parameters>
+      <Examples>
+        <Example commandLine="qala subscriptions ls -t &lt;TOPIC_NAME&gt;" />
+      </Examples>
+    </Command>
+    <!--INSPECT-->
+    <Command Name="inspect" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Subscriptions.GetSubscriptionCommand" 
+Settings="Qala.Cli.Commands.Subscriptions.GetSubscriptionArgument">
+      <Description>this command retrieves the subscription with the specified 
+ID.</Description>
+      <Parameters>
+        <Option Short="s" Long="subscription" Value="SUBSCRIPTION_ID" 
+Required="false" Kind="scalar" ClrType="System.Guid" />
+        <Option Short="t" Long="topic" Value="TOPIC_NAME" Required="false" 
+Kind="scalar" ClrType="System.String" />
+      </Parameters>
+      <Examples>
+        <Example commandLine="qala subscriptions i -t &lt;TOPIC_NAME&gt; -s 
+&lt;SUBSCRIPTION_ID&gt;" />
+      </Examples>
+    </Command>
+    <!--CREATE-->
+    <Command Name="create" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Subscriptions.CreateSubscriptionCommand" 
+Settings="Qala.Cli.Commands.Subscriptions.CreateSubscriptionArgument">
+      <Description>this command creates a new subscription for the Qala 
+CLI.</Description>
+      <Parameters>
+        <Option Short="d" Long="description" Value="DESCRIPTION" 
+Required="false" Kind="scalar" ClrType="System.String">
+          <Description>The description of the subscription.</Description>
+        </Option>
+        <Option Short="e" Long="event-type-ids" 
+Value="EVENTS_COMMA_SEPERATED_IDS" Required="false" Kind="scalar" 
+ClrType="System.Collections.Generic.List`1[[System.Guid, System.Private.CoreLib,
+Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]">
+          <Description>The comma separated list of event type ids.</Description>
+        </Option>
+        <Option Short="m" Long="max-attempts" Value="MAX_DELIVERY_ATTEMPTS" 
+Required="false" Kind="scalar" ClrType="System.Int32">
+          <Description>The maximum delivery attempts of the 
+subscription.</Description>
+        </Option>
+        <Option Short="n" Long="name" Value="NAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The name of the subscription.</Description>
+        </Option>
+        <Option Short="t" Long="topic" Value="TOPIC_NAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The name of the topic.</Description>
+        </Option>
+        <Option Short="u" Long="url" Value="WEBHOOK_URL" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The webhook url of the subscription.</Description>
+        </Option>
+      </Parameters>
+      <Examples>
+        <Example commandLine="qala sub create -n &lt;SUBSCRIPTION_NAME&gt; -t 
+&lt;TOPIC_NAME&gt; -d &lt;DESCRIPTION&gt; -e &lt;EVENTS_COMMA_SEPERATED_IDS&gt; 
+-u &lt;WEBHOOK_URL&gt; -m &lt;MAX_DELIVERY_ATTEMPTS&gt;" />
+      </Examples>
+    </Command>
+    <!--UPDATE-->
+    <Command Name="update" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Subscriptions.UpdateSubscriptionCommand" 
+Settings="Qala.Cli.Commands.Subscriptions.UpdateSubscriptionArgument">
+      <Description>this command updates an existing subscription for the Qala 
+CLI.</Description>
+      <Parameters>
+        <Argument Name="SUBSCRIPTION_ID" Position="0" Required="true" 
+Kind="scalar" ClrType="System.Guid">
+          <Description>The id of the subscription.</Description>
+        </Argument>
+        <Option Short="d" Long="description" Value="DESCRIPTION" 
+Required="false" Kind="scalar" ClrType="System.String">
+          <Description>The description of the subscription.</Description>
+        </Option>
+        <Option Short="e" Long="events" Value="EVENTS_COMMA_SEPERATED_IDS" 
+Required="false" Kind="scalar" 
+ClrType="System.Collections.Generic.List`1[[System.Guid, System.Private.CoreLib,
+Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]">
+          <Description>The comma separated list of event type ids.</Description>
+        </Option>
+        <Option Short="m" Long="max-attempts" Value="MAX_DELIVERY_ATTEMPTS" 
+Required="false" Kind="scalar" ClrType="System.Int32">
+          <Description>The maximum delivery attempts of the 
+subscription.</Description>
+        </Option>
+        <Option Short="n" Long="name" Value="NAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The name of the subscription.</Description>
+        </Option>
+        <Option Short="t" Long="topic" Value="TOPIC_NAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The name of the topic.</Description>
+        </Option>
+        <Option Short="u" Long="url" Value="WEBHOOK_URL" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The webhook url of the subscription.</Description>
+        </Option>
+      </Parameters>
+      <Examples>
+        <Example commandLine="qala sub update &lt;SUBSCRIPTION_ID&gt; -t 
+&lt;TOPIC_NAME&gt; -d &lt;DESCRIPTION&gt; -e &lt;EVENTS_COMMA_SEPERATED_IDS&gt; 
+-u &lt;WEBHOOK_URL&gt; -m &lt;MAX_DELIVERY_ATTEMPTS&gt;" />
+      </Examples>
+    </Command>
+    <!--DELETE-->
+    <Command Name="delete" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Subscriptions.DeleteSubscriptionCommand" 
+Settings="Qala.Cli.Commands.Subscriptions.DeleteSubscriptionArgument">
+      <Description>this command deletes the subscription with the specified 
+ID.</Description>
+      <Parameters>
+        <Option Short="s" Long="subscription" Value="SUBSCRIPTION_ID" 
+Required="false" Kind="scalar" ClrType="System.Guid">
+          <Description>The id of the subscription.</Description>
+        </Option>
+        <Option Short="t" Long="topic" Value="TOPIC_NAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The name of the topic.</Description>
+        </Option>
+      </Parameters>
+      <Examples>
+        <Example commandLine="qala sub delete -t &lt;TOPIC_NAME&gt; -s 
+&lt;SUBSCRIPTION_ID&gt;" />
+      </Examples>
+    </Command>
+    <!--SECRET-->
+    <Command Name="secret" IsBranch="true" 
+Settings="Spectre.Console.Cli.CommandSettings">
+      <!--INSPECT-->
+      <Command Name="inspect" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Subscriptions.GetWebhookSecretCommand" 
+Settings="Qala.Cli.Commands.Subscriptions.GetWebhookSecretArgument">
+        <Description>this command retrieves the webhook secret for the 
+subscription with the specified ID.</Description>
+        <Parameters>
+          <Option Short="s" Long="subscription-id" Value="SUBSCRIPTION_ID" 
+Required="false" Kind="scalar" ClrType="System.Guid">
+            <Description>The id of the subscription.</Description>
+          </Option>
+          <Option Short="t" Long="topic" Value="TOPIC_NAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+            <Description>The name of the topic.</Description>
+          </Option>
+        </Parameters>
+        <Examples>
+          <Example commandLine="qala sub secret i -t &lt;TOPIC_NAME&gt; -s 
+&lt;SUBSCRIPTION_ID&gt;" />
+        </Examples>
+      </Command>
+      <!--ROTATE-->
+      <Command Name="rotate" IsBranch="false" 
+ClrType="Qala.Cli.Commands.Subscriptions.RotateWebhookSecretCommand" 
+Settings="Qala.Cli.Commands.Subscriptions.RotateWebhookSecretArgument">
+        <Description>this command rotates the webhook secret for the 
+subscription with the specified ID.</Description>
+        <Parameters>
+          <Option Short="s" Long="subscription-id" Value="SUBSCRIPTION_ID" 
+Required="false" Kind="scalar" ClrType="System.Guid">
+            <Description>The id of the subscription.</Description>
+          </Option>
+          <Option Short="t" Long="topic" Value="TOPIC_NAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+            <Description>The name of the topic.</Description>
+          </Option>
+        </Parameters>
+        <Examples>
+          <Example commandLine="qala sub secret rotate -t &lt;TOPIC_NAME&gt; -s 
+&lt;SUBSCRIPTION_ID&gt;" />
+        </Examples>
+      </Command>
+    </Command>
+  </Command>
+</Model>
