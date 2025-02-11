@@ -601,7 +601,7 @@ Kind="scalar" ClrType="System.String">
 Required="false" Kind="scalar" ClrType="System.Guid">
           <Description>The id of the subscription.</Description>
         </Option>
-        <Option Short="t" Long="topic" Value="TOPIC_NAME" Required="false" 
+        <Option Short="" Long="topic" Value="TOPIC_NAME" Required="false" 
 Kind="scalar" ClrType="System.String">
           <Description>The name of the topic.</Description>
         </Option>
@@ -629,7 +629,7 @@ Kind="scalar" ClrType="System.String">
 Required="false" Kind="scalar" ClrType="System.Guid">
             <Description>The id of the subscription.</Description>
           </Option>
-          <Option Short="t" Long="topic" Value="TOPIC_NAME" Required="false" 
+          <Option Short="" Long="topic" Value="TOPIC_NAME" Required="false" 
 Kind="scalar" ClrType="System.String">
             <Description>The name of the topic.</Description>
           </Option>
@@ -654,7 +654,7 @@ Kind="scalar" ClrType="System.String">
 Required="false" Kind="scalar" ClrType="System.Guid">
             <Description>The id of the subscription.</Description>
           </Option>
-          <Option Short="t" Long="topic" Value="TOPIC_NAME" Required="false" 
+          <Option Short="" Long="topic" Value="TOPIC_NAME" Required="false" 
 Kind="scalar" ClrType="System.String">
             <Description>The name of the topic.</Description>
           </Option>

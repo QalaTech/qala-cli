@@ -47,7 +47,7 @@ public class GenerateMarkdownHandler : IRequestHandler<GenerateMarkdownRequest, 
         }
 
         File.WriteAllText(markdownPath, sb.ToString());
-        Console.WriteLine($"📄 CLI documentation generated: {markdownPath}");
+        Console.WriteLine($"CLI documentation generated: {markdownPath}");
     }
 
     private static void ProcessCommands(XElement element, StringBuilder sb, int headingLevel)
@@ -63,7 +63,7 @@ public class GenerateMarkdownHandler : IRequestHandler<GenerateMarkdownRequest, 
             sb.AppendLine();
 
             var parameters = command.Element("Parameters");
-            if (parameters != null)
+            if (parameters != null && parameters.Elements("Option") != null)
             {
                 sb.AppendLine("### Options:");
                 sb.AppendLine("| Option | Description |");
@@ -94,7 +94,6 @@ public class GenerateMarkdownHandler : IRequestHandler<GenerateMarkdownRequest, 
                 sb.AppendLine();
             }
 
-            // Recursively process subcommands
             ProcessCommands(command, sb, headingLevel + 1);
         }
     }

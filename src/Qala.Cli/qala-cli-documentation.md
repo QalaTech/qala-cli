@@ -392,7 +392,7 @@ ID.
 |--------|-------------|
 | `source` | The name of the source. |
 | `s` / `subscription` | The id of the subscription. |
-| `t` / `topic` | The name of the topic. |
+| `topic` | The name of the topic. |
 
 ### Examples:
 ```sh
@@ -413,7 +413,7 @@ subscription with the specified ID.
 |--------|-------------|
 | `source` | The name of the source. |
 | `s` / `subscription-id` | The id of the subscription. |
-| `t` / `topic` | The name of the topic. |
+| `topic` | The name of the topic. |
 
 ### Examples:
 ```sh
@@ -430,7 +430,7 @@ subscription with the specified ID.
 |--------|-------------|
 | `source` | The name of the source. |
 | `s` / `subscription-id` | The id of the subscription. |
-| `t` / `topic` | The name of the topic. |
+| `topic` | The name of the topic. |
 
 ### Examples:
 ```sh
