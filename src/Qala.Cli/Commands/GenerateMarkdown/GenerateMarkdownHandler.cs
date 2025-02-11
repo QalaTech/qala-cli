@@ -34,7 +34,13 @@ public class GenerateMarkdownHandler : IRequestHandler<GenerateMarkdownRequest, 
         var doc = XDocument.Parse(xmlContent);
         var sb = new StringBuilder();
 
-        sb.AppendLine("# Qala CLI Documentation");
+        sb.AppendLine("import HeroBanner from '../../src/components/HeroBanner/HeroBanner'");
+        sb.AppendLine();
+        sb.AppendLine("<HeroBanner");
+        sb.AppendLine("    title=\"Qala CLI Documentation\"");
+        sb.AppendLine("    tagline=\"Qala CLI is a command-line interface that enables you to manage the Q-Flow solution via the terminal. It is suitable for integration into deployment pipelines or for automating certain tasks, such as creating a new environment upon the onboarding of a new tenant.\"");
+        sb.AppendLine("    backgroundColor='transparent'");
+        sb.AppendLine("/>");
         sb.AppendLine();
 
         if (doc.Root != null)
