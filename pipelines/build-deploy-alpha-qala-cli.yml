@@ -36,55 +36,6 @@ pool:
   vmImage: ubuntu-latest
 
 stages:
-# Stage Build and Test (only for PRs from feature and hotfix branches)
-- stage: BuildAndTest
-  #condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
-  displayName: "Build and Test"
-  jobs:
-  # Build and Test
-  - job: BuildAndTest
-    displayName: "Build and Test"
-    strategy:
-      matrix:
-        Windows:
-          vmImage: 'windows-latest'
-          runtimeIdentifiers: 'win-x64, win-arm64'
-        Linux:
-          vmImage: 'ubuntu-latest'
-          runtimeIdentifiers: 'linux-x64'
-        macOS:
-          vmImage: 'macOS-latest'
-          runtimeIdentifiers: 'osx-arm64'
-    steps:
-    # Install SDK Using global.json
-    - task: UseDotNet@2
-      displayName: 'Install SDK Using global.json'
-      inputs:
-        packageType: 'sdk'
-        useGlobalJson: true
-        workingDirectory: $(Pipeline.Workspace)/s
-
-    # Restore NuGet Packages
-    - task: DotNetCoreCLI@2
-      displayName: 'Restore NuGet Packages'
-      inputs:
-        command: 'restore'
-        projects: '**/*.csproj'
-
-    # Build the project
-    - task: DotNetCoreCLI@2
-      displayName: 'Build the project'
-      inputs:
-        command: 'build'
-        projects: '$(pathToTheProjectFile)'
-
-    # Run tests
-    - task: DotNetCoreCLI@2
-      displayName: 'Run tests'
-      inputs:
-        command: 'test'
-        projects: '$(pathToTheProjectTestFile)'
-
 # Stage Alpha Build And Publish (only for merged from hotfix to release branches and feature to master branches)
 - stage: Alpha
   condition: and(succeeded(), or(and(eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'))), and(eq(variables['Build.Reason'], 'Manual'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/master')))))

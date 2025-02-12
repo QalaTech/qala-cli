@@ -12,14 +12,7 @@ pr:
 variables:
   pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj' 
   pathToTheProjectTestFile: '$(Build.SourcesDirectory)/tests/Qala.Cli.Integration.Tests/Qala.Cli.Integration.Tests.csproj' 
-  major: 1
-  minor: 0
-  patch: $[counter(variables['major'], 0)]
-  runtimeIdentifiers: 'win-x64,win-arm64'
-  gitHubConnection: 'github.com_tvcosta'
-  repositoryName: 'QalaTech/qala-cli'
-  alphaVersion: ''
-  releaseVersion: ''
+  runtimeIdentifiers: 'win-x64;win-arm64'
 
 pool:
   vmImage: ubuntu-latest
@@ -27,7 +20,7 @@ pool:
 stages:
 # Stage Build and Test (only for PRs from feature and hotfix branches)
 - stage: BuildAndTest
-  #condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
+  condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
   displayName: "Build and Test"
   jobs:
   # Build and Test
