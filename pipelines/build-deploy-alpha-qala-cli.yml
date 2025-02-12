@@ -190,7 +190,7 @@ stages:
     # If macOS, update the version in the package.json file
     - task: PowerShell@2
       displayName: 'Update the version in the package.json file'
-      condition: eq(variables['vmImage'], 'osx-arm64')
+      condition: eq(variables['vmImage'], 'macOS-latest')
       inputs:
         targetType: 'inline'
         script: |
@@ -202,14 +202,14 @@ stages:
     # If macOS install Node.js
     - task: NodeTool@0
       displayName: 'Install Node.js'
-      condition: eq(variables['vmImage'], 'osx-arm64')
+      condition: eq(variables['vmImage'], 'macOS-latest')
       inputs:
         versionSpec: '20.x'
 
     # If macOS, publish Alpha npm package
     - task: Npm@1
       displayName: 'Publish Alpha npm package'
-      condition: eq(variables['vmImage'], 'osx-arm64')
+      condition: eq(variables['vmImage'], 'macOS-latest')
       inputs:
         command: 'custom'
         customCommand: 'publish --access public --tag alpha'
