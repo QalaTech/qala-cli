@@ -206,6 +206,11 @@ stages:
       inputs:
         versionSpec: '20.x'
 
+    - task: npmAuthenticate@0
+      inputs:
+        workingFile: '$(Build.SourcesDirectory)/build/npm'
+        customEndpoint: '$(npmConnection)'
+
     # If macOS, publish Alpha npm package
     - task: Npm@1
       displayName: 'Publish Alpha npm package'
