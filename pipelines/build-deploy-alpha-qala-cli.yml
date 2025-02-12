@@ -142,12 +142,8 @@ stages:
         script: |
           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
           foreach ($rid in $runtimeIdentifiers) {
-            Write-Host "Pipeline Workspace: $(Pipeline.Workspace)/alpha/$rid"
-            Write-Host "Contents of Pipeline Workspace:"
-            Get-ChildItem -Path "$(Pipeline.Workspace)/alpha/$rid"
-
             Write-Host "Generating the msi file for runtime: $rid"
-            wix build $(Build.SourcesDirectory)/build/wix/qala.wxs -d Version=$(alphaVersion) -d QalaExecutable="$(Pipeline.Workspace)/alpha/$rid/qala.exe" -ext WixToolset.UI.wixext -o "QalaCliInstaller--$(alphaVersion)-$rid.msi"
+            wix build $(Build.SourcesDirectory)/build/wix/qala.wxs -d Version="$(major).$(minor)" -d QalaExecutable="$(Pipeline.Workspace)/alpha/$rid/qala.exe" -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller--$(alphaVersion)-$rid.msi"
           }
 
     # If Windows, move all installers and executables to the artifact staging directory
