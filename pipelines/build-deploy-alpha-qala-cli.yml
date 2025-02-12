@@ -155,14 +155,27 @@ stages:
         script: |
           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
           foreach ($rid in $runtimeIdentifiers) {
+            Write-Host "Moving installer and executables for runtime: $rid"
+            $alphaDir = "$(Build.ArtifactStagingDirectory)/alpha"
+            $ridDir = "$alphaDir/$rid"
+
+            if (-not (Test-Path -Path $alphaDir)) {
+              Write-Host "Creating directory: $alphaDir"
+              New-Item -ItemType Directory -Path $alphaDir
+            }
+
+            if (-not (Test-Path -Path $ridDir)) {
+              Write-Host "Creating directory: $ridDir"
+              New-Item -ItemType Directory -Path $ridDir
+            }
+
             Write-Host "Contents of $(Build.ArtifactStagingDirectory)"
             Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)"
 
             Write-Host "Contents of $(Build.ArtifactStagingDirectory)/alpha"
             Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/alpha"
 
-            Write-Host "Moving installer and executables for runtime: $rid"
-            Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller-$(alphaVersion)-$rid.msi" -Destination "$(Build.ArtifactStagingDirectory)/alpha/$rid" -Force
+            Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller-$(alphaVersion)-$rid.msi" -Destination $ridDir -Force
           }
 
     # If Windows, create GitHub Alpha Release
