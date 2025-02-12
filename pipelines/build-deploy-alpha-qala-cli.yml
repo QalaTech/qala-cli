@@ -38,7 +38,7 @@ pool:
 stages:
 # Stage Alpha Build And Publish (only for merged from hotfix to release branches and feature to master branches)
 - stage: Alpha
-  condition: and(succeeded(), or(and(eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'))), and(eq(variables['Build.Reason'], 'Manual'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/master')))))
+  # condition: and(succeeded(), or(and(eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'))), and(eq(variables['Build.Reason'], 'Manual'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/master')))))
   displayName: "Build and Publish Alpha Version"
   jobs:
   # Build and Publish Alpha Executables and Installers
