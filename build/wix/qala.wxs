@@ -17,8 +17,8 @@
         <Icon Id="QalaIcon" SourceFile="$(var.ProductResources)logo.ico" />
 
         <Property Id="ARPPRODUCTICON" Value="QalaIcon" />
-        <Property Id="ARPHELPLINK" Value="https://developers.qalatech.io/docs/q-flow/getting-started/" />
-        <Property Id="ARPURLINFOABOUT" Value="https://developers.qalatech.io/docs/category/concepts" />
+        <Property Id="ARPHELPLINK" Value="https://www.qalatech.io/docs/quick-start/quick-start" />
+        <Property Id="ARPURLINFOABOUT" Value="https://www.qalatech.io/" />
         <Property Id="ARPURLUPDATEINFO" Value="https://developers.qalatech.io/docs/api/qala-publishing-api" />
 
         <!-- Allow upgrades and prevent downgrades -->
