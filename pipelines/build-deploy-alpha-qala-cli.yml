@@ -169,13 +169,8 @@ stages:
               New-Item -ItemType Directory -Path $ridDir
             }
 
-            Write-Host "Contents of $(Build.ArtifactStagingDirectory)"
-            Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)"
-
-            Write-Host "Contents of $(Build.ArtifactStagingDirectory)/alpha"
-            Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)/alpha"
-
             Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/QalaCliInstaller-$(alphaVersion)-$rid.msi" -Destination $ridDir -Force
+            Get-ChildItem -Path $ridDir | ForEach-Object { Write-Host $_.FullName }
           }
 
     # If Windows, create GitHub Alpha Release
@@ -190,4 +185,4 @@ stages:
         tag: "$(alphaVersion)"
         isPreRelease: true
         title: 'Alpha Release $(alphaVersion)'   
-        assets: $(Build.ArtifactStagingDirectory)/alpha/*
+        assets: $(Build.ArtifactStagingDirectory)/alpha/*/*.msi
