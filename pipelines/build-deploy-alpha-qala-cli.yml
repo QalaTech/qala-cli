@@ -56,7 +56,7 @@ stages:
           vmImage: 'macOS-latest'
           runtimeIdentifiers: 'osx-arm64'
     pool: 
-      vmImage: $('vmImage')
+      vmImage: '$(vmImage)'
     steps:
     # Set Alpha Version Number
     - task: PowerShell@2
