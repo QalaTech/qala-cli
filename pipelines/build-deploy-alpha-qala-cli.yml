@@ -43,7 +43,8 @@ stages:
   jobs:
   - job: SetAlphaVersion
     displayName: "Set Alpha Version"
-    steps: # Set Alpha Version Number
+    steps: 
+    # Set Alpha Version Number
     - task: PowerShell@2
       displayName: 'Set Alpha Version Number'
       inputs:
@@ -80,6 +81,8 @@ stages:
           Set-Content -Path "$(Build.ArtifactStagingDirectory)/currentVersion.txt" -Value $newVersion
 
   - job: DotnetPackageRestore
+    dependsOn: SetAlphaVersion
+    condition: succeeded()
     displayName: "Restore Packages"
     steps:
     # Restore NuGet Packages
@@ -91,6 +94,8 @@ stages:
 
   # Build and Publish Alpha Executables and Installers Windows
   - job: BuildAndPublishAlphaWindows
+    dependsOn: DotnetPackageRestore
+    condition: succeeded()
     displayName: "Publish Alpha Windows"
     strategy:
       matrix:
@@ -190,7 +195,10 @@ stages:
         assets: $(Build.ArtifactStagingDirectory)/alpha/*/*.msi
 
     # Build and Publish Alpha Executables and Installers maOS
+  
   - job: BuildAndPublishAlphaMacOS
+    dependsOn: DotnetPackageRestore
+    condition: succeeded()
     displayName: "Publish Alpha macOS"
     strategy:
       matrix:
