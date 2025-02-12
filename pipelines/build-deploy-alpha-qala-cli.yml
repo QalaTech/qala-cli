@@ -141,10 +141,6 @@ stages:
         targetType: 'inline'
         script: |
           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-          Write-Host "Current Directory: $(Get-Location)"
-          Write-Host "Contents of Current Directory:"
-          Get-ChildItem -Path $(Get-Location)
-
           Write-Host "Build Directory: $(Build.SourcesDirectory)"
           Write-Host "Contents of Build Directory:"
           Get-ChildItem -Path $(Build.SourcesDirectory)
@@ -152,6 +148,11 @@ stages:
           Write-Host "Wix Directory: $(Build.SourcesDirectory)/build/wix"
           Write-Host "Contents of Wix Directory:"
           Get-ChildItem -Path "$(Build.SourcesDirectory)/build/wix"
+
+          Write-Host "Source Directory: $(Build.SourcesDirectory)/src/Qala.Cli"
+          Write-Host "Contents of Source Directory:"
+          Get-ChildItem -Path "$(Build.SourcesDirectory)/src/Qala.Cli"
+
           foreach ($rid in $runtimeIdentifiers) {
             Write-Host "Generating the msi file for runtime: $rid"
             wix build $(Build.SourcesDirectory)/build/wix/qala.wxs -d Version=$(alphaVersion) -ext WixToolset.UI.wixext -o "QalaCliInstaller--$(alphaVersion)-$rid.msi"
