@@ -1,0 +1,28 @@
+{
+  "name": "qala",
+  "version": "1.0.0",
+  "description": "Qala CLI is a command-line interface tool designed to simplify and automate various tasks for developers that are using the Qala Q-Flow.",
+  "main": "index.js",
+  "scripts": {
+    "test": "qala --help"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/QalaTech/qala-cli.git"
+  },
+  "keywords": [
+    "qala",
+    "qflow",
+    "q-flow",
+    "event-driven",
+    "event-gateway",
+    "cli"
+  ],
+  "author": "Qala Technologies",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/QalaTech/qala-cli/issues"
+  },
+  "homepage": "https://github.com/QalaTech/qala-cli#readme",
+  "bin": "./index.js"
+}
