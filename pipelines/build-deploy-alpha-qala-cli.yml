@@ -42,9 +42,24 @@ stages:
   # condition: and(succeeded(), or(and(eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'))), and(eq(variables['Build.Reason'], 'Manual'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/master')))))
   displayName: "Publish Alpha"
   jobs:
-  - job: SetAlphaVersion
-    displayName: "Set Alpha Version"
-    steps: # Set Alpha Version Number
+  # Build and Publish Alpha Executables and Installers
+  - job: BuildAndPublishAlpha
+    displayName: "Publish Alpha"
+    strategy:
+      matrix:
+        # Windows:
+        #   vmImage: 'windows-latest'
+        #   runtimeIdentifiers: 'win-x64;win-arm64'
+        # Linux:
+        #   vmImage: 'ubuntu-latest'
+        #   runtimeIdentifiers: 'linux-x64'
+        macOS:
+          vmImage: 'macOS-latest'
+          runtimeIdentifiers: 'osx-arm64'
+    pool: 
+      vmImage: '$(vmImage)'
+    steps:
+    # Set Alpha Version Number
     - task: PowerShell@2
       displayName: 'Set Alpha Version Number'
       inputs:
@@ -80,9 +95,6 @@ stages:
           $newVersion = "$major.$minor.$patch"
           Set-Content -Path "$(Build.ArtifactStagingDirectory)/currentVersion.txt" -Value $newVersion
 
-  - job: DotnetPackageRestore
-    displayName: "Restore Packages"
-    steps:
     # Restore NuGet Packages
     - task: DotNetCoreCLI@2
       displayName: 'Restore NuGet Packages'
@@ -90,24 +102,6 @@ stages:
         command: 'restore'
         projects: '**/*.csproj'
 
-  # Build and Publish Alpha Executables and Installers
-  - job: BuildAndPublishAlpha
-    displayName: "Publish Alpha"
-    strategy:
-      matrix:
-        # Windows:
-        #   vmImage: 'windows-latest'
-        #   runtimeIdentifiers: 'win-x64;win-arm64'
-        # Linux:
-        #   vmImage: 'ubuntu-latest'
-        #   runtimeIdentifiers: 'linux-x64'
-        macOS:
-          vmImage: 'macOS-latest'
-          runtimeIdentifiers: 'osx-arm64'
-    pool: 
-      vmImage: '$(vmImage)'
-    steps:
-    
     # Build and publish Alpha executables
     - task: PowerShell@2
       displayName: 'Publish Alpha executables'
