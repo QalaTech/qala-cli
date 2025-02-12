@@ -98,6 +98,7 @@ stages:
     # Restore NuGet Packages
     - task: DotNetCoreCLI@2
       displayName: 'Restore NuGet Packages'
+      condition: succeeded()
       inputs:
         command: 'restore'
         projects: '**/*.csproj'
@@ -105,6 +106,7 @@ stages:
     # Build and publish Alpha executables
     - task: PowerShell@2
       displayName: 'Publish Alpha executables'
+      condition: succeeded()
       inputs:
         targetType: 'inline'
         workingDirectory: $(Build.SourcesDirectory)/src/Qala.Cli
@@ -125,7 +127,7 @@ stages:
     # If Windows, install WiX Toolset and UI extensions
     - task: PowerShell@2
       displayName: 'Install WiX Toolset and UI extensions'
-      condition: eq(variables['vmImage'], 'windows-latest')
+      condition: and(succeeded(), eq(variables['vmImage'], 'windows-latest'))
       inputs:
         workingDirectory: $(Build.SourcesDirectory)
         targetType: 'inline'
@@ -136,7 +138,7 @@ stages:
     # If Windows, create installers for each runtime identifiers
     - task: PowerShell@2
       displayName: 'Create installers for each runtime identifiers'
-      condition: eq(variables['vmImage'], 'windows-latest')
+      condition: and(succeeded(), eq(variables['vmImage'], 'windows-latest'))
       inputs:
         workingDirectory: $(Build.SourcesDirectory)
         targetType: 'inline'
@@ -150,7 +152,7 @@ stages:
     # If Windows, move all installers and executables to the artifact staging directory
     - task: PowerShell@2
       displayName: 'Move all installers and executables to the artifact staging directory'
-      condition: eq(variables['vmImage'], 'windows-latest')
+      condition: and(succeeded(), eq(variables['vmImage'], 'windows-latest'))
       inputs:
         targetType: 'inline'
         script: |
@@ -176,7 +178,7 @@ stages:
     # If Windows, create GitHub Alpha Release
     - task: GithubRelease@1 
       displayName: 'Create GitHub Alpha Release'
-      condition: eq(variables['vmImage'], 'windows-latest')     
+      condition: and(succeeded(), eq(variables['vmImage'], 'windows-latest'))    
       inputs:
         gitHubConnection: '$(gitHubConnection)'
         repositoryName: '$(repositoryName)'
@@ -190,7 +192,7 @@ stages:
     # If macOS, update the version in the package.json file
     - task: PowerShell@2
       displayName: 'Update the version in the package.json file'
-      condition: eq(variables['vmImage'], 'macOS-latest')
+      condition: and(succeeded(), eq(variables['vmImage'], 'macOS-latest'))
       inputs:
         targetType: 'inline'
         script: |
@@ -202,7 +204,7 @@ stages:
     # If macOS install Node.js
     - task: NodeTool@0
       displayName: 'Install Node.js'
-      condition: eq(variables['vmImage'], 'macOS-latest')
+      condition: and(succeeded(), eq(variables['vmImage'], 'macOS-latest'))
       inputs:
         versionSpec: '20.x'
 
@@ -214,7 +216,7 @@ stages:
     # If macOS, publish Alpha npm package
     - task: Npm@1
       displayName: 'Publish Alpha npm package'
-      condition: eq(variables['vmImage'], 'macOS-latest')
+      condition: and(succeeded(), eq(variables['vmImage'], 'macOS-latest'))
       inputs:
         command: 'custom'
         customCommand: 'publish --access public --tag alpha'
