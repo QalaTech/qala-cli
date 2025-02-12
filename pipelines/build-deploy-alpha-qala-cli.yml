@@ -39,11 +39,11 @@ stages:
 # Stage Alpha Build And Publish (only for merged from hotfix to release branches and feature to master branches)
 - stage: Alpha
   # condition: and(succeeded(), or(and(eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'))), and(eq(variables['Build.Reason'], 'Manual'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/master')))))
-  displayName: "Build and Publish Alpha Version"
+  displayName: "Publish Alpha"
   jobs:
   # Build and Publish Alpha Executables and Installers
   - job: BuildAndPublishAlpha
-    displayName: "Build and Publish Alpha Executables and Installers"
+    displayName: "Publish Alpha Executables and Installers"
     strategy:
       matrix:
         Windows:
@@ -103,7 +103,7 @@ stages:
 
     # Build and publish Alpha executables
     - task: PowerShell@2
-      displayName: 'Build and publish Alpha executables'
+      displayName: 'Publish Alpha executables'
       inputs:
         targetType: 'inline'
         workingDirectory: $(Build.SourcesDirectory)/src/Qala.Cli

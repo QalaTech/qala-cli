@@ -44,7 +44,7 @@ stages:
   jobs:
   # Build and Publish Alpha Executables and Installers
   - job: BuildAndPublishAlpha
-    displayName: "Alpha Executables and Installers"
+    displayName: "Build and Publish Alpha Executables and Installers"
     steps:
     # Set Alpha Version Number
     - task: PowerShell@2
@@ -99,7 +99,7 @@ stages:
 
     # Build and publish Alpha executables
     - task: PowerShell@2
-      displayName: 'Publish Alpha executables'
+      displayName: 'Build and publish Alpha executables'
       inputs:
         targetType: 'inline'
         workingDirectory: $(Build.SourcesDirectory)/src/Qala.Cli
