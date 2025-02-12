@@ -43,7 +43,7 @@ stages:
   jobs:
   # Build and Publish Alpha Executables and Installers
   - job: BuildAndPublishAlpha
-    displayName: "Publish Alpha Executables and Installers"
+    displayName: "Publish Alpha"
     strategy:
       matrix:
         Windows:
@@ -124,7 +124,7 @@ stages:
     # If Windows, install WiX Toolset and UI extensions
     - task: PowerShell@2
       displayName: 'Install WiX Toolset and UI extensions'
-      condition: eq('$(vmImage)', 'windows-latest')
+      condition: eq(variables['vmImage'], 'windows-latest')
       inputs:
         workingDirectory: $(Build.SourcesDirectory)
         targetType: 'inline'
@@ -135,7 +135,7 @@ stages:
     # If Windows, create installers for each runtime identifiers
     - task: PowerShell@2
       displayName: 'Create installers for each runtime identifiers'
-      condition: eq('$(vmImage)', 'windows-latest')
+      condition: eq(variables['vmImage'], 'windows-latest')
       inputs:
         workingDirectory: $(Build.SourcesDirectory)
         targetType: 'inline'
@@ -149,7 +149,7 @@ stages:
     # If Windows, move all installers and executables to the artifact staging directory
     - task: PowerShell@2
       displayName: 'Move all installers and executables to the artifact staging directory'
-      condition: eq('$(vmImage)', 'windows-latest')
+      condition: eq(variables['vmImage'], 'windows-latest')
       inputs:
         targetType: 'inline'
         script: |
@@ -163,7 +163,7 @@ stages:
     # If Windows, create GitHub Alpha Release
     - task: GithubRelease@1 
       displayName: 'Create GitHub Alpha Release'
-      condition: eq('$(vmImage)', 'windows-latest')     
+      condition: eq(variables['vmImage'], 'windows-latest')     
       inputs:
         gitHubConnection: '$(gitHubConnection)'
         repositoryName: '$(repositoryName)'
