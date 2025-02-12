@@ -73,12 +73,14 @@ stages:
 
     # Build the project
     - task: DotNetCoreCLI@2
+      displayName: 'Build the project'
       inputs:
         command: 'build'
         projects: '$(pathToTheProjectFile)'
 
     # Run tests
     - task: DotNetCoreCLI@2
+      displayName: 'Run tests'
       inputs:
         command: 'test'
         projects: '$(pathToTheProjectTestFile)'
@@ -95,7 +97,7 @@ stages:
       matrix:
         Windows:
           vmImage: 'windows-latest'
-          runtimeIdentifiers: 'win-x64, win-arm64'
+          runtimeIdentifiers: 'win-x64;win-arm64'
         Linux:
           vmImage: 'ubuntu-latest'
           runtimeIdentifiers: 'linux-x64'
