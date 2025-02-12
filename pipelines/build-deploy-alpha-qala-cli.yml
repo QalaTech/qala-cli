@@ -225,7 +225,7 @@ stages:
     # If Windows or Linux, create GitHub Alpha Release
     - task: GithubRelease@1 
       displayName: 'Create GitHub Alpha Release'
-      condition: and(succeeded(), or(eq(variables['vmImage'], 'windows-latest'), eq(variables['vmImage'], 'ubuntu-latest'))    
+      condition: and(succeeded(), or(eq(variables['vmImage'], 'windows-latest'), eq(variables['vmImage'], 'ubuntu-latest')))    
       inputs:
         gitHubConnection: '$(gitHubConnection)'
         repositoryName: '$(repositoryName)'
