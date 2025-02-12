@@ -94,14 +94,16 @@ stages:
     displayName: "Publish Alpha Windows"
     strategy:
       matrix:
-        vmImage: 'windows-latest'
-        runtimeIdentifiers: 'win-x64;win-arm64'
+        Windows:
+          vmImage: 'windows-latest'
+          runtimeIdentifiers: 'win-x64;win-arm64'
         # Linux:
         #   vmImage: 'ubuntu-latest'
         #   runtimeIdentifiers: 'linux-x64'
     pool: 
       vmImage: '$(vmImage)'
     steps:
+    
     # Build and publish Alpha executables
     - task: PowerShell@2
       displayName: 'Publish Alpha executables'
@@ -192,8 +194,9 @@ stages:
     displayName: "Publish Alpha macOS"
     strategy:
       matrix:
-        vmImage: 'macOS-latest'
-        runtimeIdentifiers: 'osx-arm64'
+        macOS:
+          vmImage: 'macOS-latest'
+          runtimeIdentifiers: 'osx-arm64'
     pool: 
       vmImage: '$(vmImage)'
     steps:
