@@ -26,7 +26,7 @@ variables:
   major: 1
   minor: 0
   patch: $[counter(variables['major'], 0)]
-  runtimeIdentifiers: 'win-x64, win-arm64'
+  runtimeIdentifiers: 'win-x64;win-arm64;linux-x64;osx-arm64'
   gitHubConnection: 'github.com_tvcosta'
   repositoryName: 'QalaTech/qala-cli'
   alphaVersion: ''
@@ -49,12 +49,12 @@ stages:
         Windows:
           vmImage: 'windows-latest'
           runtimeIdentifiers: 'win-x64;win-arm64'
-        Linux:
-          vmImage: 'ubuntu-latest'
-          runtimeIdentifiers: 'linux-x64'
-        macOS:
-          vmImage: 'macOS-latest'
-          runtimeIdentifiers: 'osx-arm64'
+        # Linux:
+        #   vmImage: 'ubuntu-latest'
+        #   runtimeIdentifiers: 'linux-x64'
+        # macOS:
+        #   vmImage: 'macOS-latest'
+        #   runtimeIdentifiers: 'osx-arm64'
     pool: 
       vmImage: '$(vmImage)'
     steps:
@@ -172,4 +172,4 @@ stages:
         tag: "$(alphaVersion)"
         isPreRelease: true
         title: 'Alpha Release $(alphaVersion)'   
-        assets: $(Build.ArtifactStagingDirectory)/publish/*
+        assets: $(Build.ArtifactStagingDirectory)/alpha/*
