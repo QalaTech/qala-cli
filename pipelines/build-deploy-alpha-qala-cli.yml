@@ -141,17 +141,13 @@ stages:
         targetType: 'inline'
         script: |
           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-          Write-Host "Build Directory: $(Build.SourcesDirectory)"
-          Write-Host "Contents of Build Directory:"
-          Get-ChildItem -Path $(Build.SourcesDirectory)
-
-          Write-Host "Wix Directory: $(Build.SourcesDirectory)/build/wix"
-          Write-Host "Contents of Wix Directory:"
-          Get-ChildItem -Path "$(Build.SourcesDirectory)/build/wix"
-
-          Write-Host "Source Directory: $(Build.SourcesDirectory)/src/Qala.Cli"
+          Write-Host "Source Directory: $(Build.SourcesDirectory)/src/Qala.Cli/bin"
           Write-Host "Contents of Source Directory:"
-          Get-ChildItem -Path "$(Build.SourcesDirectory)/src/Qala.Cli"
+          Get-ChildItem -Path "$(Build.SourcesDirectory)/src/Qala.Cli/bin"
+
+          Write-Host "Pipeline Workspace: $(Pipeline.Workspace)/alpha/$rid"
+          Write-Host "Contents of Pipeline Workspace:"
+          Get-ChildItem -Path "$(Pipeline.Workspace)/alpha/$rid"
 
           foreach ($rid in $runtimeIdentifiers) {
             Write-Host "Generating the msi file for runtime: $rid"
