@@ -143,7 +143,7 @@ stages:
           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
           foreach ($rid in $runtimeIdentifiers) {
             Write-Host "Generating the msi file for runtime: $rid"
-            wix build build/wix/qala.wxs -d Version=$VERSION -ext WixToolset.UI.wixext -o "QalaCliInstaller--$(alphaVersion)-$rid.msi"
+            wix build build/wix/qala.wxs -d Version=$(alphaVersion) -ext WixToolset.UI.wixext -o "QalaCliInstaller--$(alphaVersion)-$rid.msi"
           }
 
     # If Windows, move all installers and executables to the artifact staging directory
