@@ -38,203 +38,188 @@ pool:
 
 stages:
 # Stage Alpha Build And Publish (only for merged from hotfix to release branches and feature to master branches)
-- stage: Alpha
-  # condition: and(succeeded(), or(and(eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/'))), and(eq(variables['Build.Reason'], 'Manual'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/master')))))
-  displayName: "Publish Alpha"
+- stage: Build
+  displayName: "Build CLI Application"
   jobs:
-  # Build and Publish Alpha Executables and Installers
-  - job: BuildAndPublishAlpha
-    displayName: "Publish Alpha"
-    strategy:
-      matrix:
-        # Windows:
-        #   vmImage: 'windows-latest'
-        #   runtimeIdentifiers: 'win-x64;win-arm64'
-        Linux:
-          vmImage: 'ubuntu-latest'
-          runtimeIdentifiers: 'linux-x64'
-        # macOS:
-        #   vmImage: 'macOS-latest'
-        #   runtimeIdentifiers: 'osx-arm64'
-    pool: 
-      vmImage: '$(vmImage)'
-    steps:
-    # Set Alpha Version Number
-    - task: PowerShell@2
-      displayName: 'Set Alpha Version Number'
-      condition: succeeded()
-      inputs:
-        targetType: 'inline'
-        script: |
-          # Fetch the previous version from a file or a variable
-          $previousVersion = "$(major).$(minor).$(patch)" # Default value if no previous version is found
-          if (Test-Path "$(Build.ArtifactStagingDirectory)/previousVersion.txt") {
-            $previousVersion = Get-Content "$(Build.ArtifactStagingDirectory)/currentVersion.txt"
-          }
+    - job: Build
+      displayName: "Build and Package CLI"
+      strategy:
+        matrix:
+          Windows:
+            vmImage: 'windows-latest'
+            runtimeIdentifiers: 'win-x64;win-arm64'
+          Linux:
+            vmImage: 'ubuntu-latest'
+            runtimeIdentifiers: 'linux-x64'
+          macOS:
+            vmImage: 'macOS-latest'
+            runtimeIdentifiers: 'osx-arm64'
+      pool: 
+        vmImage: '$(vmImage)'
+      steps: 
+        # Restore NuGet Packages
+        - task: DotNetCoreCLI@2
+          displayName: 'Restore NuGet Packages'
+          condition: succeeded()
+          inputs:
+            command: 'restore'
+            projects: '**/*.csproj'
 
-          # Split the previous version into major, minor, and patch
-          $versionParts = $previousVersion -split '\.'
-          $major = [int]$versionParts[0]
-          $minor = [int]$versionParts[1]
-          $patch = [int]$versionParts[2]
+        # Build and publish Alpha executables
+        - task: PowerShell@2
+          displayName: 'Publish Alpha executables'
+          condition: succeeded()
+          inputs:
+            targetType: 'inline'
+            workingDirectory: $(Build.SourcesDirectory)/src/Qala.Cli
+            script: |
+              $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
+              # Check if the pathToTheProjectFile file exists
+              if (Test-Path $(pathToTheProjectFile)) {
+                  Write-Host "Qala.Cli.csproj file found."
+              } else {
+                  Write-Host "Qala.Cli.csproj file not found."
+                  exit 1
+              }
+              foreach ($rid in $runtimeIdentifiers) {
+                Write-Host "Publishing Alpha version for runtime: $rid"
+                dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/alpha/$rid"
+              }
 
-          # Determine if the branch name starts with hotfix or HOTFIX
-          if ($env:BUILD_SOURCEBRANCHNAME -match '^hotfix' -or $env:BUILD_SOURCEBRANCHNAME -match '^HOTFIX') {
-            # Increment the patch version
-            $patch++
-          } else {
-            # Increment the minor version
-            $minor++
-          }
+- stage: Package
+  displayName: "Package CLI Application"
+  dependsOn: Build
+  condition: succeeded()
+  jobs:
+    - job: PackageWindows
+      displayName: "Create MSI Installer for Windows"
+      pool: 
+        vmImage: 'windows-latest'
+      steps: 
+        # Install WiX Toolset and UI extensions
+        - task: PowerShell@2
+          displayName: 'Install WiX Toolset and UI extensions'
+          inputs:
+            workingDirectory: $(Build.SourcesDirectory)
+            targetType: 'inline'
+            script: |
+              dotnet tool install --global wix
+              wix extension add WixToolset.UI.wixext
+        
+        # Create installers for each runtime identifiers
+        - task: PowerShell@2
+          displayName: 'Create installers for each runtime identifiers'
+          condition: succeeded()
+          inputs:
+            workingDirectory: $(Build.SourcesDirectory)
+            targetType: 'inline'
+            script: |
+              $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
+              foreach ($rid in $runtimeIdentifiers) {
+                Write-Host "Generating the msi file for runtime: $rid"
+                wix build $(Build.SourcesDirectory)/build/wix/qala.wxs -d Version="$(major).$(minor)" -d QalaExecutable="$(Pipeline.Workspace)/alpha/$rid/qala.exe" -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi"
+              }
+        
+        # Move all installers and executables to the artifact staging directory
+        - task: PowerShell@2
+          displayName: 'Move all installers and executables to the artifact staging directory'
+          condition: succeeded()
+          inputs:
+            targetType: 'inline'
+            script: |
+              $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
+              foreach ($rid in $runtimeIdentifiers) {
+                Write-Host "Moving installer and executables for runtime: $rid"
+                $alphaDir = "$(Build.ArtifactStagingDirectory)/alpha"
+                $ridDir = "$alphaDir/$rid"
 
-          # Set the alpha version
-          $alphaVersion = "v$major.$minor.$patch-alpha.$env:BUILD_BUILDID"
-          Write-Host "##vso[task.setvariable variable=alphaVersion]$alphaVersion"
-          Write-Host "Alpha Version: $alphaVersion"
+                if (-not (Test-Path -Path $alphaDir)) {
+                  Write-Host "Creating directory: $alphaDir"
+                  New-Item -ItemType Directory -Path $alphaDir
+                }
 
-          # Save the new version to a file for future reference
-          $newVersion = "$major.$minor.$patch"
-          Set-Content -Path "$(Build.ArtifactStagingDirectory)/currentVersion.txt" -Value $newVersion
+                if (-not (Test-Path -Path $ridDir)) {
+                  Write-Host "Creating directory: $ridDir"
+                  New-Item -ItemType Directory -Path $ridDir
+                }
 
-    # Restore NuGet Packages
-    - task: DotNetCoreCLI@2
-      displayName: 'Restore NuGet Packages'
-      condition: succeeded()
-      inputs:
-        command: 'restore'
-        projects: '**/*.csproj'
+                Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi" -Destination $ridDir -Force
+              }
+        
+    - job: PackageMacOS
+      displayName: "Package macOS NPM module"
+      pool:
+        vmImage: 'macOS-latest'
+      steps:
+        # Update the version in the package.json file
+        - task: PowerShell@2
+          displayName: 'Update the version in the package.json file'
+          inputs:
+            targetType: 'inline'
+            script: |
+              $packageJsonPath = "$(Build.SourcesDirectory)/build/npm/package.json"
+              $packageJson = Get-Content -Path $packageJsonPath -Raw | ConvertFrom-Json
+              $packageJson.version = "$(alphaVersion)"
+              $packageJson | ConvertTo-Json -Depth 32 | Set-Content -Path $packageJsonPath
 
-    # Build and publish Alpha executables
-    - task: PowerShell@2
-      displayName: 'Publish Alpha executables'
-      condition: succeeded()
-      inputs:
-        targetType: 'inline'
-        workingDirectory: $(Build.SourcesDirectory)/src/Qala.Cli
-        script: |
-          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-          # Check if the pathToTheProjectFile file exists
-          if (Test-Path $(pathToTheProjectFile)) {
-              Write-Host "Qala.Cli.csproj file found."
-          } else {
-              Write-Host "Qala.Cli.csproj file not found."
-              exit 1
-          }
-          foreach ($rid in $runtimeIdentifiers) {
-            Write-Host "Publishing Alpha version for runtime: $rid"
-            dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Pipeline.Workspace)/alpha/$rid"
-          }
+        # Install Node.js
+        - task: NodeTool@0
+          displayName: 'Install Node.js'
+          condition: succeeded()
+          inputs:
+            versionSpec: '20.x'
 
-    # If Windows, install WiX Toolset and UI extensions
-    - task: PowerShell@2
-      displayName: 'Install WiX Toolset and UI extensions'
-      condition: and(succeeded(), eq(variables['vmImage'], 'windows-latest'))
-      inputs:
-        workingDirectory: $(Build.SourcesDirectory)
-        targetType: 'inline'
-        script: |
-          dotnet tool install --global wix
-          wix extension add WixToolset.UI.wixext
+        # Authenticate npm
+        - task: npmAuthenticate@0
+          displayName: 'Authenticate npm'
+          condition: succeeded()
+          inputs:
+            workingFile: '$(Build.SourcesDirectory)/build/npm/.npmrc'
+            customEndpoint: '$(npmConnection)'
 
-    # If Windows, create installers for each runtime identifiers
-    - task: PowerShell@2
-      displayName: 'Create installers for each runtime identifiers'
-      condition: and(succeeded(), eq(variables['vmImage'], 'windows-latest'))
-      inputs:
-        workingDirectory: $(Build.SourcesDirectory)
-        targetType: 'inline'
-        script: |
-          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-          foreach ($rid in $runtimeIdentifiers) {
-            Write-Host "Generating the msi file for runtime: $rid"
-            wix build $(Build.SourcesDirectory)/build/wix/qala.wxs -d Version="$(major).$(minor)" -d QalaExecutable="$(Pipeline.Workspace)/alpha/$rid/qala.exe" -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi"
-          }
+        # Publish npm package
+        - task: Npm@1
+          displayName: 'Publish Alpha npm package'
+          condition: succeeded()
+          inputs:
+            command: 'custom'
+            customCommand: 'publish --access public --tag alpha'
+            workingDir: '$(Build.SourcesDirectory)/build/npm'
+            publishRegistry: 'useExternalRegistry'
+            publishEndpoint: '$(npmConnection)'
 
-    # If Windows, move all installers and executables to the artifact staging directory
-    - task: PowerShell@2
-      displayName: 'Move all installers and executables to the artifact staging directory'
-      condition: and(succeeded(), eq(variables['vmImage'], 'windows-latest'))
-      inputs:
-        targetType: 'inline'
-        script: |
-          $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-          foreach ($rid in $runtimeIdentifiers) {
-            Write-Host "Moving installer and executables for runtime: $rid"
-            $alphaDir = "$(Build.ArtifactStagingDirectory)/alpha"
-            $ridDir = "$alphaDir/$rid"
+    - job: PackageLinux
+      displayName: "Package Linux Tarball"
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+        # Package linux tarball
+        - task: ArchiveFiles@2
+          displayName: 'Package linux tarball'
+          inputs:
+            rootFolderOrFile: '$(Pipeline.Workspace)/alpha/linux-x64'
+            includeRootFolder: false
+            archiveType: 'tar'
+            tarCompression: 'gz'
+            archiveFile: '$(Build.ArtifactStagingDirectory)/alpha/qala-cli-$(alphaVersion)-linux-x64.tar.gz'
 
-            if (-not (Test-Path -Path $alphaDir)) {
-              Write-Host "Creating directory: $alphaDir"
-              New-Item -ItemType Directory -Path $alphaDir
-            }
-
-            if (-not (Test-Path -Path $ridDir)) {
-              Write-Host "Creating directory: $ridDir"
-              New-Item -ItemType Directory -Path $ridDir
-            }
-
-            Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi" -Destination $ridDir -Force
-          }
-
-    # If macOS, update the version in the package.json file
-    - task: PowerShell@2
-      displayName: 'Update the version in the package.json file'
-      condition: and(succeeded(), eq(variables['vmImage'], 'macOS-latest'))
-      inputs:
-        targetType: 'inline'
-        script: |
-          $packageJsonPath = "$(Build.SourcesDirectory)/build/npm/package.json"
-          $packageJson = Get-Content -Path $packageJsonPath -Raw | ConvertFrom-Json
-          $packageJson.version = "$(alphaVersion)"
-          $packageJson | ConvertTo-Json -Depth 32 | Set-Content -Path $packageJsonPath
-
-    # If macOS install Node.js
-    - task: NodeTool@0
-      displayName: 'Install Node.js'
-      condition: and(succeeded(), eq(variables['vmImage'], 'macOS-latest'))
-      inputs:
-        versionSpec: '20.x'
-
-    - task: npmAuthenticate@0
-      inputs:
-        workingFile: '$(Build.SourcesDirectory)/build/npm/.npmrc'
-        customEndpoint: '$(npmConnection)'
-
-    # If macOS, publish Alpha npm package
-    - task: Npm@1
-      displayName: 'Publish Alpha npm package'
-      condition: and(succeeded(), eq(variables['vmImage'], 'macOS-latest'))
-      inputs:
-        command: 'custom'
-        customCommand: 'publish --access public --tag alpha'
-        workingDir: '$(Build.SourcesDirectory)/build/npm'
-        publishRegistry: 'useExternalRegistry'
-        publishEndpoint: '$(npmConnection)'
-
-    # If Linux, package linux tarball for the Alpha version
-    - task: ArchiveFiles@2
-      displayName: 'Package linux tarball for the Alpha version'
-      condition: and(succeeded(), eq(variables['vmImage'], 'ubuntu-latest'))
-      inputs:
-        rootFolderOrFile: '$(Pipeline.Workspace)/alpha/linux-x64'
-        includeRootFolder: false
-        archiveType: 'tar'
-        tarCompression: 'gz'
-        archiveFile: '$(Build.ArtifactStagingDirectory)/alpha/qala-cli-$(alphaVersion)-linux-x64.tar.gz'
-
-    # If Windows or Linux, create GitHub Alpha Release
-    - task: GithubRelease@1 
-      displayName: 'Create GitHub Alpha Release'
-      condition: and(succeeded(), or(eq(variables['vmImage'], 'windows-latest'), eq(variables['vmImage'], 'ubuntu-latest')))    
-      inputs:
-        gitHubConnection: '$(gitHubConnection)'
-        repositoryName: '$(repositoryName)'
-        target: '$(Build.SourceBranchName)'
-        tagSource: 'userSpecifiedTag'
-        tag: "$(alphaVersion)"
-        isPreRelease: true
-        title: 'Alpha Release $(alphaVersion)'   
-        assets: |
-          $(Build.ArtifactStagingDirectory)/alpha/*/*.msi
-          $(Build.ArtifactStagingDirectory)/alpha/*.tar.gz
-    
+    - job: GithubRelease
+      displayName: Create Github Release
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+        # If Windows or Linux, create GitHub Alpha Release
+        - task: GithubRelease@1 
+          displayName: 'Create GitHub Alpha Release'
+          condition: and(succeeded(), or(eq(variables['vmImage'], 'windows-latest'), eq(variables['vmImage'], 'ubuntu-latest')))    
+          inputs:
+            gitHubConnection: '$(gitHubConnection)'
+            repositoryName: '$(repositoryName)'
+            target: '$(Build.SourceBranchName)'
+            tagSource: 'userSpecifiedTag'
+            tag: "$(alphaVersion)"
+            isPreRelease: true
+            title: 'Alpha Release $(alphaVersion)'   
+            assets: |
+              $(Build.ArtifactStagingDirectory)/alpha/*/*.msi
+              $(Build.ArtifactStagingDirectory)/alpha/*.tar.gz  
