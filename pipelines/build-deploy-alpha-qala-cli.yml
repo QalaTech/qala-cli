@@ -127,7 +127,7 @@ stages:
 
               # Set the alpha version
               $alphaVersion = "v$major.$minor.$patch-alpha.$env:BUILD_BUILDID"
-              Write-Host "##vso[task.setvariable variable=alphaVersion]$alphaVersion"
+              Write-Host "##vso[task.setvariable variable=alphaVersion;isOutput=true]$alphaVersion"
               Write-Host "Alpha Version: $alphaVersion"
 
               # Save the new version to a file for future reference
