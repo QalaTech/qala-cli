@@ -157,13 +157,13 @@ stages:
           inputs:
             targetType: 'inline'
             script: |
-              Get-ChildItem -Path "$(Pipeline.Workspace)/alphaPublishedFiles" -Recurse | ForEach-Object { Write-Host $_.FullName }
+              Get-ChildItem -Path "$(Pipeline.Workspace)/alphaPublishedFileswindows-latest" -Recurse | ForEach-Object { Write-Host $_.FullName }
 
         # Install WiX Toolset and UI extensions
         - task: PowerShell@2
           displayName: 'Install WiX Toolset and UI extensions'
           inputs:
-            workingDirectory: $(Build.SourcesDirectory)/alphaPublishedFiles
+            workingDirectory: $(Build.SourcesDirectory)/alphaPublishedFileswindows-latest
             targetType: 'inline'
             script: |
               dotnet tool install --global wix
@@ -174,13 +174,13 @@ stages:
           displayName: 'Create installers for each runtime identifiers'
           condition: succeeded()
           inputs:
-            workingDirectory: $(Build.SourcesDirectory)/alphaPublishedFiles
+            workingDirectory: $(Build.SourcesDirectory)/alphaPublishedFileswindows-latest
             targetType: 'inline'
             script: |
               $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
               foreach ($rid in $runtimeIdentifiers) {
                 Write-Host "Generating the msi file for runtime: $rid"
-                wix build $(Build.SourcesDirectory)/alphaPublishedFiles/build/wix/qala.wxs -d Version="$(major).$(minor)" -d QalaExecutable="$(Pipeline.Workspace)/alphaPublishedFiles/alpha/$rid/qala.exe" -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alphaPublishedFiles/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi"
+                wix build $(Build.SourcesDirectory)/alphaPublishedFileswindows-latest/build/wix/qala.wxs -d Version="$(major).$(minor)" -d QalaExecutable="$(Pipeline.Workspace)/alphaPublishedFileswindows-latest/alpha/$rid/qala.exe" -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi"
               }
         
         # Move all installers and executables to the artifact staging directory
@@ -206,7 +206,7 @@ stages:
                   New-Item -ItemType Directory -Path $ridDir
                 }
 
-                Move-Item -Path "$(Pipeline.Workspace)/alphaPublishedFiles/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi" -Destination $ridDir -Force
+                Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi" -Destination $ridDir -Force
               }
         
     # - job: PackageMacOS
@@ -272,13 +272,13 @@ stages:
           inputs:
             targetType: 'inline'
             script: |
-              Get-ChildItem -Path "$(Pipeline.Workspace)/alphaPublishedFiles" -Recurse | ForEach-Object { Write-Host $_.FullName }
+              Get-ChildItem -Path "$(Pipeline.Workspace)/alphaPublishedFilesubuntu-latest" -Recurse | ForEach-Object { Write-Host $_.FullName }
 
         # Package linux tarball
         - task: ArchiveFiles@2
           displayName: 'Package linux tarball'
           inputs:
-            rootFolderOrFile: '$(Pipeline.Workspace)/alphaPublishedFiles/alpha/linux-x64'
+            rootFolderOrFile: '$(Pipeline.Workspace)/alphaPublishedFilesubuntu-latest/alpha/linux-x64'
             includeRootFolder: false
             archiveType: 'tar'
             tarCompression: 'gz'
