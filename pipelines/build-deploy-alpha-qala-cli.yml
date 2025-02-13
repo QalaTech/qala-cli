@@ -274,7 +274,7 @@ stages:
     - job: GithubRelease
       displayName: Create Github Release
       dependsOn:
-        - PackageWindows
+        # - PackageWindows
         - PackageLinux
       condition: succeeded()
       pool:
