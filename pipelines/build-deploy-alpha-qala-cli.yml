@@ -37,59 +37,9 @@ variables:
 pool:
   vmImage: ubuntu-latest
 
-stages:
-- stage: AlphaVersion
-  displayName: "Alpha Version"
-  jobs:
-    - job: AlphaVersion
-      displayName: "Set Alpha Version"
-      steps:
-        # Set Alpha Version Number
-        - task: PowerShell@2
-          displayName: 'Set Alpha Version Number'
-          condition: succeeded()
-          inputs:
-            targetType: 'inline'
-            script: |
-              # Fetch the previous version from a file or a variable
-              $previousVersion = "$(major).$(minor).$(patch)" # Default value if no previous version is found
-              if (Test-Path "$(Build.ArtifactStagingDirectory)/previousVersion.txt") {
-                $previousVersion = Get-Content "$(Build.ArtifactStagingDirectory)/currentVersion.txt"
-              }
-
-              # Split the previous version into major, minor, and patch
-              $versionParts = $previousVersion -split '\.'
-              $major = [int]$versionParts[0]
-              $minor = [int]$versionParts[1]
-              $patch = [int]$versionParts[2]
-
-              # Determine if the branch name starts with hotfix or HOTFIX
-              if ($env:BUILD_SOURCEBRANCHNAME -match '^hotfix' -or $env:BUILD_SOURCEBRANCHNAME -match '^HOTFIX') {
-                # Increment the patch version
-                $patch++
-              } else {
-                # Increment the minor version
-                $minor++
-              }
-
-              # Set the alpha version
-              $alphaVersion = "v$major.$minor.$patch-alpha.$env:BUILD_BUILDID"
-              Write-Host "##vso[task.setvariable variable=alphaVersion]$alphaVersion"
-              Write-Host "Alpha Version: $alphaVersion"
-
-              # Save the new version to a file for future reference
-              $newVersion = "$major.$minor.$patch"
-              Set-Content -Path "$(Build.ArtifactStagingDirectory)/currentVersion.txt" -Value $newVersion
-        
-        - script: echo "##vso[task.setvariable variable=alphaVersion;isOutput=true]$(alphaVersion)"
-          displayName: 'Set the output variable alphaVersion'
-          name: setVersion  
-
-              
+stages:              
 - stage: Build
   displayName: "Build CLI Application"
-  dependsOn: AlphaVersion
-  condition: succeeded()
   jobs:
     - job: Build
       displayName: "Build and Package CLI"
@@ -145,11 +95,50 @@ stages:
   displayName: "Package CLI Application"
   dependsOn: Build
   condition: succeeded()
-  variables:
-    alphaVersion: $[ dependencies.Build.outputs['AlphaVersion.setVersion.alphaVersion'] ]
   jobs:
+    - job: AlphaVersion
+      displayName: "Set Alpha Version"
+      steps:
+        # Set Alpha Version Number
+        - task: PowerShell@2
+          displayName: 'Set Alpha Version Number'
+          inputs:
+            targetType: 'inline'
+            script: |
+              # Fetch the previous version from a file or a variable
+              $previousVersion = "$(major).$(minor).$(patch)" # Default value if no previous version is found
+              if (Test-Path "$(Build.ArtifactStagingDirectory)/previousVersion.txt") {
+                $previousVersion = Get-Content "$(Build.ArtifactStagingDirectory)/currentVersion.txt"
+              }
+
+              # Split the previous version into major, minor, and patch
+              $versionParts = $previousVersion -split '\.'
+              $major = [int]$versionParts[0]
+              $minor = [int]$versionParts[1]
+              $patch = [int]$versionParts[2]
+
+              # Determine if the branch name starts with hotfix or HOTFIX
+              if ($env:BUILD_SOURCEBRANCHNAME -match '^hotfix' -or $env:BUILD_SOURCEBRANCHNAME -match '^HOTFIX') {
+                # Increment the patch version
+                $patch++
+              } else {
+                # Increment the minor version
+                $minor++
+              }
+
+              # Set the alpha version
+              $alphaVersion = "v$major.$minor.$patch-alpha.$env:BUILD_BUILDID"
+              Write-Host "##vso[task.setvariable variable=alphaVersion]$alphaVersion"
+              Write-Host "Alpha Version: $alphaVersion"
+
+              # Save the new version to a file for future reference
+              $newVersion = "$major.$minor.$patch"
+              Set-Content -Path "$(Build.ArtifactStagingDirectory)/currentVersion.txt" -Value $newVersion
+
     - job: PackageWindows
       displayName: "Package Windows MSI files"
+      dependsOn: AlphaVersion
+      condition: succeeded()
       pool: 
         vmImage: 'windows-latest'
       variables:
@@ -212,6 +201,8 @@ stages:
         
     # - job: PackageMacOS
     #   displayName: "Package macOS NPM module"
+      # dependsOn: AlphaVersion
+      # condition: succeeded()
     #   pool:
     #     vmImage: 'macOS-latest'
     #   steps:
@@ -259,6 +250,8 @@ stages:
 
     - job: PackageLinux
       displayName: "Package Linux Tarball"
+      dependsOn: AlphaVersion
+      condition: succeeded()
       pool:
         vmImage: 'ubuntu-latest'
       steps:
