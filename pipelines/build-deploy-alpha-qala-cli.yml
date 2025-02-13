@@ -310,4 +310,4 @@ stages:
             title: 'Alpha Release $(alphaVersion)'   
             assets: |
               $(Build.ArtifactStagingDirectory)/alpha/*/*.msi
-              alphaPackageLinux/alpha/*.tar.gz  
+              '$(Pipeline.Workspace)/alphaPackageLinux/alpha/*.tar.gz'
