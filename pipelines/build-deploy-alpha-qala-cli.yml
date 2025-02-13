@@ -28,6 +28,9 @@ variables:
   gitHubConnection: 'github.com_tvcosta'
   npmConnection: 'npm_tiagoqalatech'
   repositoryName: 'QalaTech/qala-cli'
+  major: 1
+  minor: 0
+  patch: $[counter(variables['major'], 0)]
 
 pool:
   vmImage: ubuntu-latest
@@ -90,18 +93,13 @@ stages:
   displayName: "Package CLI Application"
   dependsOn: Build
   condition: succeeded()
-  variables:  
-    major: 1
-    minor: 0
-    patch: $[counter(variables['major'], 0)]
-    alphaVersion: ''
-    releaseVersion: ''
   jobs:
     - job: AlphaVersion
       displayName: "Set Alpha Version"
       steps:
         # Set Alpha Version Number
         - task: PowerShell@2
+          name: SetAlphaVersion
           displayName: 'Set Alpha Version Number'
           inputs:
             targetType: 'inline'
@@ -140,6 +138,8 @@ stages:
     #   displayName: "Package Windows MSI files"
     #   dependsOn: AlphaVersion
     #   condition: succeeded()
+    #   variables:
+    #     alphaVersion: $[ dependencies.AlphaVersion.outputs['SetAlphaVersion.alphaVersion'] ]
     #   pool: 
     #     vmImage: 'windows-latest'
     #   variables:
@@ -204,6 +204,8 @@ stages:
     #   displayName: "Package macOS NPM module"
     #   dependsOn: AlphaVersion
     #   condition: succeeded()
+    #   variables:
+    #    alphaVersion: $[ dependencies.AlphaVersion.outputs['SetAlphaVersion.alphaVersion'] ]
     #   pool:
     #     vmImage: 'macOS-latest'
     #   steps:
@@ -253,6 +255,8 @@ stages:
       displayName: "Package Linux Tarball"
       dependsOn: AlphaVersion
       condition: succeeded()
+      variables:
+        alphaVersion: $[ dependencies.AlphaVersion.outputs['SetAlphaVersion.alphaVersion'] ]
       pool:
         vmImage: 'ubuntu-latest'
       steps:
@@ -274,9 +278,12 @@ stages:
     - job: GithubRelease
       displayName: Create Github Release
       dependsOn:
+        - AlphaVersion
         # - PackageWindows
         - PackageLinux
       condition: succeeded()
+      variables:
+        alphaVersion: $[ dependencies.AlphaVersion.outputs['SetAlphaVersion.alphaVersion'] ]
       pool:
         vmImage: 'ubuntu-latest'
       steps:
