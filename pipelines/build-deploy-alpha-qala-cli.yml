@@ -257,27 +257,27 @@ stages:
             tarCompression: 'gz'
             archiveFile: '$(Build.ArtifactStagingDirectory)/alpha/qala-cli-$(alphaVersion)-linux-x64.tar.gz'
 
-    - job: GithubRelease
-      displayName: Create Github Release
-      dependsOn:
-        - PackageWindows
-        - PackageLinux
-      condition: succeeded()
-      pool:
-        vmImage: 'ubuntu-latest'
-      steps:
-        # Create GitHub Alpha Release with Windows and Linux assets
-        - task: GithubRelease@1 
-          displayName: 'Create GitHub Alpha Release'
-          condition: and(succeeded(), or(eq(variables['vmImage'], 'windows-latest'), eq(variables['vmImage'], 'ubuntu-latest')))    
-          inputs:
-            gitHubConnection: '$(gitHubConnection)'
-            repositoryName: '$(repositoryName)'
-            target: '$(Build.SourceBranchName)'
-            tagSource: 'userSpecifiedTag'
-            tag: "$(alphaVersion)"
-            isPreRelease: true
-            title: 'Alpha Release $(alphaVersion)'   
-            assets: |
-              $(Build.ArtifactStagingDirectory)/alpha/*/*.msi
-              $(Build.ArtifactStagingDirectory)/alpha/*.tar.gz  
+    # - job: GithubRelease
+    #   displayName: Create Github Release
+    #   dependsOn:
+    #     - PackageWindows
+    #     - PackageLinux
+    #   condition: succeeded()
+    #   pool:
+    #     vmImage: 'ubuntu-latest'
+    #   steps:
+    #     # Create GitHub Alpha Release with Windows and Linux assets
+    #     - task: GithubRelease@1 
+    #       displayName: 'Create GitHub Alpha Release'
+    #       condition: and(succeeded(), or(eq(variables['vmImage'], 'windows-latest'), eq(variables['vmImage'], 'ubuntu-latest')))    
+    #       inputs:
+    #         gitHubConnection: '$(gitHubConnection)'
+    #         repositoryName: '$(repositoryName)'
+    #         target: '$(Build.SourceBranchName)'
+    #         tagSource: 'userSpecifiedTag'
+    #         tag: "$(alphaVersion)"
+    #         isPreRelease: true
+    #         title: 'Alpha Release $(alphaVersion)'   
+    #         assets: |
+    #           $(Build.ArtifactStagingDirectory)/alpha/*/*.msi
+    #           $(Build.ArtifactStagingDirectory)/alpha/*.tar.gz  
