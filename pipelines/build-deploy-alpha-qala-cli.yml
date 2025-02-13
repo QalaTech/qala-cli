@@ -287,6 +287,14 @@ stages:
       pool:
         vmImage: 'ubuntu-latest'
       steps:
+        # Print the directory content for the $(Build.ArtifactStagingDirectory)
+        - task: PowerShell@2
+          displayName: 'Print directory content'
+          inputs:
+            targetType: 'inline'
+            script: |
+              Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)" -Recurse
+        
         # Create GitHub Alpha Release with Windows and Linux assets
         - task: GithubRelease@1 
           displayName: 'Create GitHub Alpha Release'
