@@ -134,7 +134,7 @@ stages:
         # Publish the Alpha executables as an artifact
         - publish: '$(Build.ArtifactStagingDirectory)'
           displayName: 'Publish to Artifact Staging Directory'
-          artifact: "alphaPublishedFiles$('vmImage')"
+          artifact: "alphaPublishedFiles$(vmImage)"
 
 - stage: Package
   displayName: "Package CLI Application"
@@ -149,7 +149,7 @@ stages:
         # Download previous published files artifact
         - download: current
           displayName: 'Download previous published files artifact'
-          artifact: "alphaPublishedFiles$('vmImage')"
+          artifact: "alphaPublishedFiles$(vmImage)"
 
         # Print all the content from the previous downloaded artifact
         - task: PowerShell@2
@@ -217,7 +217,7 @@ stages:
     #     # Download previous published files artifact
     #     - download: current
     #       displayName: 'Download previous published files artifact'
-    #       artifact: "alphaPublishedFiles$('vmImage')"
+    #       artifact: "alphaPublishedFiles$(vmImage)"
 
     #     # Update the version in the package.json file
     #     - task: PowerShell@2
@@ -264,7 +264,7 @@ stages:
         # Download previous published files artifact
         - download: current
           displayName: 'Download previous published files artifact'
-          artifact: "alphaPublishedFiles$('vmImage')"
+          artifact: "alphaPublishedFiles$(vmImage)"
 
         # Print all the content from the previous downloaded artifact
         - task: PowerShell@2
