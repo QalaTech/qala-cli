@@ -171,7 +171,7 @@ stages:
         - task: PowerShell@2
           displayName: 'Install WiX Toolset and UI extensions'
           inputs:
-            workingDirectory: $(Build.SourcesDirectory)/alphaPublishedFileswindows-latest
+            workingDirectory: $(Build.SourcesDirectory)
             targetType: 'inline'
             script: |
               dotnet tool install --global wix
@@ -182,13 +182,13 @@ stages:
           displayName: 'Create installers for each runtime identifiers'
           condition: succeeded()
           inputs:
-            workingDirectory: $(Build.SourcesDirectory)/alphaPublishedFileswindows-latest
+            workingDirectory: $(Build.SourcesDirectory)
             targetType: 'inline'
             script: |
               $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
               foreach ($rid in $runtimeIdentifiers) {
                 Write-Host "Generating the msi file for runtime: $rid"
-                wix build $(Build.SourcesDirectory)/alphaPublishedFileswindows-latest/build/wix/qala.wxs -d Version="$(major).$(minor)" -d QalaExecutable="$(Pipeline.Workspace)/alphaPublishedFileswindows-latest/alpha/$rid/qala.exe" -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi"
+                wix build $(Build.SourcesDirectory)/build/wix/qala.wxs -d Version="$(major).$(minor)" -d QalaExecutable="$(Pipeline.Workspace)/alphaPublishedFileswindows-latest/alpha/$rid/qala.exe" -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi"
               }
         
         # Move all installers and executables to the artifact staging directory
