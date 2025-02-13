@@ -24,15 +24,10 @@ pr:
 variables:
   pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj' 
   pathToTheProjectTestFile: '$(Build.SourcesDirectory)/tests/Qala.Cli.Integration.Tests/Qala.Cli.Integration.Tests.csproj' 
-  major: 1
-  minor: 0
-  patch: $[counter(variables['major'], 0)]
   runtimeIdentifiers: 'win-x64;win-arm64;linux-x64;osx-arm64'
   gitHubConnection: 'github.com_tvcosta'
   npmConnection: 'npm_tiagoqalatech'
   repositoryName: 'QalaTech/qala-cli'
-  alphaVersion: ''
-  releaseVersion: ''
 
 pool:
   vmImage: ubuntu-latest
@@ -45,9 +40,9 @@ stages:
       displayName: "Build and Package CLI"
       strategy:
         matrix:
-          Windows:
-            vmImage: 'windows-latest'
-            runtimeIdentifiers: 'win-x64;win-arm64'
+          # Windows:
+          #   vmImage: 'windows-latest'
+          #   runtimeIdentifiers: 'win-x64;win-arm64'
           Linux:
             vmImage: 'ubuntu-latest'
             runtimeIdentifiers: 'linux-x64'
@@ -95,6 +90,12 @@ stages:
   displayName: "Package CLI Application"
   dependsOn: Build
   condition: succeeded()
+  variables:  
+    major: 1
+    minor: 0
+    patch: $[counter(variables['major'], 0)]
+    alphaVersion: ''
+    releaseVersion: ''
   jobs:
     - job: AlphaVersion
       displayName: "Set Alpha Version"
@@ -135,74 +136,74 @@ stages:
               $newVersion = "$major.$minor.$patch"
               Set-Content -Path "$(Build.ArtifactStagingDirectory)/currentVersion.txt" -Value $newVersion
 
-    - job: PackageWindows
-      displayName: "Package Windows MSI files"
-      dependsOn: AlphaVersion
-      condition: succeeded()
-      pool: 
-        vmImage: 'windows-latest'
-      variables:
-        runtimeIdentifiers: 'win-x64;win-arm64'
-      steps: 
-        # Download previous published files artifact
-        - download: current
-          displayName: 'Download previous published files artifact'
-          artifact: "alphaPublishedFileswindows-latest"
+    # - job: PackageWindows
+    #   displayName: "Package Windows MSI files"
+    #   dependsOn: AlphaVersion
+    #   condition: succeeded()
+    #   pool: 
+    #     vmImage: 'windows-latest'
+    #   variables:
+    #     runtimeIdentifiers: 'win-x64;win-arm64'
+    #   steps: 
+    #     # Download previous published files artifact
+    #     - download: current
+    #       displayName: 'Download previous published files artifact'
+    #       artifact: "alphaPublishedFileswindows-latest"
 
-        # Install WiX Toolset and UI extensions
-        - task: PowerShell@2
-          displayName: 'Install WiX Toolset and UI extensions'
-          inputs:
-            workingDirectory: $(Build.SourcesDirectory)
-            targetType: 'inline'
-            script: |
-              dotnet tool install --global wix --version 5.0.2
-              wix extension add WixToolset.UI.wixext/5.0.2
+    #     # Install WiX Toolset and UI extensions
+    #     - task: PowerShell@2
+    #       displayName: 'Install WiX Toolset and UI extensions'
+    #       inputs:
+    #         workingDirectory: $(Build.SourcesDirectory)
+    #         targetType: 'inline'
+    #         script: |
+    #           dotnet tool install --global wix --version 5.0.2
+    #           wix extension add WixToolset.UI.wixext/5.0.2
         
-        # Create installers for each runtime identifiers
-        - task: PowerShell@2
-          displayName: 'Create installers for each runtime identifiers'
-          condition: succeeded()
-          inputs:
-            workingDirectory: $(Build.SourcesDirectory)
-            targetType: 'inline'
-            script: |
-              $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-              foreach ($rid in $runtimeIdentifiers) {
-                Write-Host "Generating the msi file for runtime: $rid"
-                wix build $(Build.SourcesDirectory)/build/wix/qala.wxs -d Version="$(major).$(minor)" -d QalaExecutable="$(Pipeline.Workspace)/alphaPublishedFileswindows-latest/alpha/$rid/qala.exe" -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi"
-              }
+    #     # Create installers for each runtime identifiers
+    #     - task: PowerShell@2
+    #       displayName: 'Create installers for each runtime identifiers'
+    #       condition: succeeded()
+    #       inputs:
+    #         workingDirectory: $(Build.SourcesDirectory)
+    #         targetType: 'inline'
+    #         script: |
+    #           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
+    #           foreach ($rid in $runtimeIdentifiers) {
+    #             Write-Host "Generating the msi file for runtime: $rid"
+    #             wix build $(Build.SourcesDirectory)/build/wix/qala.wxs -d Version="$(major).$(minor)" -d QalaExecutable="$(Pipeline.Workspace)/alphaPublishedFileswindows-latest/alpha/$rid/qala.exe" -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi"
+    #           }
         
-        # Move all installers and executables to the artifact staging directory
-        - task: PowerShell@2
-          displayName: 'Move all installers and executables to the artifact staging directory'
-          condition: succeeded()
-          inputs:
-            targetType: 'inline'
-            script: |
-              $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-              foreach ($rid in $runtimeIdentifiers) {
-                Write-Host "Moving installer and executables for runtime: $rid"
-                $alphaDir = "$(Build.ArtifactStagingDirectory)/alpha"
-                $ridDir = "$alphaDir/$rid"
+    #     # Move all installers and executables to the artifact staging directory
+    #     - task: PowerShell@2
+    #       displayName: 'Move all installers and executables to the artifact staging directory'
+    #       condition: succeeded()
+    #       inputs:
+    #         targetType: 'inline'
+    #         script: |
+    #           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
+    #           foreach ($rid in $runtimeIdentifiers) {
+    #             Write-Host "Moving installer and executables for runtime: $rid"
+    #             $alphaDir = "$(Build.ArtifactStagingDirectory)/alpha"
+    #             $ridDir = "$alphaDir/$rid"
 
-                if (-not (Test-Path -Path $alphaDir)) {
-                  Write-Host "Creating directory: $alphaDir"
-                  New-Item -ItemType Directory -Path $alphaDir
-                }
+    #             if (-not (Test-Path -Path $alphaDir)) {
+    #               Write-Host "Creating directory: $alphaDir"
+    #               New-Item -ItemType Directory -Path $alphaDir
+    #             }
 
-                if (-not (Test-Path -Path $ridDir)) {
-                  Write-Host "Creating directory: $ridDir"
-                  New-Item -ItemType Directory -Path $ridDir
-                }
+    #             if (-not (Test-Path -Path $ridDir)) {
+    #               Write-Host "Creating directory: $ridDir"
+    #               New-Item -ItemType Directory -Path $ridDir
+    #             }
 
-                Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi" -Destination $ridDir -Force
-              }
+    #             Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi" -Destination $ridDir -Force
+    #           }
         
     # - job: PackageMacOS
     #   displayName: "Package macOS NPM module"
-      # dependsOn: AlphaVersion
-      # condition: succeeded()
+    #   dependsOn: AlphaVersion
+    #   condition: succeeded()
     #   pool:
     #     vmImage: 'macOS-latest'
     #   steps:
