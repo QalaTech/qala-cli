@@ -149,7 +149,7 @@ stages:
         # Download previous published files artifact
         - download: current
           displayName: 'Download previous published files artifact'
-          artifact: "alphaPublishedFiles$(vmImage)"
+          artifact: "alphaPublishedFileswindows-latest"
 
         # Print all the content from the previous downloaded artifact
         - task: PowerShell@2
@@ -217,7 +217,7 @@ stages:
     #     # Download previous published files artifact
     #     - download: current
     #       displayName: 'Download previous published files artifact'
-    #       artifact: "alphaPublishedFiles$(vmImage)"
+    #       artifact: "alphaPublishedFilesmacOS-latest"
 
     #     # Update the version in the package.json file
     #     - task: PowerShell@2
@@ -264,7 +264,7 @@ stages:
         # Download previous published files artifact
         - download: current
           displayName: 'Download previous published files artifact'
-          artifact: "alphaPublishedFiles$(vmImage)"
+          artifact: "alphaPublishedFilesubuntu-latest"
 
         # Print all the content from the previous downloaded artifact
         - task: PowerShell@2
