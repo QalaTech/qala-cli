@@ -174,8 +174,8 @@ stages:
             workingDirectory: $(Build.SourcesDirectory)
             targetType: 'inline'
             script: |
-              dotnet tool install --global wix
-              wix extension add WixToolset.UI.wixext
+              dotnet tool install --global wix --version 5.0.2
+              wix extension add WixToolset.UI.wixext --version 5.0.2
         
         # Create installers for each runtime identifiers
         - task: PowerShell@2
