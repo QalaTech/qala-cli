@@ -145,6 +145,8 @@ stages:
       displayName: "Package Windows MSI files"
       pool: 
         vmImage: 'windows-latest'
+      variables:
+        runtimeIdentifiers: 'win-x64;win-arm64'
       steps: 
         # Download previous published files artifact
         - download: current
