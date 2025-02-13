@@ -80,6 +80,11 @@ stages:
               # Save the new version to a file for future reference
               $newVersion = "$major.$minor.$patch"
               Set-Content -Path "$(Build.ArtifactStagingDirectory)/currentVersion.txt" -Value $newVersion
+        
+        - script: echo "##vso[task.setvariable variable=alphaVersion;isOutput=true]$(alphaVersion)"
+          displayName: 'Set the output variable alphaVersion'
+          name: setVersion  
+
               
 - stage: Build
   displayName: "Build CLI Application"
@@ -140,6 +145,8 @@ stages:
   displayName: "Package CLI Application"
   dependsOn: Build
   condition: succeeded()
+  variables:
+    alphaVersion: $[ dependencies.Build.outputs['AlphaVersion.setVersion.alphaVersion'] ]
   jobs:
     - job: PackageWindows
       displayName: "Package Windows MSI files"
