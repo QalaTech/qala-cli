@@ -133,7 +133,7 @@ stages:
         
         # Publish the Alpha executables as an artifact
         - publish: '$(Build.ArtifactStagingDirectory)/bin'
-          displayName: 'Publish Alpha executables'
+          displayName: 'Publish to Artifact Staging Directory'
           artifact: alphaPublishedFiles
 
 - stage: Package
@@ -245,7 +245,16 @@ stages:
       steps:
         # Download previous published files artifact
         - download: current
+          displayName: 'Download previous published files artifact'
           artifact: alphaPublishedFiles
+
+        # Print the content of the previously downloaded artifact
+        - task: PowerShell@2
+          displayName: 'Print content of downloaded artifact'
+          inputs:
+            targetType: 'inline'
+            script: |
+              Get-ChildItem -Path '$(Pipeline.Workspace)/alphaPublishedFiles' -Recurse | ForEach-Object { Write-Host $_.FullName }
 
         # Package linux tarball
         - task: ArchiveFiles@2
