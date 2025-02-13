@@ -90,9 +90,9 @@ stages:
       displayName: "Build and Package CLI"
       strategy:
         matrix:
-          # Windows:
-          #   vmImage: 'windows-latest'
-          #   runtimeIdentifiers: 'win-x64;win-arm64'
+          Windows:
+            vmImage: 'windows-latest'
+            runtimeIdentifiers: 'win-x64;win-arm64'
           Linux:
             vmImage: 'ubuntu-latest'
             runtimeIdentifiers: 'linux-x64'
@@ -128,11 +128,11 @@ stages:
               }
               foreach ($rid in $runtimeIdentifiers) {
                 Write-Host "Publishing Alpha version for runtime: $rid"
-                dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Build.ArtifactStagingDirectory)/bin/alpha/$rid"
+                dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Build.ArtifactStagingDirectory)/alpha/$rid"
               }
         
         # Publish the Alpha executables as an artifact
-        - publish: '$(Build.ArtifactStagingDirectory)/bin'
+        - publish: '$(Build.ArtifactStagingDirectory)'
           displayName: 'Publish to Artifact Staging Directory'
           artifact: alphaPublishedFiles
 
@@ -141,66 +141,84 @@ stages:
   dependsOn: Build
   condition: succeeded()
   jobs:
-    # - job: PackageWindows
-    #   displayName: "Package Windows MSI files"
-    #   pool: 
-    #     vmImage: 'windows-latest'
-    #   steps: 
-    #     # Install WiX Toolset and UI extensions
-    #     - task: PowerShell@2
-    #       displayName: 'Install WiX Toolset and UI extensions'
-    #       inputs:
-    #         workingDirectory: $(Build.SourcesDirectory)
-    #         targetType: 'inline'
-    #         script: |
-    #           dotnet tool install --global wix
-    #           wix extension add WixToolset.UI.wixext
+    - job: PackageWindows
+      displayName: "Package Windows MSI files"
+      pool: 
+        vmImage: 'windows-latest'
+      steps: 
+        # Download previous published files artifact
+        - download: current
+          displayName: 'Download previous published files artifact'
+          artifact: alphaPublishedFiles
+
+        # Print all the content from the previous downloaded artifact
+        - task: PowerShell@2
+          displayName: 'Print content of previous downloaded artifact'
+          inputs:
+            targetType: 'inline'
+            script: |
+              Get-ChildItem -Path "$(Pipeline.Workspace)/alphaPublishedFiles" -Recurse | ForEach-Object { Write-Host $_.FullName }
+
+        # Install WiX Toolset and UI extensions
+        - task: PowerShell@2
+          displayName: 'Install WiX Toolset and UI extensions'
+          inputs:
+            workingDirectory: $(Build.SourcesDirectory)/alphaPublishedFiles
+            targetType: 'inline'
+            script: |
+              dotnet tool install --global wix
+              wix extension add WixToolset.UI.wixext
         
-    #     # Create installers for each runtime identifiers
-    #     - task: PowerShell@2
-    #       displayName: 'Create installers for each runtime identifiers'
-    #       condition: succeeded()
-    #       inputs:
-    #         workingDirectory: $(Build.SourcesDirectory)
-    #         targetType: 'inline'
-    #         script: |
-    #           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-    #           foreach ($rid in $runtimeIdentifiers) {
-    #             Write-Host "Generating the msi file for runtime: $rid"
-    #             wix build $(Build.SourcesDirectory)/build/wix/qala.wxs -d Version="$(major).$(minor)" -d QalaExecutable="$(Pipeline.Workspace)/alpha/$rid/qala.exe" -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi"
-    #           }
+        # Create installers for each runtime identifiers
+        - task: PowerShell@2
+          displayName: 'Create installers for each runtime identifiers'
+          condition: succeeded()
+          inputs:
+            workingDirectory: $(Build.SourcesDirectory)/alphaPublishedFiles
+            targetType: 'inline'
+            script: |
+              $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
+              foreach ($rid in $runtimeIdentifiers) {
+                Write-Host "Generating the msi file for runtime: $rid"
+                wix build $(Build.SourcesDirectory)/alphaPublishedFiles/build/wix/qala.wxs -d Version="$(major).$(minor)" -d QalaExecutable="$(Pipeline.Workspace)/alphaPublishedFiles/alpha/$rid/qala.exe" -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alphaPublishedFiles/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi"
+              }
         
-    #     # Move all installers and executables to the artifact staging directory
-    #     - task: PowerShell@2
-    #       displayName: 'Move all installers and executables to the artifact staging directory'
-    #       condition: succeeded()
-    #       inputs:
-    #         targetType: 'inline'
-    #         script: |
-    #           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-    #           foreach ($rid in $runtimeIdentifiers) {
-    #             Write-Host "Moving installer and executables for runtime: $rid"
-    #             $alphaDir = "$(Build.ArtifactStagingDirectory)/alpha"
-    #             $ridDir = "$alphaDir/$rid"
+        # Move all installers and executables to the artifact staging directory
+        - task: PowerShell@2
+          displayName: 'Move all installers and executables to the artifact staging directory'
+          condition: succeeded()
+          inputs:
+            targetType: 'inline'
+            script: |
+              $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
+              foreach ($rid in $runtimeIdentifiers) {
+                Write-Host "Moving installer and executables for runtime: $rid"
+                $alphaDir = "$(Build.ArtifactStagingDirectory)/alpha"
+                $ridDir = "$alphaDir/$rid"
 
-    #             if (-not (Test-Path -Path $alphaDir)) {
-    #               Write-Host "Creating directory: $alphaDir"
-    #               New-Item -ItemType Directory -Path $alphaDir
-    #             }
+                if (-not (Test-Path -Path $alphaDir)) {
+                  Write-Host "Creating directory: $alphaDir"
+                  New-Item -ItemType Directory -Path $alphaDir
+                }
 
-    #             if (-not (Test-Path -Path $ridDir)) {
-    #               Write-Host "Creating directory: $ridDir"
-    #               New-Item -ItemType Directory -Path $ridDir
-    #             }
+                if (-not (Test-Path -Path $ridDir)) {
+                  Write-Host "Creating directory: $ridDir"
+                  New-Item -ItemType Directory -Path $ridDir
+                }
 
-    #             Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi" -Destination $ridDir -Force
-    #           }
+                Move-Item -Path "$(Pipeline.Workspace)/alphaPublishedFiles/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi" -Destination $ridDir -Force
+              }
         
     # - job: PackageMacOS
     #   displayName: "Package macOS NPM module"
     #   pool:
     #     vmImage: 'macOS-latest'
     #   steps:
+    #     # Download previous published files artifact
+    #     - download: current
+    #       displayName: 'Download previous published files artifact'
+    #       artifact: alphaPublishedFiles
+
     #     # Update the version in the package.json file
     #     - task: PowerShell@2
     #       displayName: 'Update the version in the package.json file'
@@ -248,13 +266,13 @@ stages:
           displayName: 'Download previous published files artifact'
           artifact: alphaPublishedFiles
 
-        # Print the content of the previously downloaded artifact
+        # Print all the content from the previous downloaded artifact
         - task: PowerShell@2
-          displayName: 'Print content of downloaded artifact'
+          displayName: 'Print content of previous downloaded artifact'
           inputs:
             targetType: 'inline'
             script: |
-              Get-ChildItem -Path '$(Pipeline.Workspace)/alphaPublishedFiles' -Recurse | ForEach-Object { Write-Host $_.FullName }
+              Get-ChildItem -Path "$(Pipeline.Workspace)/alphaPublishedFiles" -Recurse | ForEach-Object { Write-Host $_.FullName }
 
         # Package linux tarball
         - task: ArchiveFiles@2
