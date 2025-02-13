@@ -93,9 +93,9 @@ stages:
           Windows:
             vmImage: 'windows-latest'
             runtimeIdentifiers: 'win-x64;win-arm64'
-          # Linux:
-          #   vmImage: 'ubuntu-latest'
-          #   runtimeIdentifiers: 'linux-x64'
+          Linux:
+            vmImage: 'ubuntu-latest'
+            runtimeIdentifiers: 'linux-x64'
           # macOS:
           #   vmImage: 'macOS-latest'
           #   runtimeIdentifiers: 'osx-arm64'
@@ -250,47 +250,46 @@ stages:
     #         publishRegistry: 'useExternalRegistry'
     #         publishEndpoint: '$(npmConnection)'
 
-    # - job: PackageLinux
-    #   displayName: "Package Linux Tarball"
-    #   pool:
-    #     vmImage: 'ubuntu-latest'
-    #   steps:
-    #     # Download previous published files artifact
-    #     - download: current
-    #       displayName: 'Download previous published files artifact'
-    #       artifact: "alphaPublishedFilesubuntu-latest"
+    - job: PackageLinux
+      displayName: "Package Linux Tarball"
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+        # Download previous published files artifact
+        - download: current
+          displayName: 'Download previous published files artifact'
+          artifact: "alphaPublishedFilesubuntu-latest"
 
-    #     # Package linux tarball
-    #     - task: ArchiveFiles@2
-    #       displayName: 'Package linux tarball'
-    #       inputs:
-    #         rootFolderOrFile: '$(Pipeline.Workspace)/alphaPublishedFilesubuntu-latest/alpha/linux-x64/qala'
-    #         includeRootFolder: false
-    #         archiveType: 'tar'
-    #         tarCompression: 'gz'
-    #         archiveFile: '$(Build.ArtifactStagingDirectory)/alpha/qala-cli-$(alphaVersion)-linux-x64.tar.gz'
+        # Package linux tarball
+        - task: ArchiveFiles@2
+          displayName: 'Package linux tarball'
+          inputs:
+            rootFolderOrFile: '$(Pipeline.Workspace)/alphaPublishedFilesubuntu-latest/alpha/linux-x64/qala'
+            includeRootFolder: false
+            archiveType: 'tar'
+            tarCompression: 'gz'
+            archiveFile: '$(Build.ArtifactStagingDirectory)/alpha/qala-cli-$(alphaVersion)-linux-x64.tar.gz'
 
-    # - job: GithubRelease
-    #   displayName: Create Github Release
-    #   dependsOn:
-    #     - PackageWindows
-    #     - PackageLinux
-    #   condition: succeeded()
-    #   pool:
-    #     vmImage: 'ubuntu-latest'
-    #   steps:
-    #     # Create GitHub Alpha Release with Windows and Linux assets
-    #     - task: GithubRelease@1 
-    #       displayName: 'Create GitHub Alpha Release'
-    #       condition: and(succeeded(), or(eq(variables['vmImage'], 'windows-latest'), eq(variables['vmImage'], 'ubuntu-latest')))    
-    #       inputs:
-    #         gitHubConnection: '$(gitHubConnection)'
-    #         repositoryName: '$(repositoryName)'
-    #         target: '$(Build.SourceBranchName)'
-    #         tagSource: 'userSpecifiedTag'
-    #         tag: "$(alphaVersion)"
-    #         isPreRelease: true
-    #         title: 'Alpha Release $(alphaVersion)'   
-    #         assets: |
-    #           $(Build.ArtifactStagingDirectory)/alpha/*/*.msi
-    #           $(Build.ArtifactStagingDirectory)/alpha/*.tar.gz  
+    - job: GithubRelease
+      displayName: Create Github Release
+      dependsOn:
+        - PackageWindows
+        - PackageLinux
+      condition: succeeded()
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+        # Create GitHub Alpha Release with Windows and Linux assets
+        - task: GithubRelease@1 
+          displayName: 'Create GitHub Alpha Release'
+          inputs:
+            gitHubConnection: '$(gitHubConnection)'
+            repositoryName: '$(repositoryName)'
+            target: '$(Build.SourceBranchName)'
+            tagSource: 'userSpecifiedTag'
+            tag: "$(alphaVersion)"
+            isPreRelease: true
+            title: 'Alpha Release $(alphaVersion)'   
+            assets: |
+              $(Build.ArtifactStagingDirectory)/alpha/*/*.msi
+              $(Build.ArtifactStagingDirectory)/alpha/*.tar.gz  
