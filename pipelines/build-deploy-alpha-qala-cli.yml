@@ -43,9 +43,9 @@ stages:
       displayName: "Build and Package CLI"
       strategy:
         matrix:
-          # Windows:
-          #   vmImage: 'windows-latest'
-          #   runtimeIdentifiers: 'win-x64;win-arm64'
+          Windows:
+            vmImage: 'windows-latest'
+            runtimeIdentifiers: 'win-x64;win-arm64'
           Linux:
             vmImage: 'ubuntu-latest'
             runtimeIdentifiers: 'linux-x64'
@@ -217,6 +217,14 @@ stages:
     #     - download: current
     #       displayName: 'Download previous published files artifact'
     #       artifact: "alphaPublishedFilesmacOS-latest"
+
+    #     # Move the executable file into a bin folder inside the npm folder
+    #     - task: CopyFiles@2
+    #       displayName: 'Move the executable file into a bin folder inside the npm folder'
+    #       inputs:
+    #         SourceFolder: '$(Pipeline.Workspace)/alphaPublishedFilesmacOS-latest/alpha/osx-arm64'
+    #         Contents: '**'
+    #         TargetFolder: '$(Build.SourcesDirectory)/build/npm/bin'
 
     #     # Update the version in the package.json file
     #     - task: PowerShell@2
