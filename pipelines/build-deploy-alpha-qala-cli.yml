@@ -128,7 +128,7 @@ stages:
               }
               foreach ($rid in $runtimeIdentifiers) {
                 Write-Host "Publishing Alpha version for runtime: $rid"
-                dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o '$(Build.ArtifactStagingDirectory)/bin/alpha/$rid'
+                dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Build.ArtifactStagingDirectory)/bin/alpha/$rid"
               }
         
         # Publish the Alpha executables as an artifact
