@@ -151,22 +151,6 @@ stages:
           displayName: 'Download previous published files artifact'
           artifact: "alphaPublishedFileswindows-latest"
 
-        # Print all the content from the previous downloaded artifact
-        - task: PowerShell@2
-          displayName: 'Print content of previous downloaded artifact'
-          inputs:
-            targetType: 'inline'
-            script: |
-              Get-ChildItem -Path "$(Pipeline.Workspace)/alphaPublishedFileswindows-latest" -Recurse | ForEach-Object { Write-Host $_.FullName }
-
-        # Print all the content from the source directory
-        - task: PowerShell@2
-          displayName: 'Print content of source directory'
-          inputs:
-            targetType: 'inline'
-            script: |
-              Get-ChildItem -Path "$(Build.SourcesDirectory)" -Recurse | ForEach-Object { Write-Host $_.FullName }
-
         # Install WiX Toolset and UI extensions
         - task: PowerShell@2
           displayName: 'Install WiX Toolset and UI extensions'
@@ -175,7 +159,7 @@ stages:
             targetType: 'inline'
             script: |
               dotnet tool install --global wix --version 5.0.2
-              wix extension add WixToolset.UI.wixext --version 5.0.2
+              wix extension add WixToolset.UI.wixext/5.0.2
         
         # Create installers for each runtime identifiers
         - task: PowerShell@2
@@ -273,14 +257,6 @@ stages:
     #     - download: current
     #       displayName: 'Download previous published files artifact'
     #       artifact: "alphaPublishedFilesubuntu-latest"
-
-    #     # Print all the content from the previous downloaded artifact
-    #     - task: PowerShell@2
-    #       displayName: 'Print content of previous downloaded artifact'
-    #       inputs:
-    #         targetType: 'inline'
-    #         script: |
-    #           Get-ChildItem -Path "$(Pipeline.Workspace)/alphaPublishedFilesubuntu-latest" -Recurse | ForEach-Object { Write-Host $_.FullName }
 
     #     # Package linux tarball
     #     - task: ArchiveFiles@2
