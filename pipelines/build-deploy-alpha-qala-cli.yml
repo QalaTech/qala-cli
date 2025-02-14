@@ -8,7 +8,7 @@ trigger:
       - master/*
   paths:
     include:
-      - src/Qala.*
+      - src/*
 
 pr:
   autoCancel: false
