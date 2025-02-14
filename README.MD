@@ -10,9 +10,7 @@ Qala CLI is a command-line interface tool designed to simplify and automate vari
 
 ## Installation
 
-To install Qala CLI, run the following command:
-
-TODO
+There are several ways to install Qala Cli. Please refer to our [technical documentation](https://www.qalatech.io/docs/quick-start/quick-start), to see what works best for you.
 
 ## Usage
 
@@ -28,4 +26,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-For any questions or feedback, please contact us at TODO.
+For any questions or feedback, please contact us at [TODO]().
