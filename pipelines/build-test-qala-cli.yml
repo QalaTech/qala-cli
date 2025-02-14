@@ -2,6 +2,12 @@ resources:
   repositories:
     - repository: self
 
+trigger:
+  branches:
+    include:
+      - master
+      - release/*
+
 pr:
   autoCancel: false
   branches:
@@ -18,8 +24,9 @@ pool:
   vmImage: ubuntu-latest
 
 stages:
-# Stage Build and Test (only for PRs from feature and hotfix branches)
-- stage: BuildAndTest
+# Stage Build and Test (only for PRs to master and release branches)
+- ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))}}:
+  - stage: BuildAndTest
   displayName: "Build and Test"
   jobs:
   # Build and Test
