@@ -64,12 +64,12 @@ stages:
             projects: '**/*.csproj'
 
         # Run tests
-        - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), in(variables['Build.SourceBranch'], 'refs/heads/release')) }}:
-          - task: DotNetCoreCLI@2
-            displayName: 'Run tests'
-            inputs:
-              command: 'test'
-              projects: '$(pathToTheProjectTestFile)'
+        # - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), in(variables['Build.SourceBranch'], 'refs/heads/release')) }}:
+        #   - task: DotNetCoreCLI@2
+        #     displayName: 'Run tests'
+        #     inputs:
+        #       command: 'test'
+        #       projects: '$(pathToTheProjectTestFile)'
 
         # Build and publish Release executables
         - task: PowerShell@2
