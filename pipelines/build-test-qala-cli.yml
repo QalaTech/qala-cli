@@ -20,7 +20,6 @@ pool:
 stages:
 # Stage Build and Test (only for PRs from feature and hotfix branches)
 - stage: BuildAndTest
-  condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/feature/'), startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')))
   displayName: "Build and Test"
   jobs:
   # Build and Test
