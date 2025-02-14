@@ -25,7 +25,7 @@ pool:
 
 stages:
 # Stage Build and Test (only for PRs to master and release branches)
-- ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/')))}}:
+- ${{ if and(eq(variables['Build.Reason'], 'PullRequest'), or(startsWith(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))) }}:
   - stage: BuildAndTest
   displayName: "Build and Test"
   jobs:
