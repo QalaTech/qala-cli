@@ -13,7 +13,7 @@ variables:
   pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj' 
   pathToTheProjectTestFile: '$(Build.SourcesDirectory)/tests/Qala.Cli.Integration.Tests/Qala.Cli.Integration.Tests.csproj' 
   runtimeIdentifiers: 'win-x64;win-arm64;linux-x64;osx-arm64'
-
+ 
 pool:
   vmImage: ubuntu-latest
 
