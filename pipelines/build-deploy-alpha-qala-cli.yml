@@ -28,74 +28,81 @@ pool:
   vmImage: ubuntu-latest
 
 stages:              
+- stage: Build
+  displayName: "Build CLI Application"
+  jobs:
+    - job: Build
+      displayName: "Build and Package CLI"
+      strategy:
+        matrix:
+          Windows:
+            vmImage: 'windows-latest'
+            runtimeIdentifiers: 'win-x64;win-arm64'
+          Linux:
+            vmImage: 'ubuntu-latest'
+            runtimeIdentifiers: 'linux-x64'
+          macOS:
+            vmImage: 'macOS-latest'
+            runtimeIdentifiers: 'osx-arm64'
+      pool: 
+        vmImage: '$(vmImage)'
+      steps: 
+        # Modify the config.yaml with variable values from the pipeline
+        - task: PowerShell@2
+          displayName: 'Modify the config.yaml with variable values from the pipeline'
+          inputs:
+            targetType: 'inline'
+            script: |
+              $configPath = "$(Build.SourcesDirectory)/src/Qala.Cli/config.yaml"
+              $config = Get-Content -Path $configPath -Raw
+              $config = $config -replace 'URL: "https://auth.server.com"', 'URL: "${env:AUTH_URL}"'
+              $config = $config -replace 'ClientID: "g123456789"', 'ClientID: "${env:AUTH_CLIENT_ID}"'
+              $config = $config -replace 'Audience: "https://localhost:7143/"', 'Audience: "${env:MANAGEMENT_API}"'
+              $config = $config -replace 'URL: "https://localhost:7143/v1/"', 'URL: "${env:MANAGEMENT_API}"v1/'
+              Set-Content -Path $configPath -Value $config
+
+        # Restore NuGet Packages
+        - task: DotNetCoreCLI@2
+          displayName: 'Restore NuGet Packages'
+          condition: succeeded()
+          inputs:
+            command: 'restore'
+            projects: '**/*.csproj'
+
+        # Run tests
+        - task: DotNetCoreCLI@2
+          displayName: 'Run tests'
+          inputs:
+            command: 'test'
+            projects: '$(pathToTheProjectTestFile)'
+
+        # Build and publish Alpha executables
+        - task: PowerShell@2
+          displayName: 'Publish Alpha executables'
+          condition: succeeded()
+          inputs:
+            targetType: 'inline'
+            workingDirectory: $(Build.SourcesDirectory)/src/Qala.Cli
+            script: |
+              $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
+              # Check if the pathToTheProjectFile file exists
+              if (Test-Path $(pathToTheProjectFile)) {
+                  Write-Host "Qala.Cli.csproj file found."
+              } else {
+                  Write-Host "Qala.Cli.csproj file not found."
+                  exit 1
+              }
+              foreach ($rid in $runtimeIdentifiers) {
+                Write-Host "Publishing Alpha version for runtime: $rid"
+                dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Build.ArtifactStagingDirectory)/alpha/$rid"
+              }
+        
+        # Publish the Alpha executables as an artifact
+        - publish: '$(Build.ArtifactStagingDirectory)'
+          displayName: 'Publish to Artifact Staging Directory'
+          artifact: "alphaPublishedFiles$(vmImage)"
+
 - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), in(variables['Build.SourceBranch'], 'refs/heads/master')) }}:
-  - stage: Build
-    displayName: "Build CLI Application"
-    jobs:
-      - job: Build
-        displayName: "Build and Package CLI"
-        strategy:
-          matrix:
-            Windows:
-              vmImage: 'windows-latest'
-              runtimeIdentifiers: 'win-x64;win-arm64'
-            Linux:
-              vmImage: 'ubuntu-latest'
-              runtimeIdentifiers: 'linux-x64'
-            macOS:
-              vmImage: 'macOS-latest'
-              runtimeIdentifiers: 'osx-arm64'
-        pool: 
-          vmImage: '$(vmImage)'
-        steps: 
-          # Modify the config.yaml with variable values from the pipeline
-          - task: PowerShell@2
-            displayName: 'Modify the config.yaml with variable values from the pipeline'
-            inputs:
-              targetType: 'inline'
-              script: |
-                $configPath = "$(Build.SourcesDirectory)/src/Qala.Cli/config.yaml"
-                $config = Get-Content -Path $configPath -Raw
-                $config = $config -replace 'URL: "https://auth.server.com"', 'URL: "${env:AUTH_URL}"'
-                $config = $config -replace 'ClientID: "g123456789"', 'ClientID: "${env:AUTH_CLIENT_ID}"'
-                $config = $config -replace 'Audience: "https://localhost:7143/"', 'Audience: "${env:MANAGEMENT_API}"'
-                $config = $config -replace 'URL: "https://localhost:7143/v1/"', 'URL: "${env:MANAGEMENT_API}"v1/'
-                Set-Content -Path $configPath -Value $config
-
-          # Restore NuGet Packages
-          - task: DotNetCoreCLI@2
-            displayName: 'Restore NuGet Packages'
-            condition: succeeded()
-            inputs:
-              command: 'restore'
-              projects: '**/*.csproj'
-
-          # Build and publish Alpha executables
-          - task: PowerShell@2
-            displayName: 'Publish Alpha executables'
-            condition: succeeded()
-            inputs:
-              targetType: 'inline'
-              workingDirectory: $(Build.SourcesDirectory)/src/Qala.Cli
-              script: |
-                $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-                # Check if the pathToTheProjectFile file exists
-                if (Test-Path $(pathToTheProjectFile)) {
-                    Write-Host "Qala.Cli.csproj file found."
-                } else {
-                    Write-Host "Qala.Cli.csproj file not found."
-                    exit 1
-                }
-                foreach ($rid in $runtimeIdentifiers) {
-                  Write-Host "Publishing Alpha version for runtime: $rid"
-                  dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Build.ArtifactStagingDirectory)/alpha/$rid"
-                }
-          
-          # Publish the Alpha executables as an artifact
-          - publish: '$(Build.ArtifactStagingDirectory)'
-            displayName: 'Publish to Artifact Staging Directory'
-            artifact: "alphaPublishedFiles$(vmImage)"
-
   - stage: Package
     displayName: "Package CLI Application"
     dependsOn: Build

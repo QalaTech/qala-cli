@@ -63,6 +63,13 @@ stages:
             command: 'restore'
             projects: '**/*.csproj'
 
+        # Run tests
+        - task: DotNetCoreCLI@2
+          displayName: 'Run tests'
+          inputs:
+            command: 'test'
+            projects: '$(pathToTheProjectTestFile)'
+
         # Build and publish Release executables
         - task: PowerShell@2
           displayName: 'Publish Release executables'
