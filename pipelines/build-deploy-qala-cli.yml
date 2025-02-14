@@ -6,19 +6,6 @@ trigger:
   branches:
     include:
       - release/*
-  paths:
-    include:
-      - src/Qala.Cli.Data
-      - src/Qala.Cli
-
-pr:
-  autoCancel: false
-  branches:
-    include:
-      - master
-  paths:
-    exclude:
-      - tests/*
 
 variables:
   pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj' 
