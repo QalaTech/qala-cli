@@ -223,7 +223,7 @@ stages:
         dependsOn: AlphaVersion
         condition: succeeded()
         variables:
-        alphaVersion: $[ dependencies.AlphaVersion.outputs['SetAlphaVersion.alphaVersion'] ]
+          alphaVersion: $[ dependencies.AlphaVersion.outputs['SetAlphaVersion.alphaVersion'] ]
         pool:
           vmImage: 'macOS-latest'
         steps:
