@@ -8,7 +8,6 @@ pr:
     include:
       - master
       - release/*
-      - hotfix/*
 
 variables:
   pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj' 
