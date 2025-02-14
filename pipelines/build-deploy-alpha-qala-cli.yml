@@ -5,10 +5,7 @@ resources:
 trigger:
   branches:
     include:
-      - master/*
-  paths:
-    include:
-      - src/*
+      - master
 
 pr:
   autoCancel: false
