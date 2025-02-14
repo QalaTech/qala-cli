@@ -25,5 +25,11 @@
   },
   "homepage": "https://qalatech.io",
   "bin": "./index.js",
-  "readme": "https://github.com/QalaTech/qala-cli#readme"
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "readme": "../../README.md"
 }
