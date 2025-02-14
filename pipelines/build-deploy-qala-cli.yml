@@ -62,9 +62,9 @@ stages:
             command: 'restore'
             projects: '**/*.csproj'
 
-        # Build and publish Alpha executables
+        # Build and publish Release executables
         - task: PowerShell@2
-          displayName: 'Publish Alpha executables'
+          displayName: 'Publish Release executables'
           condition: succeeded()
           inputs:
             targetType: 'inline'
@@ -79,27 +79,27 @@ stages:
                   exit 1
               }
               foreach ($rid in $runtimeIdentifiers) {
-                Write-Host "Publishing Alpha version for runtime: $rid"
-                dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Build.ArtifactStagingDirectory)/alpha/$rid"
+                Write-Host "Publishing Release version for runtime: $rid"
+                dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Build.ArtifactStagingDirectory)/release/$rid"
               }
         
-        # Publish the Alpha executables as an artifact
+        # Publish the Release executables as an artifact
         - publish: '$(Build.ArtifactStagingDirectory)'
           displayName: 'Publish to Artifact Staging Directory'
-          artifact: "alphaPublishedFiles$(vmImage)"
+          artifact: "releasePublishedFiles$(vmImage)"
 
 - stage: Package
   displayName: "Package CLI Application"
   dependsOn: Build
   condition: succeeded()
   jobs:
-    - job: AlphaVersion
-      displayName: "Set Alpha Version"
+    - job: ReleaseVersion
+      displayName: "Set Release Version"
       steps:
-        # Set Alpha Version Number
+        # Set Release Version Number
         - task: PowerShell@2
-          name: SetAlphaVersion
-          displayName: 'Set Alpha Version Number'
+          name: SetReleaseVersion
+          displayName: 'Set Release Version Number'
           inputs:
             targetType: 'inline'
             script: |
@@ -124,10 +124,10 @@ stages:
                 $minor++
               }
 
-              # Set the alpha version
-              $alphaVersion = "v$major.$minor.$patch-alpha.$env:BUILD_BUILDID"
-              Write-Host "##vso[task.setvariable variable=alphaVersion;isOutput=true]$alphaVersion"
-              Write-Host "Alpha Version: $alphaVersion"
+              # Set the release version
+              $releaseVersion = "v$major.$minor.$patch-release.$env:BUILD_BUILDID"
+              Write-Host "##vso[task.setvariable variable=releaseVersion;isOutput=true]$releaseVersion"
+              Write-Host "Release Version: $releaseVersion"
 
               # Save the new version to a file for future reference
               $newVersion = "$major.$minor.$patch"
@@ -135,18 +135,18 @@ stages:
 
     - job: PackageWindows
       displayName: "Package Windows MSI files"
-      dependsOn: AlphaVersion
+      dependsOn: ReleaseVersion
       condition: succeeded()
       variables:
         runtimeIdentifiers: 'win-x64;win-arm64'
-        alphaVersion: $[ dependencies.AlphaVersion.outputs['SetAlphaVersion.alphaVersion'] ]
+        releaseVersion: $[ dependencies.ReleaseVersion.outputs['SetReleaseVersion.releaseVersion'] ]
       pool: 
         vmImage: 'windows-latest'
       steps: 
         # Download previous published files artifact
         - download: current
           displayName: 'Download previous published files artifact'
-          artifact: "alphaPublishedFileswindows-latest"
+          artifact: "releasePublishedFileswindows-latest"
 
         # Install WiX Toolset and UI extensions
         - task: PowerShell@2
@@ -169,7 +169,7 @@ stages:
               $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
               foreach ($rid in $runtimeIdentifiers) {
                 Write-Host "Generating the msi file for runtime: $rid"
-                wix build $(Build.SourcesDirectory)/build/wix/qala.wxs -d Version="$(major).$(minor)" -d QalaExecutable="$(Pipeline.Workspace)/alphaPublishedFileswindows-latest/alpha/$rid/qala.exe" -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi"
+                wix build $(Build.SourcesDirectory)/build/wix/qala.wxs -d Version="$(major).$(minor)" -d QalaExecutable="$(Pipeline.Workspace)/releasePublishedFileswindows-latest/release/$rid/qala.exe" -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/release/$rid/qala-cli-$(releaseVersion)-$rid.msi"
               }
         
         # Move all installers and executables to the artifact staging directory
@@ -182,12 +182,12 @@ stages:
               $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
               foreach ($rid in $runtimeIdentifiers) {
                 Write-Host "Moving installer and executables for runtime: $rid"
-                $alphaDir = "$(Build.ArtifactStagingDirectory)/alpha"
-                $ridDir = "$alphaDir/$rid"
+                $releaseDir = "$(Build.ArtifactStagingDirectory)/release"
+                $ridDir = "$releaseDir/$rid"
 
-                if (-not (Test-Path -Path $alphaDir)) {
-                  Write-Host "Creating directory: $alphaDir"
-                  New-Item -ItemType Directory -Path $alphaDir
+                if (-not (Test-Path -Path $releaseDir)) {
+                  Write-Host "Creating directory: $releaseDir"
+                  New-Item -ItemType Directory -Path $releaseDir
                 }
 
                 if (-not (Test-Path -Path $ridDir)) {
@@ -195,48 +195,48 @@ stages:
                   New-Item -ItemType Directory -Path $ridDir
                 }
 
-                Move-Item -Path "$(Pipeline.Workspace)/alpha/$rid/qala-cli-$(alphaVersion)-$rid.msi" -Destination $ridDir -Force
+                Move-Item -Path "$(Pipeline.Workspace)/release/$rid/qala-cli-$(releaseVersion)-$rid.msi" -Destination $ridDir -Force
               }
 
-        # Publish the Alpha Windows package into the artifact staging directory
+        # Publish the Release Windows package into the artifact staging directory
         - publish: '$(Build.ArtifactStagingDirectory)'
           displayName: 'Publish to Artifact Staging Directory'
-          artifact: "alphaInstallerWindows"
+          artifact: "releaseInstallerWindows"
         
     - job: PackageMacOS
       displayName: "Package macOS NPM module"
-      dependsOn: AlphaVersion
+      dependsOn: ReleaseVersion
       condition: succeeded()
       variables:
-       alphaVersion: $[ dependencies.AlphaVersion.outputs['SetAlphaVersion.alphaVersion'] ]
+       releaseVersion: $[ dependencies.ReleaseVersion.outputs['SetReleaseVersion.releaseVersion'] ]
       pool:
         vmImage: 'macOS-latest'
       steps:
         # Download previous published files artifact
         - download: current
           displayName: 'Download previous published files artifact'
-          artifact: "alphaPublishedFilesmacOS-latest"
+          artifact: "releasePublishedFilesmacOS-latest"
 
         # Package macOS tarball
         - task: ArchiveFiles@2
           displayName: 'Package macos tarball'
           inputs:
-            rootFolderOrFile: '$(Pipeline.Workspace)/alphaPublishedFilesmacOS-latest/alpha/osx-arm64/qala'
+            rootFolderOrFile: '$(Pipeline.Workspace)/releasePublishedFilesmacOS-latest/release/osx-arm64/qala'
             includeRootFolder: false
             archiveType: 'tar'
             tarCompression: 'gz'
-            archiveFile: '$(Build.ArtifactStagingDirectory)/alpha/qala-cli-$(alphaVersion)-osx-arm64.tar.gz'
+            archiveFile: '$(Build.ArtifactStagingDirectory)/release/qala-cli-$(releaseVersion)-osx-arm64.tar.gz'
 
-        # Publish the Alpha macOS package into the artifact staging directory
+        # Publish the Release macOS package into the artifact staging directory
         - publish: '$(Build.ArtifactStagingDirectory)'
           displayName: 'Publish to Artifact Staging Directory'
-          artifact: "alphaInstallerMacOS"
+          artifact: "releaseInstallerMacOS"
 
         # Move the executable file into a bin folder inside the npm folder
         - task: CopyFiles@2
           displayName: 'Move the executable file into a bin folder inside the npm folder'
           inputs:
-            SourceFolder: '$(Pipeline.Workspace)/alphaPublishedFilesmacOS-latest/alpha/osx-arm64'
+            SourceFolder: '$(Pipeline.Workspace)/releasePublishedFilesmacOS-latest/release/osx-arm64'
             Contents: 'qala'
             TargetFolder: '$(Build.SourcesDirectory)/build/npm/bin'
 
@@ -248,7 +248,7 @@ stages:
             script: |
               $packageJsonPath = "$(Build.SourcesDirectory)/build/npm/package.json"
               $packageJson = Get-Content -Path $packageJsonPath -Raw | ConvertFrom-Json
-              $packageJson.version = "$(alphaVersion)"
+              $packageJson.version = "$(releaseVersion)"
               $packageJson | ConvertTo-Json -Depth 32 | Set-Content -Path $packageJsonPath
 
         # Install Node.js
@@ -268,40 +268,84 @@ stages:
 
         # Publish npm package
         - task: Npm@1
-          displayName: 'Publish Alpha npm package'
+          displayName: 'Publish Release npm package'
           condition: succeeded()
           inputs:
             command: 'custom'
-            customCommand: 'publish --access public --tag alpha'
+            customCommand: 'publish --access public'
             workingDir: '$(Build.SourcesDirectory)/build/npm'
             publishRegistry: 'useExternalRegistry'
             publishEndpoint: '$(npmConnection)'
 
     - job: PackageLinux
       displayName: "Package Linux Tarball"
-      dependsOn: AlphaVersion
+      dependsOn: ReleaseVersion
       condition: succeeded()
       variables:
-        alphaVersion: $[ dependencies.AlphaVersion.outputs['SetAlphaVersion.alphaVersion'] ]
+        releaseVersion: $[ dependencies.ReleaseVersion.outputs['SetReleaseVersion.releaseVersion'] ]
       pool:
         vmImage: 'ubuntu-latest'
       steps:
         # Download previous published files artifact
         - download: current
           displayName: 'Download previous published files artifact'
-          artifact: "alphaPublishedFilesubuntu-latest"
+          artifact: "releasePublishedFilesubuntu-latest"
 
         # Package linux tarball
         - task: ArchiveFiles@2
           displayName: 'Package linux tarball'
           inputs:
-            rootFolderOrFile: '$(Pipeline.Workspace)/alphaPublishedFilesubuntu-latest/alpha/linux-x64/qala'
+            rootFolderOrFile: '$(Pipeline.Workspace)/releasePublishedFilesubuntu-latest/release/linux-x64/qala'
             includeRootFolder: false
             archiveType: 'tar'
             tarCompression: 'gz'
-            archiveFile: '$(Build.ArtifactStagingDirectory)/alpha/qala-cli-$(alphaVersion)-linux-x64.tar.gz'
+            archiveFile: '$(Build.ArtifactStagingDirectory)/release/qala-cli-$(releaseVersion)-linux-x64.tar.gz'
 
-        # Publish the Alpha Linux package into the artifact staging directory
+        # Publish the Release Linux package into the artifact staging directory
         - publish: '$(Build.ArtifactStagingDirectory)'
           displayName: 'Publish to Artifact Staging Directory'
-          artifact: "alphaInstallerLinux"
+          artifact: "releaseInstallerLinux"
+
+    - job: GithubRelease
+      displayName: Create Github Release
+      dependsOn:
+        - ReleaseVersion
+        - PackageWindows
+        - PackageMacOS
+        - PackageLinux
+      condition: succeeded()
+      variables:
+        releaseVersion: $[ dependencies.ReleaseVersion.outputs['SetReleaseVersion.releaseVersion'] ]
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+        # Download previous installer linux file in artifact
+        - download: current
+          displayName: 'Download previous package linux file in artifact'
+          artifact: "releaseInstallerLinux"
+
+        # Download previous installer windows file in artifact
+        - download: current
+          displayName: 'Download previous package windows file in artifact'
+          artifact: "releaseInstallerWindows"
+
+        # Download previous installer macos file in artifact
+        - download: current
+          displayName: 'Download previous package macOS file in artifact'
+          artifact: "releaseInstallerMacOS"
+        
+        # Create GitHub Release Release with Windows and Linux assets
+        - task: GithubRelease@1 
+          displayName: 'Create GitHub Release Release'
+          inputs:
+            gitHubConnection: '$(gitHubConnection)'
+            repositoryName: '$(repositoryName)'
+            target: '$(Build.SourceBranchName)'
+            tagSource: 'userSpecifiedTag'
+            tag: "$(releaseVersion)"
+            isPreRelease: false
+            title: 'Release Release $(releaseVersion)'   
+            assets: |
+              $(Pipeline.Workspace)/releaseInstallerWindows/release/*/*.msi
+              $(Pipeline.Workspace)/releaseInstallerLinux/release/*.tar.gz
+              $(Pipeline.Workspace)/releaseInstallerMacOS/release/*.tar.gz
