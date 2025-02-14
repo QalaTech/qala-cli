@@ -246,51 +246,6 @@ stages:
           displayName: 'Publish to Artifact Staging Directory'
           artifact: "alphaInstallerMacOS"
 
-        # Move the executable file into a bin folder inside the npm folder
-        - task: CopyFiles@2
-          displayName: 'Move the executable file into a bin folder inside the npm folder'
-          inputs:
-            SourceFolder: '$(Pipeline.Workspace)/alphaPublishedFilesmacOS-latest/alpha/osx-arm64'
-            Contents: 'qala'
-            TargetFolder: '$(Build.SourcesDirectory)/build/npm/bin'
-
-        # Update the version in the package.json file
-        - task: PowerShell@2
-          displayName: 'Update the version in the package.json file'
-          inputs:
-            targetType: 'inline'
-            script: |
-              $packageJsonPath = "$(Build.SourcesDirectory)/build/npm/package.json"
-              $packageJson = Get-Content -Path $packageJsonPath -Raw | ConvertFrom-Json
-              $packageJson.version = "$(alphaVersion)"
-              $packageJson | ConvertTo-Json -Depth 32 | Set-Content -Path $packageJsonPath
-
-        # Install Node.js
-        - task: NodeTool@0
-          displayName: 'Install Node.js'
-          condition: succeeded()
-          inputs:
-            versionSpec: '20.x'
-
-        # Authenticate npm
-        - task: npmAuthenticate@0
-          displayName: 'Authenticate npm'
-          condition: succeeded()
-          inputs:
-            workingFile: '$(Build.SourcesDirectory)/build/npm/.npmrc'
-            customEndpoint: '$(npmConnection)'
-
-        # Publish npm package
-        - task: Npm@1
-          displayName: 'Publish Alpha npm package'
-          condition: succeeded()
-          inputs:
-            command: 'custom'
-            customCommand: 'publish --access public --tag alpha'
-            workingDir: '$(Build.SourcesDirectory)/build/npm'
-            publishRegistry: 'useExternalRegistry'
-            publishEndpoint: '$(npmConnection)'
-
     - job: PackageLinux
       displayName: "Package Linux Tarball"
       dependsOn: AlphaVersion
