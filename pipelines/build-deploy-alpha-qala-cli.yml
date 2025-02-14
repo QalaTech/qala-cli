@@ -6,6 +6,9 @@ trigger:
   branches:
     include:
       - master/*
+  paths:
+    include:
+      - src/Qala.*
 
 pr:
   autoCancel: false
