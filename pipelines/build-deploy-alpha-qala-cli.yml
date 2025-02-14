@@ -70,12 +70,12 @@ stages:
             projects: '**/*.csproj'
 
         # Run tests
-        - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), in(variables['Build.SourceBranch'], 'refs/heads/master')) }}:
-          - task: DotNetCoreCLI@2
-            displayName: 'Run tests'
-            inputs:
-              command: 'test'
-              projects: '$(pathToTheProjectTestFile)'
+        - task: DotNetCoreCLI@2
+          displayName: 'Run tests'
+          condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), in(variables['Build.SourceBranch'], 'refs/heads/master'))
+          inputs:
+            command: 'test'
+            projects: '$(pathToTheProjectTestFile)'
 
         # Build and publish Alpha executables
         - task: PowerShell@2
