@@ -60,21 +60,27 @@ stages:
                   New-Item -ItemType Directory -Path (Split-Path -Path $configPath) -Force
               }
 
+              # Fetch environment variables properly
+              $authUrl = $env:AUTH_URL
+              $authClientId = $env:AUTH_CLIENT_ID
+              $managementApi = $env:MANAGEMENT_API
+
               # Generate new config.yaml content
               $configContent = @"
               Auth:
-                URL: "${env:AUTH_URL}"
-                ClientID: "${env:AUTH_CLIENT_ID}"
-                Audience: "$(env:MANAGEMENT_API)"/
+                URL: "$authUrl"
+                ClientID: "$authClientId"
+                Audience: "$managementApi/"
 
               Management-API:
-                URL: "$(env:MANAGEMENT_API)"/v1
+                URL: "$managementApi/v1"
               "@
 
               # Overwrite the existing config.yaml
               $configContent | Set-Content -Path $configPath -Encoding utf8 -Force
 
               Write-Host "Replaced existing config.yaml successfully!"
+
 
         # Restore NuGet Packages
         - task: DotNetCoreCLI@2
