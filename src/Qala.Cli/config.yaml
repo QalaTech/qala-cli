@@ -1,7 +1,7 @@
 Auth:
   URL: "https://dev-lqwdwo2zdrq7ygsg.us.auth0.com"
   ClientID: "gv2q0aAxsQ1mezQtZ4ao9DJjGOYFeybB"
-  Audience: "https://localhost:7143/"
+  Audience: "https://management-api.blackpond-239b58cc.northeurope.azurecontainerapps.io/"
 
 Management-API:
-  URL: "https://localhost:7143/v1/"
+  URL: "https://management-api.blackpond-239b58cc.northeurope.azurecontainerapps.io/v1/"
