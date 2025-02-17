@@ -258,7 +258,7 @@ stages:
           - task: ArchiveFiles@2
             displayName: 'Package macos tarball'
             inputs:
-              rootFolderOrFile: '$(Pipeline.Workspace)/alphaPublishedFilesmacOS-latest/alpha/osx-arm64/qala'
+              rootFolderOrFile: '$(Pipeline.Workspace)/alphaPublishedFilesmacOS-latest/alpha/osx-arm64/'
               includeRootFolder: false
               archiveType: 'tar'
               tarCompression: 'gz'
@@ -287,7 +287,7 @@ stages:
           - task: ArchiveFiles@2
             displayName: 'Package linux tarball'
             inputs:
-              rootFolderOrFile: '$(Pipeline.Workspace)/alphaPublishedFilesubuntu-latest/alpha/linux-x64/qala'
+              rootFolderOrFile: '$(Pipeline.Workspace)/alphaPublishedFilesubuntu-latest/alpha/linux-x64/'
               includeRootFolder: false
               archiveType: 'tar'
               tarCompression: 'gz'
