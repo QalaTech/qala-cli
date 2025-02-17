@@ -1,6 +1,6 @@
 Auth:
-  URL: "https://auth.server.com"
-  ClientID: "g123456789"
+  URL: "https://dev-lqwdwo2zdrq7ygsg.us.auth0.com"
+  ClientID: "gv2q0aAxsQ1mezQtZ4ao9DJjGOYFeybB"
   Audience: "https://localhost:7143/"
 
 Management-API:
