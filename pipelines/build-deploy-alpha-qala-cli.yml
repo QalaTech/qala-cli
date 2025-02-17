@@ -63,12 +63,12 @@ stages:
               # Generate new config.yaml content
               $configContent = @"
               Auth:
-                URL: "$(AUTH_URL)"
-                ClientID: "$(AUTH_CLIENT_ID)"
-                Audience: "$(AUTH_AUDIENCE)"
+                URL: "${env:AUTH_URL}"
+                ClientID: "${env:AUTH_CLIENT_ID}"
+                Audience: "$(AUTH_AUDIENCE)/"
 
               Management-API:
-                URL: "$(MANAGEMENT_API)"
+                URL: "$(env:MANAGEMENT_API)/v1"
               "@
 
               # Overwrite the existing config.yaml
