@@ -65,10 +65,10 @@ stages:
               Auth:
                 URL: "${env:AUTH_URL}"
                 ClientID: "${env:AUTH_CLIENT_ID}"
-                Audience: "$(env:MANAGEMENT_API)/"
+                Audience: "$(env:MANAGEMENT_API)"/
 
               Management-API:
-                URL: "$(env:MANAGEMENT_API)/v1"
+                URL: "$(env:MANAGEMENT_API)"/v1
               "@
 
               # Overwrite the existing config.yaml
