@@ -1,0 +1,98 @@
+---
+id: qala-cli-topics
+title: topics
+title_meta: topics
+pagination_label: topics
+keywords: [qala, q-flow, documentation, cli, topics]
+tags: [qala, q-flow, documentation, cli, topics]
+image: ../docs/img/logo_no_lettering.svg
+description: No description available.
+sidebar_label: topics
+sidebar_position: 5
+draft: true
+hide_table_of_contents: false
+pagination_next: null
+pagination_prev: references/references-intro
+hide_title: true
+toc_max_heading_level: 2
+sidebar_class_name: hidden
+---
+
+import HeroBanner from '../../src/components/HeroBanner/HeroBanner';
+
+<HeroBanner
+    title="topics"
+    tagline="No description available."
+    backgroundColor='transparent'
+/>
+
+# `topics` Commands
+
+<table>
+<tr><th>Command</th><th>Description</th></tr>
+<tr><td><a href="#list" title="Learn about list">list</a></td><td>this command lists all the topics available in your 
+environment.</td></tr>
+<tr><td><a href="#name" title="Learn about name">name</a></td><td>this command retrieves the topic with the specified 
+NAME.</td></tr>
+<tr><td><a href="#create" title="Learn about create">create</a></td><td>this command creates a new topic for the Qala 
+CLI.</td></tr>
+<tr><td><a href="#update" title="Learn about update">update</a></td><td>this command updates an existing topic for the Qala 
+CLI.</td></tr>
+</table>
+## `list`
+this command lists all the topics available in your 
+environment.
+
+**Examples:**
+```sh
+topics ls
+```
+
+
+## `name`
+this command retrieves the topic with the specified 
+NAME.
+
+**Options:**
+<table>
+<tr><th>Option</th><th>Description</th></tr>
+</table>
+**Examples:**
+```sh
+topics name <NAME>
+```
+
+
+## `create`
+this command creates a new topic for the Qala 
+CLI.
+
+**Options:**
+<table>
+<tr><th>Option</th><th>Description</th></tr>
+<tr><td>`d` / `description`</td><td>The description of the topic.</td></tr>
+<tr><td>`e` / `event-type-ids`</td><td>The comma separated list of event type ids.</td></tr>
+<tr><td>`n` / `name`</td><td>The name of the topic.</td></tr>
+</table>
+**Examples:**
+```sh
+topics create -n <NAME> -d  <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS>
+```
+
+
+## `update`
+this command updates an existing topic for the Qala 
+CLI.
+
+**Options:**
+<table>
+<tr><th>Option</th><th>Description</th></tr>
+<tr><td>`d` / `description`</td><td>The description of the topic.</td></tr>
+<tr><td>`e` / `event-type-ids`</td><td>The comma separated list of event type ids.</td></tr>
+</table>
+**Examples:**
+```sh
+topics update <NAME> -d <DESCRIPTION>  -e <EVENTS_COMMA_SEPERATED_IDS>
+```
+
+

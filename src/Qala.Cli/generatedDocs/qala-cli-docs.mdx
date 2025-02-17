@@ -1,0 +1,67 @@
+---
+id: qala-cli-docs
+title: Qala CLI Documentation
+title_meta: Qala CLI Documentation
+pagination_label: Qala CLI Documentation
+keywords: [qala, q-flow, documentation, cli]
+tags: [qala, q-flow, documentation, cli]
+image: ../docs/img/logo_no_lettering.svg
+description: Qala CLI is a command-line interface that enables you to manage the Q-Flow solution via the terminal. It is suitable for integration into deployment pipelines or for automating certain tasks.
+sidebar_label: Qala CLI Documentation
+sidebar_position: 2
+draft: true
+hide_table_of_contents: false
+pagination_next: null
+pagination_prev: references/references-intro
+hide_title: true
+toc_max_heading_level: 2
+---
+
+import HeroBanner from '../../src/components/HeroBanner/HeroBanner';
+
+<HeroBanner
+    title="Qala CLI Documentation"
+    tagline="Qala CLI is a command-line interface that enables you to manage the Q-Flow solution via the terminal."
+    backgroundColor='transparent'
+/>
+
+## Available Commands
+
+<table>
+<tr><th>Command</th><th>Description</th></tr>
+<tr><td><a href="#login" title="Learn about login">login</a></td><td>this commands initiates the process for the user to 
+login.</td></tr>
+<tr><td><a href="#config" title="Learn about config">config</a></td><td>this command creates enables the configuration of the Qala CLI 
+(for automation purposes).</td></tr>
+<tr><td><a href="qala-cli-environment" title="Learn about environment">environment</a></td><td>No description available.</td></tr>
+<tr><td><a href="qala-cli-events" title="Learn about events">events</a></td><td>No description available.</td></tr>
+<tr><td><a href="qala-cli-topics" title="Learn about topics">topics</a></td><td>No description available.</td></tr>
+<tr><td><a href="qala-cli-sources" title="Learn about sources">sources</a></td><td>No description available.</td></tr>
+<tr><td><a href="qala-cli-subscriptions" title="Learn about subscriptions">subscriptions</a></td><td>No description available.</td></tr>
+</table>
+## `login`
+this commands initiates the process for the user to 
+login.
+
+**Examples:**
+```sh
+login
+```
+
+
+## `config`
+this command creates enables the configuration of the Qala CLI 
+(for automation purposes).
+
+**Options:**
+<table>
+<tr><th>Option</th><th>Description</th></tr>
+<tr><td>`e` / `env`</td><td>The environment ID to use for the request.</td></tr>
+<tr><td>`k` / `key`</td><td>The API key to use for the request.</td></tr>
+</table>
+**Examples:**
+```sh
+config -k <API_KEY> -e <ENV_ID>
+```
+
+

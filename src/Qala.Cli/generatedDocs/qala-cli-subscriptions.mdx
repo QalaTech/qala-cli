@@ -1,0 +1,140 @@
+---
+id: qala-cli-subscriptions
+title: subscriptions
+title_meta: subscriptions
+pagination_label: subscriptions
+keywords: [qala, q-flow, documentation, cli, subscriptions]
+tags: [qala, q-flow, documentation, cli, subscriptions]
+image: ../docs/img/logo_no_lettering.svg
+description: No description available.
+sidebar_label: subscriptions
+sidebar_position: 7
+draft: true
+hide_table_of_contents: false
+pagination_next: null
+pagination_prev: references/references-intro
+hide_title: true
+toc_max_heading_level: 2
+sidebar_class_name: hidden
+---
+
+import HeroBanner from '../../src/components/HeroBanner/HeroBanner';
+
+<HeroBanner
+    title="subscriptions"
+    tagline="No description available."
+    backgroundColor='transparent'
+/>
+
+# `subscriptions` Commands
+
+<table>
+<tr><th>Command</th><th>Description</th></tr>
+<tr><td><a href="#list" title="Learn about list">list</a></td><td>this command lists all the subscriptions available in your 
+environment for a specific topic or source.</td></tr>
+<tr><td><a href="#inspect" title="Learn about inspect">inspect</a></td><td>this command retrieves the subscription with the specified 
+ID.</td></tr>
+<tr><td><a href="#create" title="Learn about create">create</a></td><td>this command creates a new subscription for the Qala 
+CLI.</td></tr>
+<tr><td><a href="#update" title="Learn about update">update</a></td><td>this command updates an existing subscription for the Qala 
+CLI.</td></tr>
+<tr><td><a href="#delete" title="Learn about delete">delete</a></td><td>this command deletes the subscription with the specified 
+ID.</td></tr>
+<tr><td><a href="qala-cli-secret.mdx" title="Learn about secret">secret</a></td><td>No description available.</td></tr>
+</table>
+## `list`
+this command lists all the subscriptions available in your 
+environment for a specific topic or source.
+
+**Options:**
+<table>
+<tr><th>Option</th><th>Description</th></tr>
+<tr><td>`source`</td><td>No description.</td></tr>
+<tr><td>`topic`</td><td>No description.</td></tr>
+</table>
+**Examples:**
+```sh
+qala subscriptions ls --topic <TOPIC_NAME>
+qala subscriptions ls --source  <SOURCE_NAME>
+```
+
+
+## `inspect`
+this command retrieves the subscription with the specified 
+ID.
+
+**Options:**
+<table>
+<tr><th>Option</th><th>Description</th></tr>
+<tr><td>`source`</td><td>The name of the source.</td></tr>
+<tr><td>`s` / `subscription`</td><td>The id of the subscription.</td></tr>
+<tr><td>`topic`</td><td>The name of the topic.</td></tr>
+</table>
+**Examples:**
+```sh
+qala subscriptions i --topic <TOPIC_NAME> -s <SUBSCRIPTION_ID>
+qala subscriptions i --source <SOURCE_NAME>  -s <SUBSCRIPTION_ID>
+```
+
+
+## `create`
+this command creates a new subscription for the Qala 
+CLI.
+
+**Options:**
+<table>
+<tr><th>Option</th><th>Description</th></tr>
+<tr><td>`d` / `description`</td><td>The description of the subscription.</td></tr>
+<tr><td>`e` / `event-type-ids`</td><td>The comma separated list of event type ids.</td></tr>
+<tr><td>`m` / `max-attempts`</td><td>The maximum delivery attempts of the 
+subscription.</td></tr>
+<tr><td>`n` / `name`</td><td>The name of the subscription.</td></tr>
+<tr><td>`source`</td><td>No description.</td></tr>
+<tr><td>`topic`</td><td>The name of the topic.</td></tr>
+<tr><td>`u` / `url`</td><td>The webhook url of the subscription.</td></tr>
+</table>
+**Examples:**
+```sh
+qala sub create -n <SUBSCRIPTION_NAME> -t  <TOPIC_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS>  -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>
+```
+
+
+## `update`
+this command updates an existing subscription for the Qala 
+CLI.
+
+**Options:**
+<table>
+<tr><th>Option</th><th>Description</th></tr>
+<tr><td>`d` / `description`</td><td>The description of the subscription.</td></tr>
+<tr><td>`e` / `events`</td><td>The comma separated list of event type ids.</td></tr>
+<tr><td>`m` / `max-attempts`</td><td>The maximum delivery attempts of the 
+subscription.</td></tr>
+<tr><td>`n` / `name`</td><td>The name of the subscription.</td></tr>
+<tr><td>`source`</td><td>The name of the source.</td></tr>
+<tr><td>`topic`</td><td>The name of the topic.</td></tr>
+<tr><td>`u` / `url`</td><td>The webhook url of the subscription.</td></tr>
+</table>
+**Examples:**
+```sh
+qala sub update <SUBSCRIPTION_ID> -t  <TOPIC_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS>  -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>
+```
+
+
+## `delete`
+this command deletes the subscription with the specified 
+ID.
+
+**Options:**
+<table>
+<tr><th>Option</th><th>Description</th></tr>
+<tr><td>`source`</td><td>The name of the source.</td></tr>
+<tr><td>`s` / `subscription`</td><td>The id of the subscription.</td></tr>
+<tr><td>`topic`</td><td>The name of the topic.</td></tr>
+</table>
+**Examples:**
+```sh
+qala sub delete -t <TOPIC_NAME> -s  <SUBSCRIPTION_ID>
+```
+
+
