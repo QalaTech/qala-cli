@@ -65,7 +65,7 @@ stages:
               Auth:
                 URL: "${env:AUTH_URL}"
                 ClientID: "${env:AUTH_CLIENT_ID}"
-                Audience: "$(AUTH_AUDIENCE)/"
+                Audience: "$(env:MANAGEMENT_API)/"
 
               Management-API:
                 URL: "$(env:MANAGEMENT_API)/v1"
