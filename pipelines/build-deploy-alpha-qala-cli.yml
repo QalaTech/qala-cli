@@ -49,17 +49,32 @@ stages:
       steps: 
         # Modify the config.yaml with variable values from the pipeline
         - task: PowerShell@2
-          displayName: 'Modify the config.yaml with variable values from the pipeline'
+          displayName: "Generate and Replace config.yaml"
           inputs:
             targetType: 'inline'
             script: |
               $configPath = "$(Build.SourcesDirectory)/src/Qala.Cli/config.yaml"
-              $config = Get-Content -Path $configPath -Raw
-              $config = $config -replace 'URL: "https://auth.server.com"', 'URL: "${env:AUTH_URL}"'
-              $config = $config -replace 'ClientID: "g123456789"', 'ClientID: "${env:AUTH_CLIENT_ID}"'
-              $config = $config -replace 'Audience: "https://localhost:7143/"', 'Audience: "${env:MANAGEMENT_API}"'
-              $config = $config -replace 'URL: "https://localhost:7143/v1/"', 'URL: "${env:MANAGEMENT_API}"v1/'
-              Set-Content -Path $configPath -Value $config
+
+              # Ensure the directory exists
+              if (!(Test-Path -Path (Split-Path -Path $configPath))) {
+                  New-Item -ItemType Directory -Path (Split-Path -Path $configPath) -Force
+              }
+
+              # Generate new config.yaml content
+              $configContent = @"
+              Auth:
+                URL: "$(AUTH_URL)"
+                ClientID: "$(AUTH_CLIENT_ID)"
+                Audience: "$(AUTH_AUDIENCE)"
+
+              Management-API:
+                URL: "$(MANAGEMENT_API)"
+              "@
+
+              # Overwrite the existing config.yaml
+              $configContent | Set-Content -Path $configPath -Encoding utf8 -Force
+
+              Write-Host "Replaced existing config.yaml successfully!"
 
         # Restore NuGet Packages
         - task: DotNetCoreCLI@2
