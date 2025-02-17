@@ -41,20 +41,6 @@ stages:
       pool: 
         vmImage: '$(vmImage)'
       steps: 
-        # Modify the config.yaml with variable values from the pipeline
-        - task: PowerShell@2
-          displayName: 'Modify the config.yaml with variable values from the pipeline'
-          inputs:
-            targetType: 'inline'
-            script: |
-              $configPath = "$(Build.SourcesDirectory)/src/Qala.Cli/config.yaml"
-              $config = Get-Content -Path $configPath -Raw
-              $config = $config -replace 'URL: "https://auth.server.com"', 'URL: "${env:AUTH_URL}"'
-              $config = $config -replace 'ClientID: "g123456789"', 'ClientID: "${env:AUTH_CLIENT_ID}"'
-              $config = $config -replace 'Audience: "https://localhost:7143/"', 'Audience: "${env:MANAGEMENT_API}"'
-              $config = $config -replace 'URL: "https://localhost:7143/v1/"', 'URL: "${env:MANAGEMENT_API}"v1/'
-              Set-Content -Path $configPath -Value $config
-
         # Restore NuGet Packages
         - task: DotNetCoreCLI@2
           displayName: 'Restore NuGet Packages'
