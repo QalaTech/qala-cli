@@ -76,14 +76,14 @@ app.Configure(config =>
            .WithAlias("ls");
        t.AddCommand<GetTopicCommand>("inspect")
            .WithDescription("this command retrieves the topic with the specified NAME.")
-           .WithExample("topics inspect <NAME>")
+           .WithExample("topics inspect <TOPIC_NAME>")
            .WithAlias("i");
        t.AddCommand<CreateTopicCommand>("create")
            .WithDescription("this command creates a new topic for the Qala CLI.")
-           .WithExample("topics create -n <NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES>");
+           .WithExample("topics create -n <TOPIC_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES>");
        t.AddCommand<UpdateTopicCommand>("update")
            .WithDescription("this command updates an existing topic for the Qala CLI.")
-           .WithExample("topics update <NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES>");
+           .WithExample("topics update <TOPIC_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES>");
    })
    .WithAlias("tp");
 
