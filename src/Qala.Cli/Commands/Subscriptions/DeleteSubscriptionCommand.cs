@@ -35,9 +35,9 @@ public class DeleteSubscriptionCommand(IMediator mediator, IAnsiConsole console)
 
     public override ValidationResult Validate(CommandContext context, DeleteSubscriptionArgument argument)
     {
-        if (string.IsNullOrWhiteSpace(argument.TopicName))
+        if (string.IsNullOrWhiteSpace(argument.TopicName) && string.IsNullOrWhiteSpace(argument.SourceName))
         {
-            return ValidationResult.Error("Topic name is required.");
+            return ValidationResult.Error("Either Topic name or Source name must be provided.");
         }
 
         if (string.IsNullOrWhiteSpace(argument.SubscriptionName))
