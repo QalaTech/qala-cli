@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Qala.Cli.Data.Repository.Interfaces;
 
@@ -5,35 +6,55 @@ public class LocalEnvironments : ILocalEnvironments
 {
     public string GetLocalEnvironment(string variable)
     {
-        return Environment.GetEnvironmentVariable(variable, EnvironmentVariableTarget.Process) ?? string.Empty;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            return Environment.GetEnvironmentVariable(variable, EnvironmentVariableTarget.Machine) ?? string.Empty;
+        }
+
+        string? result = null;
+        var proc = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "/bin/bash",
+                Arguments = $"-c \"source {GetShellConfigFile()} && echo ${variable}\"",
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            }
+        };
+
+        proc.Start();
+        while (!proc.StandardOutput.EndOfStream)
+        {
+            result = proc.StandardOutput.ReadLine();
+        }
+
+        proc.WaitForExit();
+        return result ?? string.Empty;
     }
 
     public void SetLocalEnvironment(string variable, string? value)
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            Environment.SetEnvironmentVariable(variable, value, EnvironmentVariableTarget.Process);
+            Environment.SetEnvironmentVariable(variable, value, EnvironmentVariableTarget.Machine);
+            return;
         }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            Environment.SetEnvironmentVariable(variable, value, EnvironmentVariableTarget.Process);
 
-            string shellConfigFile = GetShellConfigFile();
-            string exportCommand = $"export {variable}={value}";
-
-            if (!File.ReadAllText(shellConfigFile).Contains(exportCommand))
-            {
-                File.AppendAllText(shellConfigFile, $"{Environment.NewLine}{exportCommand}");
-            }
-            else
-            {
-                Console.WriteLine($"Environment variable '{variable}' is already present in '{shellConfigFile}'.");
-            }
-        }
-        else
+        var proc = new Process
         {
-            throw new PlatformNotSupportedException("Unsupported operating system.");
-        }
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "/bin/bash",
+                Arguments = $"-c \"echo 'export {variable}={value}' >> {GetShellConfigFile()}\"",
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            }
+        };
+        proc.Start();
+        proc.WaitForExit();
     }
 
     private static string GetShellConfigFile()

@@ -14,7 +14,10 @@ public class ConfigService(ILocalEnvironments localEnvironments) : IConfigServic
         localEnvironments.SetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_API_KEY], key);
         localEnvironments.SetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID], environmentId.ToString());
 
-        return await Task.FromResult<Either<ConfigErrorResponse, ConfigSuccessResponse>>(new ConfigSuccessResponse(new Config(key, environmentId)));
+        var newKey = localEnvironments.GetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_API_KEY]);
+        var newEnvironmentId = localEnvironments.GetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID]);
+
+        return await Task.FromResult<Either<ConfigErrorResponse, ConfigSuccessResponse>>(new ConfigSuccessResponse(new Config(newKey, new Guid(newEnvironmentId))));
     }
 
     public async Task<Either<ConfigErrorResponse, ConfigSuccessResponse>> GetAsync()
@@ -22,12 +25,12 @@ public class ConfigService(ILocalEnvironments localEnvironments) : IConfigServic
         var key = localEnvironments.GetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_API_KEY]);
         var environmentId = localEnvironments.GetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID]);
 
-        if(string.IsNullOrEmpty(key))
+        if (string.IsNullOrEmpty(key))
         {
             throw new Exception("No API key found");
         }
 
-        if(string.IsNullOrEmpty(environmentId))
+        if (string.IsNullOrEmpty(environmentId))
         {
             throw new Exception("No environment ID found");
         }
