@@ -72,7 +72,7 @@ public class UpdateSourceCommand(IMediator mediator, IAnsiConsole console) : Asy
                 {
                     Type = AuthSchemeType.Basic,
                     Username = argument.Username,
-                    Password = argument.Password
+                    PasswordReference = argument.Password
                 };
                 break;
             case AuthSchemeType.ApiKey:
@@ -80,7 +80,7 @@ public class UpdateSourceCommand(IMediator mediator, IAnsiConsole console) : Asy
                 {
                     Type = AuthSchemeType.ApiKey,
                     ApiKeyName = argument.ApiKeyName,
-                    ApiKeyValue = argument.ApiKeyValue
+                    ApiKeyValueReference = argument.ApiKeyValue
                 };
                 break;
             case AuthSchemeType.JWT:

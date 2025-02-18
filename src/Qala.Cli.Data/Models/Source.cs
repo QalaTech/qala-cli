@@ -76,7 +76,7 @@ public class BasicAuthenticationScheme : AuthenticationScheme
     }
 
     public string Username { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
+    public string PasswordReference { get; set; } = string.Empty;
     public string SecretType { get; set; } = "secret";
 }
 
@@ -88,7 +88,7 @@ public class ApiKeyAuthenticationScheme : AuthenticationScheme
     }
 
     public string ApiKeyName { get; set; } = string.Empty;
-    public string ApiKeyValue { get; set; } = string.Empty;
+    public string ApiKeyValueReference { get; set; } = string.Empty;
     public string SecretType { get; set; } = "secret";
 }
 
