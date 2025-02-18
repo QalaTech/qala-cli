@@ -18,22 +18,30 @@ public class Services
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<Program>());
         services.AddSingleton<IAuthService, AuthService>();
         services.AddSingleton<IConfigService, ConfigService>();
-        services.AddSingleton<IEnvironmentService, EnvironmentService>();
-        services.AddSingleton<IEventTypeService, EventTypeService>();
-        services.AddSingleton<ITopicService, TopicService>();
-        services.AddSingleton<ISubscriptionService, SubscriptionService>();
-        services.AddSingleton<ISourceService, SourceService>();
+        services.AddTransient<IEnvironmentService, EnvironmentService>();
+        services.AddTransient<IEventTypeService, EventTypeService>();
+        services.AddTransient<ITopicService, TopicService>();
+        services.AddTransient<ISubscriptionService, SubscriptionService>();
+        services.AddTransient<ISourceService, SourceService>();
     }
 
     public static void RegisterDataServices(IServiceCollection services, IConfiguration configuration)
     {
         services.AddSingleton<ILocalEnvironments, LocalEnvironments>();
-        services.AddHttpClient<IOrganizationGateway, OrganizationGateway>(client => BuildHttpClient(client, configuration));
-        services.AddHttpClient<IEnvironmentGateway, EnvironmentGateway>(client => BuildHttpClient(client, configuration));
-        services.AddHttpClient<IEventTypeGateway, EventTypeGateway>(client => BuildHttpClient(client, configuration));
-        services.AddHttpClient<ITopicGateway, TopicGateway>(client => BuildHttpClient(client, configuration));
-        services.AddHttpClient<ISubscriptionGateway, SubscriptionGateway>(client => BuildHttpClient(client, configuration));
-        services.AddHttpClient<ISourceGateway, SourceGateway>(client => BuildHttpClient(client, configuration));
+        services.AddTransient<DynamicHeaderHandler>();
+
+        services.AddHttpClient<IOrganizationGateway, OrganizationGateway>(client => BuildHttpClient(client, configuration))
+            .AddHttpMessageHandler<DynamicHeaderHandler>();
+        services.AddHttpClient<IEnvironmentGateway, EnvironmentGateway>(client => BuildHttpClient(client, configuration))
+            .AddHttpMessageHandler<DynamicHeaderHandler>();
+        services.AddHttpClient<IEventTypeGateway, EventTypeGateway>(client => BuildHttpClient(client, configuration))
+            .AddHttpMessageHandler<DynamicHeaderHandler>();
+        services.AddHttpClient<ITopicGateway, TopicGateway>(client => BuildHttpClient(client, configuration))
+            .AddHttpMessageHandler<DynamicHeaderHandler>();
+        services.AddHttpClient<ISubscriptionGateway, SubscriptionGateway>(client => BuildHttpClient(client, configuration))
+            .AddHttpMessageHandler<DynamicHeaderHandler>();
+        services.AddHttpClient<ISourceGateway, SourceGateway>(client => BuildHttpClient(client, configuration))
+            .AddHttpMessageHandler<DynamicHeaderHandler>();
     }
 
     private static void BuildHttpClient(HttpClient client, IConfiguration configuration)
