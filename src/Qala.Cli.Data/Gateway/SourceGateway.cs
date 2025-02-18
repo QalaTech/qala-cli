@@ -11,10 +11,11 @@ public class SourceGateway(HttpClient client) : ISourceGateway
         try
         {
             var response = await client.PostAsJsonAsync("sources", new { Name = name, Description = description, SourceType = sourceType, Configuration = configuration });
-
+            var msg = response.Content.ReadAsStringAsync().Result;
             if (!response.IsSuccessStatusCode)
             {
-                throw new Exception("Failed to create source");
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Failed to create source. Status Code: {response.StatusCode}, Response: {errorContent}");
             }
 
             var content = await response.Content.ReadFromJsonAsync<Source>() ?? throw new Exception("Failed to create source");
@@ -22,7 +23,7 @@ public class SourceGateway(HttpClient client) : ISourceGateway
         }
         catch (Exception e)
         {
-            throw new Exception("Failed to create topic", e);
+            throw new Exception("Failed to create source", e);
         }
     }
 
@@ -88,10 +89,11 @@ public class SourceGateway(HttpClient client) : ISourceGateway
         try
         {
             var response = await client.PutAsJsonAsync($"sources/{sourceName}", new { Name = name, Description = description, SourceType = sourceType, Configuration = configuration });
-
+            var msg = response.Content.ReadAsStringAsync().Result;
             if (!response.IsSuccessStatusCode)
             {
-                throw new Exception("Failed to update source");
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Failed to create source. Status Code: {response.StatusCode}, Response: {errorContent}");
             }
 
             var content = await response.Content.ReadFromJsonAsync<Source>() ?? throw new Exception("Failed to update source");

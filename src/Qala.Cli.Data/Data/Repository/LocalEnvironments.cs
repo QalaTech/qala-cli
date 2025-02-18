@@ -8,7 +8,7 @@ public class LocalEnvironments : ILocalEnvironments
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            return Environment.GetEnvironmentVariable(variable, EnvironmentVariableTarget.User) ?? string.Empty;
+            return Environment.GetEnvironmentVariable(variable, EnvironmentVariableTarget.Process) ?? string.Empty;
         }
 
         string? result = null;

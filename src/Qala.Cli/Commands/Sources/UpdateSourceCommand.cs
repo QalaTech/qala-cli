@@ -43,21 +43,6 @@ public class UpdateSourceCommand(IMediator mediator, IAnsiConsole console) : Asy
             return ValidationResult.Error("Source name is required.");
         }
 
-        if (string.IsNullOrWhiteSpace(argument.NewName))
-        {
-            return ValidationResult.Error("New source name is required.");
-        }
-
-        if (string.IsNullOrWhiteSpace(argument.Description))
-        {
-            return ValidationResult.Error("Source description is required.");
-        }
-
-        if (argument.Methods.Count == 0)
-        {
-            return ValidationResult.Error("At least one http method is required.");
-        }
-
         return ValidationResult.Success();
     }
 

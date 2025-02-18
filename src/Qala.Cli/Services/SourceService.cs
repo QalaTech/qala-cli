@@ -29,9 +29,10 @@ public class SourceService(ISourceGateway sourceGateway) : ISourceService
 
         var options = new JsonSerializerOptions
         {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             Converters =
             {
-                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+                new JsonStringEnumConverter()
             }
         };
 
@@ -77,42 +78,62 @@ public class SourceService(ISourceGateway sourceGateway) : ISourceService
         return await Task.FromResult(Either<ListSourcesErrorResponse, ListSourcesSuccessResponse>.Right(new ListSourcesSuccessResponse(sources)));
     }
 
-    public async Task<Either<UpdateSourceErrorResponse, UpdateSourceSuccessResponse>> UpdateSourceAsync(string sourceName, string name, string description, SourceConfiguration configuration)
+    public async Task<Either<UpdateSourceErrorResponse, UpdateSourceSuccessResponse>> UpdateSourceAsync(string sourceName, string? newName, string? description, SourceConfiguration configuration)
     {
         if (string.IsNullOrWhiteSpace(sourceName))
         {
             return await Task.FromResult(Either<UpdateSourceErrorResponse, UpdateSourceSuccessResponse>.Left(new UpdateSourceErrorResponse("Source name is required")));
         }
 
-        if (string.IsNullOrWhiteSpace(name))
+        var source = await sourceGateway.GetSourceAsync(sourceName);
+        if (source == null)
         {
-            return await Task.FromResult(Either<UpdateSourceErrorResponse, UpdateSourceSuccessResponse>.Left(new UpdateSourceErrorResponse("Name is required")));
+            return await Task.FromResult(Either<UpdateSourceErrorResponse, UpdateSourceSuccessResponse>.Left(new UpdateSourceErrorResponse("Source not found")));
         }
 
-        if (string.IsNullOrWhiteSpace(description))
+        if (!string.IsNullOrWhiteSpace(newName))
         {
-            return await Task.FromResult(Either<UpdateSourceErrorResponse, UpdateSourceSuccessResponse>.Left(new UpdateSourceErrorResponse("Description is required")));
+            source.Name = newName;
         }
 
-        if (configuration == null)
+        if (!string.IsNullOrWhiteSpace(description))
         {
-            return await Task.FromResult(Either<UpdateSourceErrorResponse, UpdateSourceSuccessResponse>.Left(new UpdateSourceErrorResponse("Configuration is required")));
+            source.Description = description;
+        }
+
+        if (configuration != null)
+        {
+            if (configuration.AllowedHttpMethods != null)
+            {
+                source.Configuration.AllowedHttpMethods = configuration.AllowedHttpMethods;
+            }
+
+            if (configuration.AuthenticationScheme != null)
+            {
+                source.Configuration.AuthenticationScheme = configuration.AuthenticationScheme;
+            }
+
+            if (configuration.WhitelistedIpRanges != null && configuration.WhitelistedIpRanges.Any())
+            {
+                source.Configuration.WhitelistedIpRanges = configuration.WhitelistedIpRanges;
+            }
         }
 
         var options = new JsonSerializerOptions
         {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             Converters =
             {
-                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+                new JsonStringEnumConverter()
             }
         };
 
-        var source = await sourceGateway.UpdateSourceAsync(sourceName, name, description, SourceType.Http, JsonSerializer.Serialize<SourceConfiguration>(configuration, options));
-        if (source == null)
+        var updatedSource = await sourceGateway.UpdateSourceAsync(sourceName, source.Name, source.Description, SourceType.Http, JsonSerializer.Serialize<SourceConfiguration>(source.Configuration, options));
+        if (updatedSource == null)
         {
             return await Task.FromResult(Either<UpdateSourceErrorResponse, UpdateSourceSuccessResponse>.Left(new UpdateSourceErrorResponse("Failed to update source")));
         }
 
-        return await Task.FromResult(Either<UpdateSourceErrorResponse, UpdateSourceSuccessResponse>.Right(new UpdateSourceSuccessResponse(source)));
+        return await Task.FromResult(Either<UpdateSourceErrorResponse, UpdateSourceSuccessResponse>.Right(new UpdateSourceSuccessResponse(updatedSource)));
     }
 }

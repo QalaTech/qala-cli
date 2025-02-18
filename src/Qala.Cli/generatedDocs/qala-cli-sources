@@ -61,7 +61,7 @@ NAME.
 </table>
 **Examples:**
 ```sh
-qala sources inspect <NAME>
+qala sources inspect <SOURCE_NAME>
 ```
 
 
@@ -101,7 +101,7 @@ basic.</td></tr>
 </table>
 **Examples:**
 ```sh
-qala sources create -n <NAME> -d  <DESCRIPTION> -m <METHODS_COMMA_SEPERATED> -i  <IP_WHITELISTING_COMMA_SEPERATED> -a <AUTHENTICATION_TYPE>
+qala sources create -n <SOURCE_NAME> -d  <DESCRIPTION> -m <METHODS_COMMA_SEPERATED> -i  <IP_WHITELISTING_COMMA_SEPERATED> -a <AUTHENTICATION_TYPE>
 ```
 
 
@@ -141,7 +141,7 @@ basic.</td></tr>
 </table>
 **Examples:**
 ```sh
-qala sources update <NAME> -d  <DESCRIPTION> -m <METHODS_COMMA_SEPERATED> -i  <IP_WHITELISTING_COMMA_SEPERATED> -a <AUTHENTICATION_TYPE>
+qala sources update <SOURCE_NAME> -n  <NEW_NAME> -d <DESCRIPTION> -m <METHODS_COMMA_SEPERATED> -i  <IP_WHITELISTING_COMMA_SEPERATED> -a <AUTHENTICATION_TYPE>
 ```
 
 
@@ -155,7 +155,7 @@ NAME.
 </table>
 **Examples:**
 ```sh
-qala sources delete -n <NAME>
+qala sources delete <SOURCE_NAME>
 ```
 
 

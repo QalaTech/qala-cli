@@ -249,7 +249,7 @@ ClrType="System.String">
         </Argument>
       </Parameters>
       <Examples>
-        <Example commandLine="qala sources inspect &lt;NAME&gt;" />
+        <Example commandLine="qala sources inspect &lt;SOURCE_NAME&gt;" />
       </Examples>
     </Command>
     <!--CREATE-->
@@ -335,7 +335,7 @@ basic.</Description>
         </Option>
       </Parameters>
       <Examples>
-        <Example commandLine="qala sources create -n &lt;NAME&gt; -d 
+        <Example commandLine="qala sources create -n &lt;SOURCE_NAME&gt; -d 
 &lt;DESCRIPTION&gt; -m &lt;METHODS_COMMA_SEPERATED&gt; -i 
 &lt;IP_WHITELISTING_COMMA_SEPERATED&gt; -a &lt;AUTHENTICATION_TYPE&gt;" />
       </Examples>
@@ -427,8 +427,8 @@ basic.</Description>
         </Option>
       </Parameters>
       <Examples>
-        <Example commandLine="qala sources update &lt;NAME&gt; -d 
-&lt;DESCRIPTION&gt; -m &lt;METHODS_COMMA_SEPERATED&gt; -i 
+        <Example commandLine="qala sources update &lt;SOURCE_NAME&gt; -n 
+&lt;NEW_NAME&gt; -d &lt;DESCRIPTION&gt; -m &lt;METHODS_COMMA_SEPERATED&gt; -i 
 &lt;IP_WHITELISTING_COMMA_SEPERATED&gt; -a &lt;AUTHENTICATION_TYPE&gt;" />
       </Examples>
     </Command>
@@ -445,7 +445,7 @@ ClrType="System.String">
         </Argument>
       </Parameters>
       <Examples>
-        <Example commandLine="qala sources delete -n &lt;NAME&gt;" />
+        <Example commandLine="qala sources delete &lt;SOURCE_NAME&gt;" />
       </Examples>
     </Command>
   </Command>

@@ -95,17 +95,17 @@ app.Configure(config =>
            .WithAlias("ls");
         s.AddCommand<GetSourceCommand>("inspect")
            .WithDescription("this command retrieves the source with the specified NAME.")
-           .WithExample("qala sources inspect <NAME>")
+           .WithExample("qala sources inspect <SOURCE_NAME>")
            .WithAlias("i");
         s.AddCommand<CreateSourceCommand>("create")
            .WithDescription("this command creates a new source for the Qala CLI.")
-           .WithExample("qala sources create -n <NAME> -d <DESCRIPTION> -m <METHODS_COMMA_SEPERATED> -i <IP_WHITELISTING_COMMA_SEPERATED> -a <AUTHENTICATION_TYPE>");
+           .WithExample("qala sources create -n <SOURCE_NAME> -d <DESCRIPTION> -m <METHODS_COMMA_SEPERATED> -i <IP_WHITELISTING_COMMA_SEPERATED> -a <AUTHENTICATION_TYPE>");
         s.AddCommand<UpdateSourceCommand>("update")
            .WithDescription("this command updates an existing source for the Qala CLI.")
-           .WithExample("qala sources update <NAME> -d <DESCRIPTION> -m <METHODS_COMMA_SEPERATED> -i <IP_WHITELISTING_COMMA_SEPERATED> -a <AUTHENTICATION_TYPE>");
+           .WithExample("qala sources update <SOURCE_NAME> -n <NEW_NAME> -d <DESCRIPTION> -m <METHODS_COMMA_SEPERATED> -i <IP_WHITELISTING_COMMA_SEPERATED> -a <AUTHENTICATION_TYPE>");
         s.AddCommand<DeleteSourceCommand>("delete")
            .WithDescription("this command deletes the source with the specified NAME.")
-           .WithExample("qala sources delete -n <NAME>");
+           .WithExample("qala sources delete <SOURCE_NAME>");
     })
      .WithAlias("sr");
 
