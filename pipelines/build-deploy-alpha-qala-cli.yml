@@ -70,7 +70,7 @@ stages:
               Auth:
                 URL: "$authUrl"
                 ClientID: "$authClientId"
-                Audience: "$managementApi/"
+                Audience: "$managementApi"
 
               Management-API:
                 URL: "$managementApi/v1"
