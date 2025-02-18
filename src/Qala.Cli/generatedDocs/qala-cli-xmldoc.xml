@@ -148,8 +148,8 @@ environment.</Description>
         <Example commandLine="topics ls" />
       </Examples>
     </Command>
-    <!--NAME-->
-    <Command Name="name" IsBranch="false" 
+    <!--INSPECT-->
+    <Command Name="inspect" IsBranch="false" 
 ClrType="Qala.Cli.Commands.Topics.GetTopicCommand" 
 Settings="Qala.Cli.Commands.Topics.GetTopicArgument">
       <Description>this command retrieves the topic with the specified 
@@ -161,7 +161,7 @@ ClrType="System.String">
         </Argument>
       </Parameters>
       <Examples>
-        <Example commandLine="topics name &lt;NAME&gt;" />
+        <Example commandLine="topics inspect &lt;NAME&gt;" />
       </Examples>
     </Command>
     <!--CREATE-->

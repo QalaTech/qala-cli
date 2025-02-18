@@ -94,7 +94,7 @@ public class TopicService(ITopicGateway topicGateway, IEventTypeGateway eventTyp
             topic.Description = description;
         }
 
-        if (eventTypeNames != null && eventTypeNames.Count >= 0)
+        if (eventTypeNames != null && eventTypeNames.Count != 0)
         {
             var eventTypes = await eventTypeGateway.ListEventTypesAsync();
             if (eventTypes == null || !eventTypes.Any())
