@@ -161,7 +161,7 @@ ClrType="System.String">
         </Argument>
       </Parameters>
       <Examples>
-        <Example commandLine="topics inspect &lt;NAME&gt;" />
+        <Example commandLine="topics inspect &lt;TOPIC_NAME&gt;" />
       </Examples>
     </Command>
     <!--CREATE-->
@@ -189,7 +189,7 @@ Kind="scalar" ClrType="System.String">
         </Option>
       </Parameters>
       <Examples>
-        <Example commandLine="topics create -n &lt;NAME&gt; -d 
+        <Example commandLine="topics create -n &lt;TOPIC_NAME&gt; -d 
 &lt;DESCRIPTION&gt; -e &lt;EVENTS_COMMA_SEPERATED_NAMES&gt;" />
       </Examples>
     </Command>
@@ -218,8 +218,8 @@ names.</Description>
         </Option>
       </Parameters>
       <Examples>
-        <Example commandLine="topics update &lt;NAME&gt; -d &lt;DESCRIPTION&gt; 
--e &lt;EVENTS_COMMA_SEPERATED_NAMES&gt;" />
+        <Example commandLine="topics update &lt;TOPIC_NAME&gt; -d 
+&lt;DESCRIPTION&gt; -e &lt;EVENTS_COMMA_SEPERATED_NAMES&gt;" />
       </Examples>
     </Command>
   </Command>

@@ -22,18 +22,24 @@ public class GetSourceCommand(IMediator mediator, IAnsiConsole console) : AsyncC
                         {
                             BaseCommands.DisplaySuccessMessage("Source", BaseCommands.CommandAction.Get, console);
                             console.Write(new Grid()
-                                .AddColumns(4)
+                                .AddColumns(7)
                                 .AddRow(
                                     new Text("Id", new Style(decoration: Decoration.Bold)),
                                     new Text("Name", new Style(decoration: Decoration.Bold)),
                                     new Text("Description", new Style(decoration: Decoration.Bold)),
-                                    new Text("Source Type", new Style(decoration: Decoration.Bold))
+                                    new Text("Source Type", new Style(decoration: Decoration.Bold)),
+                                    new Text("Http Methods", new Style(decoration: Decoration.Bold)),
+                                    new Text("Authentication", new Style(decoration: Decoration.Bold)),
+                                    new Text("Whitelisted IP Ranges", new Style(decoration: Decoration.Bold))
                                 )
                                 .AddRow(
                                     new Text(success.Source.SourceId.ToString()),
                                     new Text(success.Source.Name),
                                     new Text(success.Source.Description),
-                                    new Text(success.Source.SourceType.ToString())
+                                    new Text(success.Source.SourceType.ToString()),
+                                    new Text(string.Join(", ", success.Source.Configuration.AllowedHttpMethods)),
+                                    new Text(success.Source.Configuration.AuthenticationScheme.Type.ToString()),
+                                    new Text(string.Join(", ", success.Source.Configuration.WhitelistedIpRanges))
                                 )
                             );
 
