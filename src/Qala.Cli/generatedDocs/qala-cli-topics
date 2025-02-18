@@ -71,12 +71,13 @@ CLI.
 <table>
 <tr><th>Option</th><th>Description</th></tr>
 <tr><td>`d` / `description`</td><td>The description of the topic.</td></tr>
-<tr><td>`e` / `event-type-ids`</td><td>The comma separated list of event type ids.</td></tr>
+<tr><td>`e` / `events`</td><td>The comma separated list of event type 
+names.</td></tr>
 <tr><td>`n` / `name`</td><td>The name of the topic.</td></tr>
 </table>
 **Examples:**
 ```sh
-topics create -n <NAME> -d  <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS>
+topics create -n <NAME> -d  <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES>
 ```
 
 
@@ -88,11 +89,12 @@ CLI.
 <table>
 <tr><th>Option</th><th>Description</th></tr>
 <tr><td>`d` / `description`</td><td>The description of the topic.</td></tr>
-<tr><td>`e` / `event-type-ids`</td><td>The comma separated list of event type ids.</td></tr>
+<tr><td>`e` / `events`</td><td>The comma separated list of event type 
+names.</td></tr>
 </table>
 **Examples:**
 ```sh
-topics update <NAME> -d <DESCRIPTION>  -e <EVENTS_COMMA_SEPERATED_IDS>
+topics update <NAME> -d <DESCRIPTION>  -e <EVENTS_COMMA_SEPERATED_NAMES>
 ```
 
 

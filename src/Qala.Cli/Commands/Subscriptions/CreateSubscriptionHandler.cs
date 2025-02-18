@@ -6,7 +6,7 @@ namespace Qala.Cli.Commands.Subscriptions;
 
 public record CreateSubscriptionSuccessResponse(Data.Models.Subscription Subscription);
 public record CreateSubscriptionErrorResponse(string Message);
-public record CreateSubscriptionRequest(string? TopicName, string? SourceName, string Name, string Description, string WebhookUrl, List<Guid> EventTypeIds, int MaxDeliveryAttempts) : IRequest<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>;
+public record CreateSubscriptionRequest(string? TopicName, string? SourceName, string Name, string Description, string WebhookUrl, List<string> EventTypeNames, int MaxDeliveryAttempts) : IRequest<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>;
 
 public class CreateSubscriptionHandler(ISubscriptionService subscriptionService)
     : IRequestHandler<CreateSubscriptionRequest, Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>
@@ -19,7 +19,7 @@ public class CreateSubscriptionHandler(ISubscriptionService subscriptionService)
         }
 
         var topicName = request.TopicName ?? request.SourceName;
-        return await subscriptionService.CreateSubscriptionAsync(topicName!, request.Name, request.Description, request.WebhookUrl, request.EventTypeIds, request.MaxDeliveryAttempts)
+        return await subscriptionService.CreateSubscriptionAsync(topicName!, request.Name, request.Description, request.WebhookUrl, request.EventTypeNames, request.MaxDeliveryAttempts)
                 .ToAsync()
                 .Case switch
         {

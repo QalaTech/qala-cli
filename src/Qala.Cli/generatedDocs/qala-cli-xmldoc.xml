@@ -125,13 +125,13 @@ Settings="Qala.Cli.Commands.EventTypes.GetEventTypeArgument">
       <Description>this command retrieves the event type with the specified 
 ID.</Description>
       <Parameters>
-        <Argument Name="EVENT_TYPE_ID" Position="0" Required="true" 
-Kind="scalar" ClrType="System.Guid">
-          <Description>The ID of the event type to retrieve.</Description>
+        <Argument Name="EVENT_TYPE_NAME" Position="0" Required="true" 
+Kind="scalar" ClrType="System.String">
+          <Description>The Name of the event type to retrieve.</Description>
         </Argument>
       </Parameters>
       <Examples>
-        <Example commandLine="events inspect &lt;EVENT_TYPE_ID&gt;" />
+        <Example commandLine="events inspect &lt;EVENT_TYPE_NAME&gt;" />
       </Examples>
     </Command>
   </Command>
@@ -175,11 +175,13 @@ CLI.</Description>
 Required="false" Kind="scalar" ClrType="System.String">
           <Description>The description of the topic.</Description>
         </Option>
-        <Option Short="e" Long="event-type-ids" 
-Value="EVENTS_COMMA_SEPERATED_IDS" Required="false" Kind="scalar" 
-ClrType="System.Collections.Generic.List`1[[System.Guid, System.Private.CoreLib,
-Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]">
-          <Description>The comma separated list of event type ids.</Description>
+        <Option Short="e" Long="events" Value="EVENTS_COMMA_SEPERATED_NAMES" 
+Required="false" Kind="scalar" 
+ClrType="System.Collections.Generic.List`1[[System.String, 
+System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, 
+PublicKeyToken=7cec85d7bea7798e]]">
+          <Description>The comma separated list of event type 
+names.</Description>
         </Option>
         <Option Short="n" Long="name" Value="NAME" Required="false" 
 Kind="scalar" ClrType="System.String">
@@ -188,7 +190,7 @@ Kind="scalar" ClrType="System.String">
       </Parameters>
       <Examples>
         <Example commandLine="topics create -n &lt;NAME&gt; -d 
-&lt;DESCRIPTION&gt; -e &lt;EVENTS_COMMA_SEPERATED_IDS&gt;" />
+&lt;DESCRIPTION&gt; -e &lt;EVENTS_COMMA_SEPERATED_NAMES&gt;" />
       </Examples>
     </Command>
     <!--UPDATE-->
@@ -206,16 +208,18 @@ ClrType="System.String">
 Required="false" Kind="scalar" ClrType="System.String">
           <Description>The description of the topic.</Description>
         </Option>
-        <Option Short="e" Long="event-type-ids" 
-Value="EVENTS_COMMA_SEPERATED_IDS" Required="false" Kind="scalar" 
-ClrType="System.Collections.Generic.List`1[[System.Guid, System.Private.CoreLib,
-Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]">
-          <Description>The comma separated list of event type ids.</Description>
+        <Option Short="e" Long="events" Value="EVENTS_COMMA_SEPERATED_NAMES" 
+Required="false" Kind="scalar" 
+ClrType="System.Collections.Generic.List`1[[System.String, 
+System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, 
+PublicKeyToken=7cec85d7bea7798e]]">
+          <Description>The comma separated list of event type 
+names.</Description>
         </Option>
       </Parameters>
       <Examples>
         <Example commandLine="topics update &lt;NAME&gt; -d &lt;DESCRIPTION&gt; 
--e &lt;EVENTS_COMMA_SEPERATED_IDS&gt;" />
+-e &lt;EVENTS_COMMA_SEPERATED_NAMES&gt;" />
       </Examples>
     </Command>
   </Command>
@@ -478,9 +482,9 @@ ID.</Description>
 Kind="scalar" ClrType="System.String">
           <Description>The name of the source.</Description>
         </Option>
-        <Option Short="s" Long="subscription" Value="SUBSCRIPTION_ID" 
-Required="false" Kind="scalar" ClrType="System.Guid">
-          <Description>The id of the subscription.</Description>
+        <Option Short="s" Long="subscription" Value="SUBSCRIPTION_NAME" 
+Required="false" Kind="scalar" ClrType="System.String">
+          <Description>The name of the subscription.</Description>
         </Option>
         <Option Short="" Long="topic" Value="TOPIC_NAME" Required="false" 
 Kind="scalar" ClrType="System.String">
@@ -505,11 +509,13 @@ CLI.</Description>
 Required="false" Kind="scalar" ClrType="System.String">
           <Description>The description of the subscription.</Description>
         </Option>
-        <Option Short="e" Long="event-type-ids" 
-Value="EVENTS_COMMA_SEPERATED_IDS" Required="false" Kind="scalar" 
-ClrType="System.Collections.Generic.List`1[[System.Guid, System.Private.CoreLib,
-Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]">
-          <Description>The comma separated list of event type ids.</Description>
+        <Option Short="e" Long="events" Value="EVENTS_COMMA_SEPERATED_NAMES" 
+Required="false" Kind="scalar" 
+ClrType="System.Collections.Generic.List`1[[System.String, 
+System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, 
+PublicKeyToken=7cec85d7bea7798e]]">
+          <Description>The comma separated list of event type 
+names.</Description>
         </Option>
         <Option Short="m" Long="max-attempts" Value="MAX_DELIVERY_ATTEMPTS" 
 Required="false" Kind="scalar" ClrType="System.Int32">
@@ -533,8 +539,9 @@ Kind="scalar" ClrType="System.String">
       </Parameters>
       <Examples>
         <Example commandLine="qala sub create -n &lt;SUBSCRIPTION_NAME&gt; -t 
-&lt;TOPIC_NAME&gt; -d &lt;DESCRIPTION&gt; -e &lt;EVENTS_COMMA_SEPERATED_IDS&gt; 
--u &lt;WEBHOOK_URL&gt; -m &lt;MAX_DELIVERY_ATTEMPTS&gt;" />
+&lt;TOPIC_NAME&gt; -d &lt;DESCRIPTION&gt; -e 
+&lt;EVENTS_COMMA_SEPERATED_NAMES&gt; -u &lt;WEBHOOK_URL&gt; -m 
+&lt;MAX_DELIVERY_ATTEMPTS&gt;" />
       </Examples>
     </Command>
     <!--UPDATE-->
@@ -544,28 +551,30 @@ Settings="Qala.Cli.Commands.Subscriptions.UpdateSubscriptionArgument">
       <Description>this command updates an existing subscription for the Qala 
 CLI.</Description>
       <Parameters>
-        <Argument Name="SUBSCRIPTION_ID" Position="0" Required="true" 
-Kind="scalar" ClrType="System.Guid">
-          <Description>The id of the subscription.</Description>
+        <Argument Name="SUBSCRIPTION_NAME" Position="0" Required="true" 
+Kind="scalar" ClrType="System.String">
+          <Description>The name of the subscription.</Description>
         </Argument>
         <Option Short="d" Long="description" Value="DESCRIPTION" 
 Required="false" Kind="scalar" ClrType="System.String">
           <Description>The description of the subscription.</Description>
         </Option>
-        <Option Short="e" Long="events" Value="EVENTS_COMMA_SEPERATED_IDS" 
+        <Option Short="e" Long="events" Value="EVENTS_COMMA_SEPERATED_NAMES" 
 Required="false" Kind="scalar" 
-ClrType="System.Collections.Generic.List`1[[System.Guid, System.Private.CoreLib,
-Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]">
-          <Description>The comma separated list of event type ids.</Description>
+ClrType="System.Collections.Generic.List`1[[System.String, 
+System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, 
+PublicKeyToken=7cec85d7bea7798e]]">
+          <Description>The comma separated list of event type 
+names.</Description>
         </Option>
         <Option Short="m" Long="max-attempts" Value="MAX_DELIVERY_ATTEMPTS" 
 Required="false" Kind="scalar" ClrType="System.Int32">
           <Description>The maximum delivery attempts of the 
 subscription.</Description>
         </Option>
-        <Option Short="n" Long="name" Value="NAME" Required="false" 
+        <Option Short="n" Long="name" Value="NEW_NAME" Required="false" 
 Kind="scalar" ClrType="System.String">
-          <Description>The name of the subscription.</Description>
+          <Description>The new name of the subscription.</Description>
         </Option>
         <Option Short="" Long="source" Value="SOURCE_NAME" Required="false" 
 Kind="scalar" ClrType="System.String">
@@ -582,8 +591,9 @@ Kind="scalar" ClrType="System.String">
       </Parameters>
       <Examples>
         <Example commandLine="qala sub update &lt;SUBSCRIPTION_ID&gt; -t 
-&lt;TOPIC_NAME&gt; -d &lt;DESCRIPTION&gt; -e &lt;EVENTS_COMMA_SEPERATED_IDS&gt; 
--u &lt;WEBHOOK_URL&gt; -m &lt;MAX_DELIVERY_ATTEMPTS&gt;" />
+&lt;TOPIC_NAME&gt; -d &lt;DESCRIPTION&gt; -e 
+&lt;EVENTS_COMMA_SEPERATED_NAMES&gt; -u &lt;WEBHOOK_URL&gt; -m 
+&lt;MAX_DELIVERY_ATTEMPTS&gt;" />
       </Examples>
     </Command>
     <!--DELETE-->
@@ -597,9 +607,9 @@ ID.</Description>
 Kind="scalar" ClrType="System.String">
           <Description>The name of the source.</Description>
         </Option>
-        <Option Short="s" Long="subscription" Value="SUBSCRIPTION_ID" 
-Required="false" Kind="scalar" ClrType="System.Guid">
-          <Description>The id of the subscription.</Description>
+        <Option Short="s" Long="subscription" Value="SUBSCRIPTION_NAME" 
+Required="false" Kind="scalar" ClrType="System.String">
+          <Description>The name of the subscription.</Description>
         </Option>
         <Option Short="" Long="topic" Value="TOPIC_NAME" Required="false" 
 Kind="scalar" ClrType="System.String">
@@ -625,9 +635,9 @@ subscription with the specified ID.</Description>
 Kind="scalar" ClrType="System.String">
             <Description>The name of the source.</Description>
           </Option>
-          <Option Short="s" Long="subscription-id" Value="SUBSCRIPTION_ID" 
-Required="false" Kind="scalar" ClrType="System.Guid">
-            <Description>The id of the subscription.</Description>
+          <Option Short="s" Long="subscription" Value="SUBSCRIPTION_NAME" 
+Required="false" Kind="scalar" ClrType="System.String">
+            <Description>The name of the subscription.</Description>
           </Option>
           <Option Short="" Long="topic" Value="TOPIC_NAME" Required="false" 
 Kind="scalar" ClrType="System.String">
@@ -650,9 +660,9 @@ subscription with the specified ID.</Description>
 Kind="scalar" ClrType="System.String">
             <Description>The name of the source.</Description>
           </Option>
-          <Option Short="s" Long="subscription-id" Value="SUBSCRIPTION_ID" 
-Required="false" Kind="scalar" ClrType="System.Guid">
-            <Description>The id of the subscription.</Description>
+          <Option Short="s" Long="subscription" Value="SUBSCRIPTION_NAME" 
+Required="false" Kind="scalar" ClrType="System.String">
+            <Description>The name of the subscription.</Description>
           </Option>
           <Option Short="" Long="topic" Value="TOPIC_NAME" Required="false" 
 Kind="scalar" ClrType="System.String">

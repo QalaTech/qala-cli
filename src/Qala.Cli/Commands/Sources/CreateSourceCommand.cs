@@ -32,7 +32,7 @@ public class CreateSourceCommand(IMediator mediator, IAnsiConsole console) : Asy
                                     new Text("Source Type", new Style(decoration: Decoration.Bold))
                                 )
                                 .AddRow(
-                                    new Text(success.Source.Id.ToString()),
+                                    new Text(success.Source.SourceId.ToString()),
                                     new Text(success.Source.Name),
                                     new Text(success.Source.Description),
                                     new Text(success.Source.SourceType.ToString())
@@ -75,7 +75,7 @@ public class CreateSourceCommand(IMediator mediator, IAnsiConsole console) : Asy
     {
         var configuration = new SourceConfiguration
         {
-            AllowedMethods = [.. argument.Methods.Select(method => Enum.Parse<Data.Models.HttpMethod>(method, true))]
+            AllowedHttpMethods = [.. argument.Methods.Select(method => Enum.Parse<Data.Models.HttpMethod>(method, true))]
         };
 
         if (argument.IpWhitelisting != null)

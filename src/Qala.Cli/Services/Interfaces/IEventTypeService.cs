@@ -6,5 +6,5 @@ namespace Qala.Cli.Services.Interfaces;
 public interface IEventTypeService
 {
     Task<Either<ListEventTypesErrorResponse, ListEventTypesSuccessResponse>> ListEventTypesAsync();
-    Task<Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>> GetEventTypeAsync(Guid id);
+    Task<Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>> GetEventTypeAsync(string name);
 }

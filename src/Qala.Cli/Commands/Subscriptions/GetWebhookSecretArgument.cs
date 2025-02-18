@@ -13,7 +13,7 @@ public class GetWebhookSecretArgument : CommandSettings
     [Description("The name of the source.")]
     public string SourceName { get; set; } = string.Empty;
 
-    [CommandOption("-s|--subscription-id <SUBSCRIPTION_ID>")]
-    [Description("The id of the subscription.")]
-    public Guid SubscriptionId { get; set; } = Guid.Empty;
+    [CommandOption("-s|--subscription <SUBSCRIPTION_NAME>")]
+    [Description("The name of the subscription.")]
+    public string SubscriptionName { get; set; } = string.Empty;
 }

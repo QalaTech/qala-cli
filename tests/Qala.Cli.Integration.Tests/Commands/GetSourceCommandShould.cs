@@ -36,7 +36,7 @@ public class GetSourceCommandShould(QalaCliBaseFixture fixture) : IClassFixture<
                                 new Text("Source Type", new Style(decoration: Decoration.Bold))
                             )
                             .AddRow(
-                                new Text(fixture.AvailableSources.First().Id.ToString()),
+                                new Text(fixture.AvailableSources.First().SourceId.ToString()),
                                 new Text(fixture.AvailableSources.First().Name),
                                 new Text(fixture.AvailableSources.First().Description),
                                 new Text(fixture.AvailableSources.First().SourceType.ToString())

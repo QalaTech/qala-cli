@@ -65,7 +65,7 @@ public class UpdateSourceCommand(IMediator mediator, IAnsiConsole console) : Asy
     {
         var configuration = new SourceConfiguration
         {
-            AllowedMethods = [.. argument.Methods.Select(method => Enum.Parse<Data.Models.HttpMethod>(method, true))]
+            AllowedHttpMethods = [.. argument.Methods.Select(method => Enum.Parse<Data.Models.HttpMethod>(method, true))]
         };
 
         if (argument.IpWhitelisting != null)

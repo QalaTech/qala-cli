@@ -15,7 +15,7 @@ public class UpdateSubscriptionCommand(IMediator mediator, IAnsiConsole console)
             .SpinnerStyle(Style.Parse("yellow bold"))
             .StartAsync("Processing request...", async ctx =>
             {
-                return await mediator.Send(new UpdateSubscriptionRequest(argument.TopicName, argument.SourceName, argument.SubscriptionId, argument.Name, argument.Description, argument.WebhookUrl, argument.EventTypeIds, argument.MaxDeliveryAttempts))
+                return await mediator.Send(new UpdateSubscriptionRequest(argument.TopicName, argument.SourceName, argument.SubscriptionName, argument.NewName, argument.Description, argument.WebhookUrl, argument.EventTypeNames, argument.MaxDeliveryAttempts))
                     .ToAsync()
                     .Match(
                         success =>
@@ -36,7 +36,7 @@ public class UpdateSubscriptionCommand(IMediator mediator, IAnsiConsole console)
                                     new Text(success.Subscription.Name),
                                     new Text(success.Subscription.Description),
                                     new Text(success.Subscription.WebhookUrl),
-                                    new Text(string.Join(", ", success.Subscription.EventTypes.Select(et => et.Id.ToString()))),
+                                    new Text(string.Join(", ", success.Subscription.EventTypes.Select(et => et.Type))),
                                     new Text(success.Subscription.MaxDeliveryAttempts.ToString())
                                 )
                             );
@@ -60,7 +60,7 @@ public class UpdateSubscriptionCommand(IMediator mediator, IAnsiConsole console)
             return ValidationResult.Error("Topic name is required.");
         }
 
-        if (string.IsNullOrWhiteSpace(argument.Name))
+        if (string.IsNullOrWhiteSpace(argument.SubscriptionName))
         {
             return ValidationResult.Error("Subscription name is required.");
         }

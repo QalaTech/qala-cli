@@ -13,9 +13,9 @@ public class UpdateTopicCommand(IMediator mediator, IAnsiConsole console) : Asyn
             .AutoRefresh(true)
             .Spinner(Spinner.Known.Star2)
             .SpinnerStyle(Style.Parse("yellow bold"))
-            .StartAsync("Processing request...", async ctx => 
+            .StartAsync("Processing request...", async ctx =>
             {
-                return await mediator.Send(new UpdateTopicRequest(argument.Name, argument.Description, argument.EventTypeIds))
+                return await mediator.Send(new UpdateTopicRequest(argument.Name, argument.Description, argument.EventTypeNames))
                     .ToAsync()
                     .Match(
                         success =>
@@ -35,7 +35,7 @@ public class UpdateTopicCommand(IMediator mediator, IAnsiConsole console) : Asyn
                                     new Text(success.Topic.Name),
                                     new Text(success.Topic.Description),
                                     new Text(success.Topic.ProvisioningState),
-                                    new Text(string.Join(", ", success.Topic.EventTypes.Select(et => et.Id.ToString())))
+                                    new Text(string.Join(", ", success.Topic.EventTypes.Select(et => et.Type)))
                                 )
                             );
 
@@ -63,9 +63,9 @@ public class UpdateTopicCommand(IMediator mediator, IAnsiConsole console) : Asyn
             return ValidationResult.Error("Topic description is required.");
         }
 
-        if (argument.EventTypeIds.Count == 0)
+        if (argument.EventTypeNames.Count == 0)
         {
-            return ValidationResult.Error("At least one event type id is required.");
+            return ValidationResult.Error("At least one event type name is required.");
         }
 
         return ValidationResult.Success();

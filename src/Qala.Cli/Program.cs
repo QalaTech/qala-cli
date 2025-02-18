@@ -63,7 +63,7 @@ app.Configure(config =>
             .WithAlias("ls");
         et.AddCommand<GetEventTypeCommand>("inspect")
             .WithDescription("this command retrieves the event type with the specified ID.")
-            .WithExample("events inspect <EVENT_TYPE_ID>")
+            .WithExample("events inspect <EVENT_TYPE_NAME>")
             .WithAlias("i");
     })
     .WithAlias("ev");
@@ -80,10 +80,10 @@ app.Configure(config =>
            .WithAlias("n");
        t.AddCommand<CreateTopicCommand>("create")
            .WithDescription("this command creates a new topic for the Qala CLI.")
-           .WithExample("topics create -n <NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS>");
+           .WithExample("topics create -n <NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES>");
        t.AddCommand<UpdateTopicCommand>("update")
            .WithDescription("this command updates an existing topic for the Qala CLI.")
-           .WithExample("topics update <NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS>");
+           .WithExample("topics update <NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES>");
    })
    .WithAlias("tp");
 
@@ -123,10 +123,10 @@ app.Configure(config =>
             .WithAlias("i");
         s.AddCommand<CreateSubscriptionCommand>("create")
             .WithDescription("this command creates a new subscription for the Qala CLI.")
-            .WithExample("qala sub create -n <SUBSCRIPTION_NAME> -t <TOPIC_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS> -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>");
+            .WithExample("qala sub create -n <SUBSCRIPTION_NAME> -t <TOPIC_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>");
         s.AddCommand<UpdateSubscriptionCommand>("update")
             .WithDescription("this command updates an existing subscription for the Qala CLI.")
-            .WithExample("qala sub update <SUBSCRIPTION_ID> -t <TOPIC_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS> -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>");
+            .WithExample("qala sub update <SUBSCRIPTION_ID> -t <TOPIC_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>");
         s.AddCommand<DeleteSubscriptionCommand>("delete")
             .WithDescription("this command deletes the subscription with the specified ID.")
             .WithExample("qala sub delete -t <TOPIC_NAME> -s <SUBSCRIPTION_ID>");

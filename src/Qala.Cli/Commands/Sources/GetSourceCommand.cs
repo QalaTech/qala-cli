@@ -30,7 +30,7 @@ public class GetSourceCommand(IMediator mediator, IAnsiConsole console) : AsyncC
                                     new Text("Source Type", new Style(decoration: Decoration.Bold))
                                 )
                                 .AddRow(
-                                    new Text(success.Source.Id.ToString()),
+                                    new Text(success.Source.SourceId.ToString()),
                                     new Text(success.Source.Name),
                                     new Text(success.Source.Description),
                                     new Text(success.Source.SourceType.ToString())

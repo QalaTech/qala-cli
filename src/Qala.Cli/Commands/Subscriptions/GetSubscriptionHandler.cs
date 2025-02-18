@@ -6,7 +6,7 @@ namespace Qala.Cli.Commands.Subscriptions;
 
 public record GetSubscriptionSuccessResponse(Data.Models.Subscription Subscription);
 public record GetSubscriptionErrorResponse(string Message);
-public record GetSubscriptionRequest(string? TopicName, string? SourceName, Guid SubscriptionId) : IRequest<Either<GetSubscriptionErrorResponse, GetSubscriptionSuccessResponse>>;
+public record GetSubscriptionRequest(string? TopicName, string? SourceName, string SubscriptionName) : IRequest<Either<GetSubscriptionErrorResponse, GetSubscriptionSuccessResponse>>;
 
 public class GetSubscriptionHandler(ISubscriptionService subscriptionService)
     : IRequestHandler<GetSubscriptionRequest, Either<GetSubscriptionErrorResponse, GetSubscriptionSuccessResponse>>
@@ -20,7 +20,7 @@ public class GetSubscriptionHandler(ISubscriptionService subscriptionService)
 
         var topicName = request.TopicName ?? request.SourceName;
 
-        return await subscriptionService.GetSubscriptionAsync(topicName!, request.SubscriptionId)
+        return await subscriptionService.GetSubscriptionAsync(topicName!, request.SubscriptionName)
                 .ToAsync()
                 .Case switch
         {

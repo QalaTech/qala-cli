@@ -6,7 +6,7 @@ namespace Qala.Cli.Commands.Subscriptions;
 
 public record DeleteSubscriptionSuccessResponse();
 public record DeleteSubscriptionErrorResponse(string Message);
-public record DeleteSubscriptionRequest(string? TopicName, string? SourceName, Guid SubscriptionId) : IRequest<Either<DeleteSubscriptionErrorResponse, DeleteSubscriptionSuccessResponse>>;
+public record DeleteSubscriptionRequest(string? TopicName, string? SourceName, string SubscriptionName) : IRequest<Either<DeleteSubscriptionErrorResponse, DeleteSubscriptionSuccessResponse>>;
 
 public class DeleteSubscriptionHandler(ISubscriptionService subscriptionService)
     : IRequestHandler<DeleteSubscriptionRequest, Either<DeleteSubscriptionErrorResponse, DeleteSubscriptionSuccessResponse>>
@@ -19,7 +19,7 @@ public class DeleteSubscriptionHandler(ISubscriptionService subscriptionService)
         }
 
         var topicName = request.TopicName ?? request.SourceName;
-        return await subscriptionService.DeleteSubscriptionAsync(topicName!, request.SubscriptionId)
+        return await subscriptionService.DeleteSubscriptionAsync(topicName!, request.SubscriptionName)
                 .ToAsync()
                 .Case switch
         {

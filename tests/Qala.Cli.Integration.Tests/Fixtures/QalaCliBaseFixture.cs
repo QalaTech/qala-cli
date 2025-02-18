@@ -46,11 +46,11 @@ public class QalaCliBaseFixture : IDisposable
 
     public List<Source> AvailableSources =
     [
-        new () { Id = Guid.NewGuid(), Name = "TestSource", Description = "Test Source Description", SourceType = SourceType.Http, Configuration = new SourceConfiguration { AllowedMethods = [Data.Models.HttpMethod.Get, Data.Models.HttpMethod.Post], AuthenticationScheme = new NoAuthenticationScheme(), WhitelistedIpRanges = ["102.0.0.1"]}},
-        new () { Id = Guid.NewGuid(), Name = "TestSource2", Description = "Test Source Description 2", SourceType = SourceType.Http, Configuration = new SourceConfiguration { AllowedMethods = [Data.Models.HttpMethod.Put, Data.Models.HttpMethod.Post], AuthenticationScheme = new BasicAuthenticationScheme() { Password = "password_ref", Username = "username" }, WhitelistedIpRanges = ["127.0.0.1, 127.0.0.2"]}},
-        new () { Id = Guid.NewGuid(), Name = "TestSource3", Description = "Test Source Description 3", SourceType = SourceType.Http, Configuration = new SourceConfiguration { AllowedMethods = [Data.Models.HttpMethod.Delete, Data.Models.HttpMethod.Post], AuthenticationScheme = new ApiKeyAuthenticationScheme() { ApiKeyName = "key", ApiKeyValue = "value" }, WhitelistedIpRanges = ["102.0.0.1/24"]}},
-        new () { Id = Guid.NewGuid(), Name = "TestSource4", Description = "Test Source Description 4", SourceType = SourceType.Http, Configuration = new SourceConfiguration { AllowedMethods = [Data.Models.HttpMethod.Get, Data.Models.HttpMethod.Post], AuthenticationScheme = new JwtAuthenticationScheme() { Algorithm = Algorithm.RSA, PublicKey = "public_key" }, WhitelistedIpRanges = ["102.0.0.1/24"]}},
-        new () { Id = Guid.NewGuid(), Name = "TestSource5", Description = "Test Source Description 5", SourceType = SourceType.Http, Configuration = new SourceConfiguration { AllowedMethods = [Data.Models.HttpMethod.Get, Data.Models.HttpMethod.Post], AuthenticationScheme = new JwtAuthenticationScheme() { Algorithm = Algorithm.HSA, Secret = "public_key" }, WhitelistedIpRanges = ["102.0.0.1/24, 127.0.0.1, 127.0.0.2"]}}
+        new () { SourceId = Guid.NewGuid(), Name = "TestSource", Description = "Test Source Description", SourceType = SourceType.Http, Configuration = new SourceConfiguration { AllowedHttpMethods = [Data.Models.HttpMethod.GET, Data.Models.HttpMethod.POST], AuthenticationScheme = new NoAuthenticationScheme(), WhitelistedIpRanges = ["102.0.0.1"]}},
+        new () { SourceId = Guid.NewGuid(), Name = "TestSource2", Description = "Test Source Description 2", SourceType = SourceType.Http, Configuration = new SourceConfiguration { AllowedHttpMethods = [Data.Models.HttpMethod.PUT, Data.Models.HttpMethod.POST], AuthenticationScheme = new BasicAuthenticationScheme() { Password = "password_ref", Username = "username" }, WhitelistedIpRanges = ["127.0.0.1, 127.0.0.2"]}},
+        new () { SourceId = Guid.NewGuid(), Name = "TestSource3", Description = "Test Source Description 3", SourceType = SourceType.Http, Configuration = new SourceConfiguration { AllowedHttpMethods = [Data.Models.HttpMethod.DELETE, Data.Models.HttpMethod.POST], AuthenticationScheme = new ApiKeyAuthenticationScheme() { ApiKeyName = "key", ApiKeyValue = "value" }, WhitelistedIpRanges = ["102.0.0.1/24"]}},
+        new () { SourceId = Guid.NewGuid(), Name = "TestSource4", Description = "Test Source Description 4", SourceType = SourceType.Http, Configuration = new SourceConfiguration { AllowedHttpMethods = [Data.Models.HttpMethod.GET, Data.Models.HttpMethod.POST], AuthenticationScheme = new JwtAuthenticationScheme() { Algorithm = Algorithm.RSA, PublicKey = "public_key" }, WhitelistedIpRanges = ["102.0.0.1/24"]}},
+        new () { SourceId = Guid.NewGuid(), Name = "TestSource5", Description = "Test Source Description 5", SourceType = SourceType.Http, Configuration = new SourceConfiguration { AllowedHttpMethods = [Data.Models.HttpMethod.GET, Data.Models.HttpMethod.POST], AuthenticationScheme = new JwtAuthenticationScheme() { Algorithm = Algorithm.HSA, Secret = "public_key" }, WhitelistedIpRanges = ["102.0.0.1/24, 127.0.0.1, 127.0.0.2"]}}
     ];
 
     public List<Subscription> AvailableSubscriptions =
@@ -247,7 +247,7 @@ public class QalaCliBaseFixture : IDisposable
 
                         var newSource = new Source
                         {
-                            Id = new Guid("60ef03bb-f5a7-4c81-addf-38e2b360bff5"),
+                            SourceId = new Guid("60ef03bb-f5a7-4c81-addf-38e2b360bff5"),
                             Name = name,
                             Description = description,
                             SourceType = sourceType,

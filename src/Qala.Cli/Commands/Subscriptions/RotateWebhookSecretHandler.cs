@@ -6,7 +6,7 @@ namespace Qala.Cli.Commands.Subscriptions;
 
 public record RotateWebhookSecretSuccessResponse(string WebhookSecret);
 public record RotateWebhookSecretErrorResponse(string Message);
-public record RotateWebhookSecretRequest(string? TopicName, string? SourceName, Guid SubscriptionId) : IRequest<Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>>;
+public record RotateWebhookSecretRequest(string? TopicName, string? SourceName, string SubscriptionName) : IRequest<Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>>;
 
 public class RotateWebhookSecretHandler(ISubscriptionService subscriptionService)
     : IRequestHandler<RotateWebhookSecretRequest, Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>>
@@ -20,7 +20,7 @@ public class RotateWebhookSecretHandler(ISubscriptionService subscriptionService
 
         var topicName = request.TopicName ?? request.SourceName;
 
-        return await subscriptionService.RotateWebhookSecretAsync(topicName!, request.SubscriptionId)
+        return await subscriptionService.RotateWebhookSecretAsync(topicName!, request.SubscriptionName)
                 .ToAsync()
                 .Case switch
         {

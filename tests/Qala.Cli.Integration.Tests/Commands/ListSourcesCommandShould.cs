@@ -39,7 +39,7 @@ public class ListSourcesCommandShould(QalaCliBaseFixture fixture) : IClassFixtur
                         foreach (var source in fixture.AvailableSources)
                         {
                             grid.AddRow(
-                                new Text(source.Id.ToString()),
+                                new Text(source.SourceId.ToString()),
                                 new Text(source.Name),
                                 new Text(source.Description),
                                 new Text(source.SourceType.ToString())

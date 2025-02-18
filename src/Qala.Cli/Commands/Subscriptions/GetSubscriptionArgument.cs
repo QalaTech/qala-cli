@@ -13,7 +13,7 @@ public class GetSubscriptionArgument : CommandSettings
     [Description("The name of the source.")]
     public string SourceName { get; set; } = string.Empty;
 
-    [CommandOption("-s|--subscription <SUBSCRIPTION_ID>")]
-    [Description("The id of the subscription.")]
-    public Guid SubscriptionId { get; set; }
+    [CommandOption("-s|--subscription <SUBSCRIPTION_NAME>")]
+    [Description("The name of the subscription.")]
+    public string SubscriptionName { get; set; } = string.Empty;
 }

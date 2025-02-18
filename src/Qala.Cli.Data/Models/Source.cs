@@ -5,17 +5,18 @@ namespace Qala.Cli.Data.Models;
 
 public class Source
 {
-    public Guid Id { get; set; }
+    public Guid SourceId { get; set; }
     public Guid EnvironmentId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public SourceType SourceType { get; set; }
+    [JsonConverter(typeof(SourceConfigurationConverter))]
     public SourceConfiguration Configuration { get; set; } = new();
 }
 
 public class SourceConfiguration
 {
-    public List<HttpMethod> AllowedMethods { get; set; } = [];
+    public List<HttpMethod> AllowedHttpMethods { get; set; } = [];
     [JsonConverter(typeof(AuthenticationSchemeConverter))]
     public AuthenticationScheme AuthenticationScheme { get; set; } = new NoAuthenticationScheme();
     public List<string> WhitelistedIpRanges { get; set; } = [];
@@ -31,10 +32,10 @@ public enum SourceType
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum HttpMethod
 {
-    Get,
-    Post,
-    Put,
-    Delete
+    GET,
+    POST,
+    PUT,
+    DELETE
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]

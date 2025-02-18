@@ -15,7 +15,7 @@ public class DeleteSubscriptionCommand(IMediator mediator, IAnsiConsole console)
             .SpinnerStyle(Style.Parse("yellow bold"))
             .StartAsync("Processing request...", async ctx =>
             {
-                return await mediator.Send(new DeleteSubscriptionRequest(argument.TopicName, argument.SourceName, argument.SubscriptionId))
+                return await mediator.Send(new DeleteSubscriptionRequest(argument.TopicName, argument.SourceName, argument.SubscriptionName))
                     .ToAsync()
                     .Match(
                         success =>
@@ -40,9 +40,9 @@ public class DeleteSubscriptionCommand(IMediator mediator, IAnsiConsole console)
             return ValidationResult.Error("Topic name is required.");
         }
 
-        if (argument.SubscriptionId == Guid.Empty)
+        if (string.IsNullOrWhiteSpace(argument.SubscriptionName))
         {
-            return ValidationResult.Error("Subscription id is required.");
+            return ValidationResult.Error("Subscription name is required.");
         }
 
         return ValidationResult.Success();

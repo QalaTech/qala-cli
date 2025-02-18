@@ -11,7 +11,7 @@ public class AuthenticationSchemeConverter : JsonConverter<AuthenticationScheme>
         using (JsonDocument doc = JsonDocument.ParseValue(ref reader))
         {
             JsonElement root = doc.RootElement;
-            string type = root.TryGetProperty("Type", out JsonElement typeElement) && typeElement.GetString() is string typeString
+            string type = root.TryGetProperty("type", out JsonElement typeElement) && typeElement.GetString() is string typeString
                 ? typeString
                 : throw new JsonException("The 'Type' property is missing or null.");
 
