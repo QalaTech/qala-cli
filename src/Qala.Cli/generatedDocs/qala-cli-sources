@@ -32,7 +32,7 @@ import HeroBanner from '../../src/components/HeroBanner/HeroBanner';
 <tr><th>Command</th><th>Description</th></tr>
 <tr><td><a href="#list" title="Learn about list">list</a></td><td>this command lists all the sources available in your 
 environment.</td></tr>
-<tr><td><a href="#name" title="Learn about name">name</a></td><td>this command retrieves the source with the specified 
+<tr><td><a href="#inspect" title="Learn about inspect">inspect</a></td><td>this command retrieves the source with the specified 
 NAME.</td></tr>
 <tr><td><a href="#create" title="Learn about create">create</a></td><td>this command creates a new source for the Qala 
 CLI.</td></tr>
@@ -51,7 +51,7 @@ qala sources ls
 ```
 
 
-## `name`
+## `inspect`
 this command retrieves the source with the specified 
 NAME.
 
@@ -61,7 +61,7 @@ NAME.
 </table>
 **Examples:**
 ```sh
-qala sources name <NAME>
+qala sources inspect <NAME>
 ```
 
 

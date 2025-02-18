@@ -72,8 +72,8 @@ ID.
 </table>
 **Examples:**
 ```sh
-qala subscriptions i --topic <TOPIC_NAME> -s <SUBSCRIPTION_ID>
-qala subscriptions i --source <SOURCE_NAME>  -s <SUBSCRIPTION_ID>
+qala subscriptions i --topic <TOPIC_NAME> -s <SUBSCRIPTION_NAME>
+qala subscriptions i --source <SOURCE_NAME>  -s <SUBSCRIPTION_NAME>
 ```
 
 
@@ -96,7 +96,7 @@ subscription.</td></tr>
 </table>
 **Examples:**
 ```sh
-qala sub create -n <SUBSCRIPTION_NAME> -t  <TOPIC_NAME> -d <DESCRIPTION> -e  <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m  <MAX_DELIVERY_ATTEMPTS>
+qala sub create -n <SUBSCRIPTION_NAME>  --topic <TOPIC_NAME> -d <DESCRIPTION> -e  <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m  <MAX_DELIVERY_ATTEMPTS>
 ```
 
 
@@ -119,7 +119,7 @@ subscription.</td></tr>
 </table>
 **Examples:**
 ```sh
-qala sub update <SUBSCRIPTION_ID> -t  <TOPIC_NAME> -d <DESCRIPTION> -e  <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m  <MAX_DELIVERY_ATTEMPTS>
+qala sub update <SUBSCRIPTION_NAME> --topic  <TOPIC_NAME> -n <NEW_NAME> -d <DESCRIPTION> -e  <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m  <MAX_DELIVERY_ATTEMPTS>
 ```
 
 
@@ -136,7 +136,7 @@ ID.
 </table>
 **Examples:**
 ```sh
-qala sub delete -t <TOPIC_NAME> -s  <SUBSCRIPTION_ID>
+qala sub delete --topic <TOPIC_NAME> -s  <SUBSCRIPTION_NAME>
 ```
 
 

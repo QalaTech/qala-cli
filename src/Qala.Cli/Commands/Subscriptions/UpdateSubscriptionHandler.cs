@@ -6,7 +6,7 @@ namespace Qala.Cli.Commands.Subscriptions;
 
 public record UpdateSubscriptionSuccessResponse(Data.Models.Subscription Subscription);
 public record UpdateSubscriptionErrorResponse(string Message);
-public record UpdateSubscriptionRequest(string? TopicName, string? SourceName, string SubscriptionName, string NewName, string Description, string WebhookUrl, List<string> EventTypeNames, int MaxDeliveryAttempts) : IRequest<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>;
+public record UpdateSubscriptionRequest(string? TopicName, string? SourceName, string SubscriptionName, string? NewName, string? Description, string? WebhookUrl, List<string>? EventTypeNames, int? MaxDeliveryAttempts) : IRequest<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>;
 
 public class UpdateSubscriptionHandler(ISubscriptionService subscriptionService)
     : IRequestHandler<UpdateSubscriptionRequest, Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>

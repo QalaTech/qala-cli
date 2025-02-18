@@ -236,8 +236,8 @@ environment.</Description>
         <Example commandLine="qala sources ls" />
       </Examples>
     </Command>
-    <!--NAME-->
-    <Command Name="name" IsBranch="false" 
+    <!--INSPECT-->
+    <Command Name="inspect" IsBranch="false" 
 ClrType="Qala.Cli.Commands.Sources.GetSourceCommand" 
 Settings="Qala.Cli.Commands.Sources.GetSourceArgument">
       <Description>this command retrieves the source with the specified 
@@ -249,7 +249,7 @@ ClrType="System.String">
         </Argument>
       </Parameters>
       <Examples>
-        <Example commandLine="qala sources name &lt;NAME&gt;" />
+        <Example commandLine="qala sources inspect &lt;NAME&gt;" />
       </Examples>
     </Command>
     <!--CREATE-->
@@ -493,9 +493,9 @@ Kind="scalar" ClrType="System.String">
       </Parameters>
       <Examples>
         <Example commandLine="qala subscriptions i --topic &lt;TOPIC_NAME&gt; -s
-&lt;SUBSCRIPTION_ID&gt;" />
+&lt;SUBSCRIPTION_NAME&gt;" />
         <Example commandLine="qala subscriptions i --source &lt;SOURCE_NAME&gt; 
--s &lt;SUBSCRIPTION_ID&gt;" />
+-s &lt;SUBSCRIPTION_NAME&gt;" />
       </Examples>
     </Command>
     <!--CREATE-->
@@ -538,8 +538,8 @@ Kind="scalar" ClrType="System.String">
         </Option>
       </Parameters>
       <Examples>
-        <Example commandLine="qala sub create -n &lt;SUBSCRIPTION_NAME&gt; -t 
-&lt;TOPIC_NAME&gt; -d &lt;DESCRIPTION&gt; -e 
+        <Example commandLine="qala sub create -n &lt;SUBSCRIPTION_NAME&gt; 
+--topic &lt;TOPIC_NAME&gt; -d &lt;DESCRIPTION&gt; -e 
 &lt;EVENTS_COMMA_SEPERATED_NAMES&gt; -u &lt;WEBHOOK_URL&gt; -m 
 &lt;MAX_DELIVERY_ATTEMPTS&gt;" />
       </Examples>
@@ -568,7 +568,9 @@ PublicKeyToken=7cec85d7bea7798e]]">
 names.</Description>
         </Option>
         <Option Short="m" Long="max-attempts" Value="MAX_DELIVERY_ATTEMPTS" 
-Required="false" Kind="scalar" ClrType="System.Int32">
+Required="false" Kind="scalar" ClrType="System.Nullable`1[[System.Int32, 
+System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, 
+PublicKeyToken=7cec85d7bea7798e]]">
           <Description>The maximum delivery attempts of the 
 subscription.</Description>
         </Option>
@@ -590,8 +592,8 @@ Kind="scalar" ClrType="System.String">
         </Option>
       </Parameters>
       <Examples>
-        <Example commandLine="qala sub update &lt;SUBSCRIPTION_ID&gt; -t 
-&lt;TOPIC_NAME&gt; -d &lt;DESCRIPTION&gt; -e 
+        <Example commandLine="qala sub update &lt;SUBSCRIPTION_NAME&gt; --topic 
+&lt;TOPIC_NAME&gt; -n &lt;NEW_NAME&gt; -d &lt;DESCRIPTION&gt; -e 
 &lt;EVENTS_COMMA_SEPERATED_NAMES&gt; -u &lt;WEBHOOK_URL&gt; -m 
 &lt;MAX_DELIVERY_ATTEMPTS&gt;" />
       </Examples>
@@ -617,8 +619,8 @@ Kind="scalar" ClrType="System.String">
         </Option>
       </Parameters>
       <Examples>
-        <Example commandLine="qala sub delete -t &lt;TOPIC_NAME&gt; -s 
-&lt;SUBSCRIPTION_ID&gt;" />
+        <Example commandLine="qala sub delete --topic &lt;TOPIC_NAME&gt; -s 
+&lt;SUBSCRIPTION_NAME&gt;" />
       </Examples>
     </Command>
     <!--SECRET-->
@@ -645,8 +647,8 @@ Kind="scalar" ClrType="System.String">
           </Option>
         </Parameters>
         <Examples>
-          <Example commandLine="qala sub secret i -t &lt;TOPIC_NAME&gt; -s 
-&lt;SUBSCRIPTION_ID&gt;" />
+          <Example commandLine="qala sub secret i --topic &lt;TOPIC_NAME&gt; -s 
+&lt;SUBSCRIPTION_NAME&gt;" />
         </Examples>
       </Command>
       <!--ROTATE-->
@@ -670,8 +672,8 @@ Kind="scalar" ClrType="System.String">
           </Option>
         </Parameters>
         <Examples>
-          <Example commandLine="qala sub secret rotate -t &lt;TOPIC_NAME&gt; -s 
-&lt;SUBSCRIPTION_ID&gt;" />
+          <Example commandLine="qala sub secret rotate --topic 
+&lt;TOPIC_NAME&gt; -s &lt;SUBSCRIPTION_NAME&gt;" />
         </Examples>
       </Command>
     </Command>

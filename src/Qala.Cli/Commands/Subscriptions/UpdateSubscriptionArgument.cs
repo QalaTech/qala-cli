@@ -37,5 +37,5 @@ public class UpdateSubscriptionArgument : CommandSettings
 
     [CommandOption("-m|--max-attempts <MAX_DELIVERY_ATTEMPTS>")]
     [Description("The maximum delivery attempts of the subscription.")]
-    public int MaxDeliveryAttempts { get; set; } = 0;
+    public int? MaxDeliveryAttempts { get; set; }
 }

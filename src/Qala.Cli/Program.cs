@@ -93,10 +93,10 @@ app.Configure(config =>
            .WithDescription("this command lists all the sources available in your environment.")
            .WithExample("qala sources ls")
            .WithAlias("ls");
-        s.AddCommand<GetSourceCommand>("name")
+        s.AddCommand<GetSourceCommand>("inspect")
            .WithDescription("this command retrieves the source with the specified NAME.")
-           .WithExample("qala sources name <NAME>")
-           .WithAlias("n");
+           .WithExample("qala sources inspect <NAME>")
+           .WithAlias("i");
         s.AddCommand<CreateSourceCommand>("create")
            .WithDescription("this command creates a new source for the Qala CLI.")
            .WithExample("qala sources create -n <NAME> -d <DESCRIPTION> -m <METHODS_COMMA_SEPERATED> -i <IP_WHITELISTING_COMMA_SEPERATED> -a <AUTHENTICATION_TYPE>");
@@ -118,27 +118,27 @@ app.Configure(config =>
             .WithAlias("ls");
         s.AddCommand<GetSubscriptionCommand>("inspect")
             .WithDescription("this command retrieves the subscription with the specified ID.")
-            .WithExample("qala subscriptions i --topic <TOPIC_NAME> -s <SUBSCRIPTION_ID>")
-            .WithExample("qala subscriptions i --source <SOURCE_NAME> -s <SUBSCRIPTION_ID>")
+            .WithExample("qala subscriptions i --topic <TOPIC_NAME> -s <SUBSCRIPTION_NAME>")
+            .WithExample("qala subscriptions i --source <SOURCE_NAME> -s <SUBSCRIPTION_NAME>")
             .WithAlias("i");
         s.AddCommand<CreateSubscriptionCommand>("create")
             .WithDescription("this command creates a new subscription for the Qala CLI.")
-            .WithExample("qala sub create -n <SUBSCRIPTION_NAME> -t <TOPIC_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>");
+            .WithExample("qala sub create -n <SUBSCRIPTION_NAME> --topic <TOPIC_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>");
         s.AddCommand<UpdateSubscriptionCommand>("update")
             .WithDescription("this command updates an existing subscription for the Qala CLI.")
-            .WithExample("qala sub update <SUBSCRIPTION_ID> -t <TOPIC_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>");
+            .WithExample("qala sub update <SUBSCRIPTION_NAME> --topic <TOPIC_NAME> -n <NEW_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>");
         s.AddCommand<DeleteSubscriptionCommand>("delete")
             .WithDescription("this command deletes the subscription with the specified ID.")
-            .WithExample("qala sub delete -t <TOPIC_NAME> -s <SUBSCRIPTION_ID>");
+            .WithExample("qala sub delete --topic <TOPIC_NAME> -s <SUBSCRIPTION_NAME>");
         s.AddBranch("secret", ws =>
         {
             ws.AddCommand<GetWebhookSecretCommand>("inspect")
                 .WithDescription("this command retrieves the webhook secret for the subscription with the specified ID.")
-                .WithExample("qala sub secret i -t <TOPIC_NAME> -s <SUBSCRIPTION_ID>")
+                .WithExample("qala sub secret i --topic <TOPIC_NAME> -s <SUBSCRIPTION_NAME>")
                 .WithAlias("i");
             ws.AddCommand<RotateWebhookSecretCommand>("rotate")
                 .WithDescription("this command rotates the webhook secret for the subscription with the specified ID.")
-                .WithExample("qala sub secret rotate -t <TOPIC_NAME> -s <SUBSCRIPTION_ID>")
+                .WithExample("qala sub secret rotate --topic <TOPIC_NAME> -s <SUBSCRIPTION_NAME>")
                 .WithAlias("r");
         });
     })
