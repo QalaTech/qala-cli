@@ -44,7 +44,7 @@ public class GenerateMarkdownHandler : IRequestHandler<GenerateMarkdownRequest, 
                 string commandName = command.Attribute("Name")?.Value ?? "Unknown";
                 string description = command.Element("Description")?.Value ?? "No description available.";
                 var subCommands = command.Elements("Command").ToList();
-                string fileName = $"qala-cli-{commandName}";
+                string fileName = $"qala-cli-{commandName}.mdx";
 
                 if (subCommands.Count != 0)
                 {
@@ -100,7 +100,7 @@ public class GenerateMarkdownHandler : IRequestHandler<GenerateMarkdownRequest, 
             string subCommandName = subCommand.Attribute("Name")?.Value ?? "Unknown";
             string subDescription = subCommand.Element("Description")?.Value ?? "No description available.";
             var deeperSubCommands = subCommand.Elements("Command").ToList();
-            string subFileName = $"qala-cli-{subCommandName}";
+            string subFileName = $"qala-cli-{subCommandName}.mdx";
 
             if (deeperSubCommands.Count != 0)
             {

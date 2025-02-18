@@ -67,13 +67,13 @@ ID.
 <table>
 <tr><th>Option</th><th>Description</th></tr>
 <tr><td>`source`</td><td>The name of the source.</td></tr>
-<tr><td>`s` / `subscription`</td><td>The id of the subscription.</td></tr>
+<tr><td>`s` / `subscription`</td><td>The name of the subscription.</td></tr>
 <tr><td>`topic`</td><td>The name of the topic.</td></tr>
 </table>
 **Examples:**
 ```sh
-qala subscriptions i --topic <TOPIC_NAME> -s <SUBSCRIPTION_ID>
-qala subscriptions i --source <SOURCE_NAME>  -s <SUBSCRIPTION_ID>
+qala subscriptions i --topic <TOPIC_NAME> -s <SUBSCRIPTION_NAME>
+qala subscriptions i --source <SOURCE_NAME>  -s <SUBSCRIPTION_NAME>
 ```
 
 
@@ -85,7 +85,8 @@ CLI.
 <table>
 <tr><th>Option</th><th>Description</th></tr>
 <tr><td>`d` / `description`</td><td>The description of the subscription.</td></tr>
-<tr><td>`e` / `event-type-ids`</td><td>The comma separated list of event type ids.</td></tr>
+<tr><td>`e` / `events`</td><td>The comma separated list of event type 
+names.</td></tr>
 <tr><td>`m` / `max-attempts`</td><td>The maximum delivery attempts of the 
 subscription.</td></tr>
 <tr><td>`n` / `name`</td><td>The name of the subscription.</td></tr>
@@ -95,7 +96,7 @@ subscription.</td></tr>
 </table>
 **Examples:**
 ```sh
-qala sub create -n <SUBSCRIPTION_NAME> -t  <TOPIC_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS>  -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>
+qala sub create -n <SUBSCRIPTION_NAME>  --topic <TOPIC_NAME> -d <DESCRIPTION> -e  <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m  <MAX_DELIVERY_ATTEMPTS>
 ```
 
 
@@ -107,17 +108,18 @@ CLI.
 <table>
 <tr><th>Option</th><th>Description</th></tr>
 <tr><td>`d` / `description`</td><td>The description of the subscription.</td></tr>
-<tr><td>`e` / `events`</td><td>The comma separated list of event type ids.</td></tr>
+<tr><td>`e` / `events`</td><td>The comma separated list of event type 
+names.</td></tr>
 <tr><td>`m` / `max-attempts`</td><td>The maximum delivery attempts of the 
 subscription.</td></tr>
-<tr><td>`n` / `name`</td><td>The name of the subscription.</td></tr>
+<tr><td>`n` / `name`</td><td>The new name of the subscription.</td></tr>
 <tr><td>`source`</td><td>The name of the source.</td></tr>
 <tr><td>`topic`</td><td>The name of the topic.</td></tr>
 <tr><td>`u` / `url`</td><td>The webhook url of the subscription.</td></tr>
 </table>
 **Examples:**
 ```sh
-qala sub update <SUBSCRIPTION_ID> -t  <TOPIC_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_IDS>  -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>
+qala sub update <SUBSCRIPTION_NAME> --topic  <TOPIC_NAME> -n <NEW_NAME> -d <DESCRIPTION> -e  <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m  <MAX_DELIVERY_ATTEMPTS>
 ```
 
 
@@ -129,12 +131,12 @@ ID.
 <table>
 <tr><th>Option</th><th>Description</th></tr>
 <tr><td>`source`</td><td>The name of the source.</td></tr>
-<tr><td>`s` / `subscription`</td><td>The id of the subscription.</td></tr>
+<tr><td>`s` / `subscription`</td><td>The name of the subscription.</td></tr>
 <tr><td>`topic`</td><td>The name of the topic.</td></tr>
 </table>
 **Examples:**
 ```sh
-qala sub delete -t <TOPIC_NAME> -s  <SUBSCRIPTION_ID>
+qala sub delete --topic <TOPIC_NAME> -s  <SUBSCRIPTION_NAME>
 ```
 
 
