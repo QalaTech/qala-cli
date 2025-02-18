@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Qala.Cli.Utils;
 using Spectre.Console.Cli;
 
 namespace Qala.Cli.Commands.Sources;
@@ -19,10 +20,12 @@ public class UpdateSourceArgument : CommandSettings
 
     [CommandOption("-m|--methods <COMMA_SEPERATED_HTTP_METHODS>")]
     [Description("The comma separated list of the http methods available to the source.")]
+    [TypeConverter(typeof(CommaSeparatedStringListConverter))]
     public List<string> Methods { get; set; } = [];
 
     [CommandOption("-i|--ip-whitelisting <COMMA_SEPERATED_IPS_WHITELISTING>")]
     [Description("The comma separated list of the ips allowed to access the source.")]
+    [TypeConverter(typeof(CommaSeparatedStringListConverter))]
     public List<string> IpWhitelisting { get; set; } = [];
 
     [CommandOption("-a|--authenticationType <AUTHENTICATION_TYPE>")]
