@@ -84,7 +84,7 @@ public class UpdateSourceCommand(IMediator mediator, IAnsiConsole console) : Asy
                 };
                 break;
             case AuthSchemeType.JWT:
-                if (!Enum.TryParse<Algorithm>(argument.Algorithm, out var algorithm))
+                if (Enum.TryParse<Algorithm>(argument.Algorithm, out var algorithm))
                 {
                     if (algorithm == Algorithm.RSA)
                     {
