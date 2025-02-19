@@ -57,7 +57,7 @@ public class CreateSourceArgument : CommandSettings
     public string Algorithm { get; set; } = string.Empty;
 
     [CommandOption("--publicKey <PUBLIC_KEY>")]
-    [Description("The public key of the source when authentication type is jwt and algorithm is RSA.")]
+    [Description("The file path where the public key of the source when authentication type is jwt and algorithm is RSA.")]
     public string PublicKey { get; set; } = string.Empty;
 
     [CommandOption("--secret <SECRET>")]

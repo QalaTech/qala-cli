@@ -16,7 +16,7 @@ public class CreateSourceCommand(IMediator mediator, IAnsiConsole console) : Asy
             .SpinnerStyle(Style.Parse("yellow bold"))
             .StartAsync("Processing request...", async ctx =>
             {
-                var configuration = BuildConfiguration(settings);
+                var configuration = await BuildConfigurationAsync(settings);
                 return await mediator.Send(new CreateSourceRequest(settings.Name, settings.Description, configuration))
                     .ToAsync()
                     .Match(
@@ -131,7 +131,7 @@ public class CreateSourceCommand(IMediator mediator, IAnsiConsole console) : Asy
         return ValidationResult.Success();
     }
 
-    private static SourceConfiguration BuildConfiguration(CreateSourceArgument argument)
+    private static async Task<SourceConfiguration> BuildConfigurationAsync(CreateSourceArgument argument)
     {
         var configuration = new SourceConfiguration
         {
@@ -173,13 +173,14 @@ public class CreateSourceCommand(IMediator mediator, IAnsiConsole console) : Asy
                 {
                     if (algorithm == Algorithm.RSA)
                     {
+                        var publicKey = await File.ReadAllTextAsync(argument.PublicKey);
                         configuration.AuthenticationScheme = new JwtAuthenticationScheme
                         {
                             Type = AuthSchemeType.JWT,
                             Issuer = argument.Issuer,
                             Audience = argument.Audience,
                             Algorithm = Algorithm.RSA,
-                            PublicKey = argument.PublicKey
+                            PublicKey = publicKey
                         };
                     }
                     else
