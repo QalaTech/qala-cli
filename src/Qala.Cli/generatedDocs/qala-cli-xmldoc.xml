@@ -320,8 +320,8 @@ basic.</Description>
         </Option>
         <Option Short="" Long="publicKey" Value="PUBLIC_KEY" Required="false" 
 Kind="scalar" ClrType="System.String">
-          <Description>The public key of the source when authentication type is 
-jwt and algorithm is RSA.</Description>
+          <Description>The file path where the public key of the source when 
+authentication type is jwt and algorithm is RSA.</Description>
         </Option>
         <Option Short="" Long="secret" Value="SECRET" Required="false" 
 Kind="scalar" ClrType="System.String">
@@ -412,8 +412,8 @@ basic.</Description>
         </Option>
         <Option Short="" Long="publicKey" Value="PUBLIC_KEY" Required="false" 
 Kind="scalar" ClrType="System.String">
-          <Description>The public key of the source when authentication type is 
-jwt and algorithm is RSA.</Description>
+          <Description>The file path where the public key of the source when 
+authentication type is jwt and algorithm is RSA.</Description>
         </Option>
         <Option Short="" Long="secret" Value="SECRET" Required="false" 
 Kind="scalar" ClrType="System.String">
@@ -527,7 +527,9 @@ Kind="scalar" ClrType="System.String">
           <Description>The name of the subscription.</Description>
         </Option>
         <Option Short="" Long="source" Value="SOURCE_NAME" Required="false" 
-Kind="scalar" ClrType="System.String" />
+Kind="scalar" ClrType="System.String">
+          <Description>The name of the source.</Description>
+        </Option>
         <Option Short="" Long="topic" Value="TOPIC_NAME" Required="false" 
 Kind="scalar" ClrType="System.String">
           <Description>The name of the topic.</Description>

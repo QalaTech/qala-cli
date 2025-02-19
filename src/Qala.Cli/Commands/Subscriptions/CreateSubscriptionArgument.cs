@@ -11,6 +11,7 @@ public class CreateSubscriptionArgument : CommandSettings
     public string TopicName { get; set; } = string.Empty;
 
     [CommandOption("--source <SOURCE_NAME>")]
+    [Description("The name of the source.")]
     public string SourceName { get; set; } = string.Empty;
 
     [CommandOption("-n|--name <NAME>")]
