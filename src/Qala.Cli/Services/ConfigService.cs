@@ -11,13 +11,25 @@ public class ConfigService(ILocalEnvironments localEnvironments) : IConfigServic
 {
     public async Task<Either<ConfigErrorResponse, ConfigSuccessResponse>> CreateConfigAsync(string key, Guid environmentId)
     {
-        localEnvironments.SetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_API_KEY], key);
-        localEnvironments.SetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID], environmentId.ToString());
+        if (string.IsNullOrWhiteSpace(key) && environmentId == Guid.Empty)
+        {
+            return await Task.FromResult<Either<ConfigErrorResponse, ConfigSuccessResponse>>(new ConfigErrorResponse("API Key or Environment ID are required"));
+        }
 
-        var newKey = localEnvironments.GetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_API_KEY]);
-        var newEnvironmentId = localEnvironments.GetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID]);
+        if (!string.IsNullOrWhiteSpace(key))
+        {
+            localEnvironments.SetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_API_KEY], key);
+        }
 
-        return await Task.FromResult<Either<ConfigErrorResponse, ConfigSuccessResponse>>(new ConfigSuccessResponse(new Config(newKey, new Guid(newEnvironmentId))));
+        if (environmentId != Guid.Empty)
+        {
+            localEnvironments.SetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID], environmentId.ToString());
+        }
+
+        var currentKey = localEnvironments.GetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_API_KEY]);
+        var currentEnvironmentId = localEnvironments.GetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID]);
+
+        return await Task.FromResult<Either<ConfigErrorResponse, ConfigSuccessResponse>>(new ConfigSuccessResponse(new Config(currentKey, string.IsNullOrWhiteSpace(currentEnvironmentId) ? Guid.Empty : new Guid(currentEnvironmentId))));
     }
 
     public async Task<Either<ConfigErrorResponse, ConfigSuccessResponse>> GetAsync()
@@ -27,12 +39,12 @@ public class ConfigService(ILocalEnvironments localEnvironments) : IConfigServic
 
         if (string.IsNullOrEmpty(key))
         {
-            throw new Exception("No API key found");
+            return await Task.FromResult<Either<ConfigErrorResponse, ConfigSuccessResponse>>(new ConfigErrorResponse("No API key found"));
         }
 
         if (string.IsNullOrEmpty(environmentId))
         {
-            throw new Exception("No environment ID found");
+            return await Task.FromResult<Either<ConfigErrorResponse, ConfigSuccessResponse>>(new ConfigErrorResponse("No environment ID found"));
         }
 
         return await Task.FromResult<Either<ConfigErrorResponse, ConfigSuccessResponse>>(new ConfigSuccessResponse(new Config(key, new Guid(environmentId))));

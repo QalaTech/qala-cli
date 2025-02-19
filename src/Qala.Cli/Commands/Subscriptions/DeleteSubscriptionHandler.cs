@@ -18,7 +18,8 @@ public class DeleteSubscriptionHandler(ISubscriptionService subscriptionService)
             return new DeleteSubscriptionErrorResponse("Either Topic name or Source name must be provided.");
         }
 
-        var topicName = request.TopicName ?? request.SourceName;
+        var topicName = string.IsNullOrWhiteSpace(request.TopicName) ? request.SourceName : request.TopicName;
+
         return await subscriptionService.DeleteSubscriptionAsync(topicName!, request.SubscriptionName)
                 .ToAsync()
                 .Case switch

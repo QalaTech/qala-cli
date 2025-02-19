@@ -18,7 +18,8 @@ public class CreateSubscriptionHandler(ISubscriptionService subscriptionService)
             return new CreateSubscriptionErrorResponse("Either Topic name or Source name must be provided.");
         }
 
-        var topicName = request.TopicName ?? request.SourceName;
+        var topicName = string.IsNullOrWhiteSpace(request.TopicName) ? request.SourceName : request.TopicName;
+
         return await subscriptionService.CreateSubscriptionAsync(topicName!, request.Name, request.Description, request.WebhookUrl, request.EventTypeNames, request.MaxDeliveryAttempts)
                 .ToAsync()
                 .Case switch

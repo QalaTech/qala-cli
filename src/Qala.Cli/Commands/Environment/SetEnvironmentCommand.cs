@@ -13,18 +13,18 @@ public class SetEnvironmentCommand(IMediator mediator, IAnsiConsole console) : A
             .AutoRefresh(true)
             .Spinner(Spinner.Known.Star2)
             .SpinnerStyle(Style.Parse("yellow bold"))
-            .StartAsync("Processing request...", async ctx => 
+            .StartAsync("Processing request...", async ctx =>
             {
                 return await mediator.Send(new SetEnvironmentRequest(argument.EnvironmentId))
                 .ToAsync()
                 .Match(
-                    success => 
+                    success =>
                     {
                         BaseCommands.DisplaySuccessMessage("Environment", BaseCommands.CommandAction.Set, console);
-                        
+
                         return 0;
                     },
-                    error => 
+                    error =>
                     {
                         BaseCommands.DisplayErrorMessage("Environment", BaseCommands.CommandAction.Set, error.Message, console);
 
@@ -32,5 +32,15 @@ public class SetEnvironmentCommand(IMediator mediator, IAnsiConsole console) : A
                     }
                 );
             });
+    }
+
+    public override ValidationResult Validate(CommandContext context, SetEnvironmentArgument argument)
+    {
+        if (argument.EnvironmentId == Guid.Empty)
+        {
+            return ValidationResult.Error("Environment ID is required");
+        }
+
+        return ValidationResult.Success();
     }
 }

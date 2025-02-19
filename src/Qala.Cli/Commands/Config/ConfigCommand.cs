@@ -8,12 +8,12 @@ namespace Qala.Cli.Commands.Config;
 public class ConfigCommand(IMediator mediator, IAnsiConsole console) : AsyncCommand<ConfigArgument>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, ConfigArgument argument)
-    {   
+    {
         return await console.Status()
             .AutoRefresh(true)
             .Spinner(Spinner.Known.Star2)
             .SpinnerStyle(Style.Parse("yellow bold"))
-            .StartAsync("Processing request...", async ctx => 
+            .StartAsync("Processing request...", async ctx =>
             {
                 return await mediator.Send(new ConfigRequest(argument.Key, argument.EnvironmentId))
                     .ToAsync()
@@ -29,7 +29,7 @@ public class ConfigCommand(IMediator mediator, IAnsiConsole console) : AsyncComm
                                 )
                                 .AddRow(
                                     new Text(success.Config.Key),
-                                    new Text(success.Config.EnvironmentId.ToString())
+                                    new Text(success.Config.EnvironmentId == Guid.Empty ? "" : success.Config.EnvironmentId.ToString())
                                 )
                             );
 
@@ -44,12 +44,12 @@ public class ConfigCommand(IMediator mediator, IAnsiConsole console) : AsyncComm
                     );
             });
     }
-    
+
     public override ValidationResult Validate(CommandContext context, ConfigArgument config)
     {
-        if (string.IsNullOrWhiteSpace(config.Key))
+        if (string.IsNullOrWhiteSpace(config.Key) && config.EnvironmentId == Guid.Empty)
         {
-            return ValidationResult.Error("API Key is required");
+            return ValidationResult.Error("API Key or Environment ID are required");
         }
 
         return ValidationResult.Success();

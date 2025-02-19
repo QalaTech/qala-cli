@@ -18,6 +18,8 @@ using Qala.Cli.Commands.Sources;
 using System.Text.Json;
 using Qala.Cli.Data.Utils;
 using System.Text.Json.Serialization;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace Qala.Cli.Integration.Tests.Fixtures;
 
@@ -25,9 +27,9 @@ public class QalaCliBaseFixture : IDisposable
 {
     public readonly List<Data.Models.Environment> AvailableEnvironments =
     [
-        new() { Id = Guid.NewGuid(), Name = "TestEnv", Region = "us-east-1", EnvironmentType = "dev", IsSchemaValidationEnabled = false },
-        new() { Id = Guid.NewGuid(), Name = "TestEnv2", Region = "us-east-2", EnvironmentType = "prod", IsSchemaValidationEnabled = true  },
-        new() { Id = Guid.NewGuid(), Name = "TestEnv3", Region = "us-east-3", EnvironmentType = "prod", IsSchemaValidationEnabled = true  }
+        new() { Id = Guid.Parse("55908371-b629-40b5-97bc-d6064cf8d3cd"), Name = "TestEnv", Region = "eu", EnvironmentType = "development", IsSchemaValidationEnabled = false },
+        new() { Id = Guid.Parse("2ac732a9-97d9-4218-80b7-4e974be074fe"), Name = "TestEnv2", Region = "eu", EnvironmentType = "development", IsSchemaValidationEnabled = true  },
+        new() { Id = Guid.Parse("ba1887bb-89e2-4dac-b3f9-03b4e519b59d"), Name = "TestEnv3", Region = "eu", EnvironmentType = "production", IsSchemaValidationEnabled = true  }
     ];
 
     public readonly List<EventType> AvailableEventTypes =
@@ -60,10 +62,14 @@ public class QalaCliBaseFixture : IDisposable
         new() { Id = Guid.NewGuid(), Name = "TestSubscription3", Description = "Test Subscription Description 3", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 3, WebhookSecret = Guid.NewGuid().ToString() }
     ];
 
-    public readonly string ApiKey = Guid.NewGuid().ToString();
+    public List<string> AvailableApiKeys =
+    [
+        "297b5ae0-37c8-4419-b1f4-41f3d998d78e",
+        "3f539e05-f8ff-45e0-b904-43cbdd7314f3",
+        "4f3628c4-70a4-4fe8-b23e-51eec93a90ab"
+    ];
 
     public Mock<IOrganizationGateway> OrganizationServiceMock = new();
-    public Mock<ILocalEnvironments> LocalEnvironmentsMock = new();
     public Mock<IEnvironmentGateway> EnvironmentGatewayMock = new();
     public Mock<IEventTypeGateway> EventTypeGatewayMock = new();
     public Mock<ITopicGateway> TopicGatewayMock = new();
@@ -75,7 +81,6 @@ public class QalaCliBaseFixture : IDisposable
 
     public QalaCliBaseFixture()
     {
-        InitializaLocalEnvironmentsMock();
         InitializeOrganizationGatewayMock();
         InitializeEnvironmentGatewayMock();
         InitializeEventTypeGatewayMock();
@@ -97,15 +102,61 @@ public class QalaCliBaseFixture : IDisposable
         GC.SuppressFinalize(this);
     }
 
-    private void InitializaLocalEnvironmentsMock()
+    public static void InitializeEnvironmentVariables(string? apiKey = null, string? envId = null, string? authToken = null)
     {
-        LocalEnvironmentsMock.Setup(
-            l => l.GetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_API_KEY]))
-                    .Returns(ApiKey);
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            System.Environment.SetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_API_KEY], apiKey, EnvironmentVariableTarget.User);
+            System.Environment.SetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID], envId, EnvironmentVariableTarget.User);
+            System.Environment.SetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_AUTH_TOKEN], authToken, EnvironmentVariableTarget.User);
+            return;
+        }
 
-        LocalEnvironmentsMock.Setup(
-            l => l.GetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID]))
-                    .Returns(AvailableEnvironments.First().Id.ToString());
+        var proc = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "/bin/bash",
+                Arguments = $"-c \"echo 'unset {Constants.LocalVariable[LocalVariableType.QALA_API_KEY]} {Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID]} {Constants.LocalVariable[LocalVariableType.QALA_AUTH_TOKEN]}' >> {GetShellConfigFile()}\"",
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            }
+        };
+        proc.Start();
+        proc.WaitForExit();
+
+        if (!string.IsNullOrWhiteSpace(apiKey))
+        {
+            SetEnvironmentVariableNonWindows(Constants.LocalVariable[LocalVariableType.QALA_API_KEY], apiKey);
+        }
+
+        if (!string.IsNullOrWhiteSpace(envId))
+        {
+            SetEnvironmentVariableNonWindows(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID], envId);
+        }
+
+        if (!string.IsNullOrWhiteSpace(authToken))
+        {
+            SetEnvironmentVariableNonWindows(Constants.LocalVariable[LocalVariableType.QALA_AUTH_TOKEN], authToken);
+        }
+    }
+
+    private static void SetEnvironmentVariableNonWindows(string variable, string value)
+    {
+        var proc = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "/bin/bash",
+                Arguments = $"-c \"echo 'export {variable}={value}' >> {GetShellConfigFile()}\"",
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            }
+        };
+        proc.Start();
+        proc.WaitForExit();
     }
 
     private void InitializeOrganizationGatewayMock()
@@ -404,12 +455,27 @@ public class QalaCliBaseFixture : IDisposable
 
     private void InitializeDataServices(IServiceCollection services)
     {
-        services.AddSingleton<ILocalEnvironments>(LocalEnvironmentsMock.Object);
+        services.AddSingleton<ILocalEnvironments, LocalEnvironments>();
         services.AddSingleton<IOrganizationGateway>(OrganizationServiceMock.Object);
         services.AddSingleton<IEnvironmentGateway>(EnvironmentGatewayMock.Object);
         services.AddSingleton<IEventTypeGateway>(EventTypeGatewayMock.Object);
         services.AddSingleton<ITopicGateway>(TopicGatewayMock.Object);
         services.AddSingleton<ISubscriptionGateway>(SubscriptionGatewayMock.Object);
         services.AddSingleton<ISourceGateway>(SourceGatewayMock.Object);
+    }
+
+    private static string GetShellConfigFile()
+    {
+        string homeDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile);
+        string shell = System.Environment.GetEnvironmentVariable("SHELL") ?? string.Empty;
+
+        if (shell != null && shell.Contains("zsh"))
+        {
+            return Path.Combine(homeDirectory, ".zshrc");
+        }
+        else
+        {
+            return Path.Combine(homeDirectory, ".bash_profile");
+        }
     }
 }

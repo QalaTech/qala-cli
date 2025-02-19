@@ -18,7 +18,7 @@ public class RotateWebhookSecretHandler(ISubscriptionService subscriptionService
             return new RotateWebhookSecretErrorResponse("Either Topic name or Source name must be provided.");
         }
 
-        var topicName = request.TopicName ?? request.SourceName;
+        var topicName = string.IsNullOrWhiteSpace(request.TopicName) ? request.SourceName : request.TopicName;
 
         return await subscriptionService.RotateWebhookSecretAsync(topicName!, request.SubscriptionName)
                 .ToAsync()
