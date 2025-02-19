@@ -35,22 +35,26 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEven
             return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Max delivery attempts should be greater than 0"));
         }
 
-        var eventTypes = await eventTypeGateway.ListEventTypesAsync();
-        if (eventTypes == null || !eventTypes.Any())
+        List<Guid> eventTypeIds = [];
+        if (topicType == "Topic")
         {
-            return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Event types not found"));
-        }
+            var eventTypes = await eventTypeGateway.ListEventTypesAsync();
+            if (eventTypes == null || !eventTypes.Any())
+            {
+                return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Event types not found"));
+            }
 
-        List<Guid> eventTypeIds = eventTypes
-            .Where(e => e?.Type != null && eventTypeNames.Contains(e.Type))
-            .Select(e => e?.Id)
-            .Where(id => id.HasValue)
-            .Select(id => id.GetValueOrDefault())
-            .ToList();
+            eventTypeIds = eventTypes
+                .Where(e => e?.Type != null && eventTypeNames.Contains(e.Type))
+                .Select(e => e?.Id)
+                .Where(id => id.HasValue)
+                .Select(id => id.GetValueOrDefault())
+                .ToList();
 
-        if (eventTypeIds == null || eventTypeIds.Count == 0)
-        {
-            return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Event types not found"));
+            if (eventTypeIds == null || eventTypeIds.Count == 0)
+            {
+                return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Event types not found"));
+            }
         }
 
         var subscription = await subscriptionGateway.CreateSubscriptionAsync(topicName, name, description, webhookUrl, eventTypeIds, maxDeliveryAttempts);
