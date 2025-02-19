@@ -43,6 +43,66 @@ public class UpdateSourceCommand(IMediator mediator, IAnsiConsole console) : Asy
             return ValidationResult.Error("Source name is required.");
         }
 
+        if (!string.IsNullOrWhiteSpace(argument.AuthenticationType))
+        {
+            if (argument.AuthenticationType.Equals("Basic", StringComparison.OrdinalIgnoreCase))
+            {
+                if (string.IsNullOrWhiteSpace(argument.Username))
+                {
+                    return ValidationResult.Error("Username is required when authentication type is basic.");
+                }
+
+                if (string.IsNullOrWhiteSpace(argument.Password))
+                {
+                    return ValidationResult.Error("Password is required when authentication type is basic.");
+                }
+            }
+            else if (argument.AuthenticationType.Equals("ApiKey", StringComparison.OrdinalIgnoreCase))
+            {
+                if (string.IsNullOrWhiteSpace(argument.ApiKeyName))
+                {
+                    return ValidationResult.Error("Api key name is required when authentication type is api key.");
+                }
+
+                if (string.IsNullOrWhiteSpace(argument.ApiKeyValue))
+                {
+                    return ValidationResult.Error("Api key value is required when authentication type is api key.");
+                }
+            }
+            else if (argument.AuthenticationType.Equals("JWT", StringComparison.OrdinalIgnoreCase))
+            {
+                if (string.IsNullOrWhiteSpace(argument.Issuer))
+                {
+                    return ValidationResult.Error("Issuer is required when authentication type is jwt.");
+                }
+
+                if (string.IsNullOrWhiteSpace(argument.Audience))
+                {
+                    return ValidationResult.Error("Audience is required when authentication type is jwt.");
+                }
+
+                if (string.IsNullOrWhiteSpace(argument.Algorithm))
+                {
+                    return ValidationResult.Error("Algorithm is required when authentication type is jwt.");
+                }
+
+                if (argument.Algorithm.Equals("RSA", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (string.IsNullOrWhiteSpace(argument.PublicKey))
+                    {
+                        return ValidationResult.Error("Public key is required when authentication type is jwt and algorithm is RSA.");
+                    }
+                }
+                else if (argument.Algorithm.Equals("HSA", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (string.IsNullOrWhiteSpace(argument.Secret))
+                    {
+                        return ValidationResult.Error("Secret is required when authentication type is jwt and algorithm is HSA.");
+                    }
+                }
+            }
+        }
+
         return ValidationResult.Success();
     }
 
