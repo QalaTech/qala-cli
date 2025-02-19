@@ -18,7 +18,7 @@ public class GetWebhookSecretHandler(ISubscriptionService subscriptionService)
             return new GetWebhookSecretErrorResponse("Either Topic name or Source name must be provided.");
         }
 
-        var topicName = request.TopicName ?? request.SourceName;
+        var topicName = string.IsNullOrWhiteSpace(request.TopicName) ? request.SourceName : request.TopicName;
 
         return await subscriptionService.GetWebhookSecretAsync(topicName!, request.SubscriptionName)
                 .ToAsync()
