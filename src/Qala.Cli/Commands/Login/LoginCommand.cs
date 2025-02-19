@@ -1,11 +1,12 @@
 using MediatR;
+using Qala.Cli.Data.Repository.Interfaces;
 using Qala.Cli.Utils;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace Qala.Cli.Commands.Login;
 
-public class LoginCommand(IMediator mediator, IAnsiConsole console) : AsyncCommand<LoginArgument>
+public class LoginCommand(IMediator mediator, IAnsiConsole console, ILocalEnvironments localEnvironments) : AsyncCommand<LoginArgument>
 {
     public override async Task<int> ExecuteAsync(CommandContext context, LoginArgument argument)
     {
@@ -13,7 +14,7 @@ public class LoginCommand(IMediator mediator, IAnsiConsole console) : AsyncComma
         return await mediator.Send(new LoginRequest())
             .ToAsync()
             .Match(
-                success => 
+                success =>
                 {
                     var environmentName = console.Prompt(
                         new SelectionPrompt<string>()
@@ -23,8 +24,8 @@ public class LoginCommand(IMediator mediator, IAnsiConsole console) : AsyncComma
                             .AddChoices(success.Environments.Select(e => e.Name).ToArray()));
 
                     var environmentId = success.Environments.First(e => e.Name == environmentName).Id.ToString();
-                    
-                    System.Environment.SetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID], environmentId, EnvironmentVariableTarget.User);
+
+                    localEnvironments.SetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID], environmentId);
                     console.MarkupLine($"[green bold]Login Successful[/]");
 
                     return 0;
