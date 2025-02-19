@@ -75,7 +75,7 @@ public class CreateSubscriptionCommand(IMediator mediator, IAnsiConsole console)
             return ValidationResult.Error("Webhook URL is required.");
         }
 
-        if (argument.EventTypeNames.Count == 0)
+        if (!string.IsNullOrWhiteSpace(argument.TopicName) && argument.EventTypeNames.Count == 0)
         {
             return ValidationResult.Error("At least one event type name is required.");
         }
