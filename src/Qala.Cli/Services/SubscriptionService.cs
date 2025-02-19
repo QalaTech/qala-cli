@@ -8,7 +8,7 @@ namespace Qala.Cli.Services;
 
 public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEventTypeGateway eventTypeGateway) : ISubscriptionService
 {
-    public async Task<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>> CreateSubscriptionAsync(string topicName, string name, string description, string webhookUrl, List<string> eventTypeNames, int maxDeliveryAttempts)
+    public async Task<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>> CreateSubscriptionAsync(string topicType, string topicName, string name, string description, string webhookUrl, List<string> eventTypeNames, int maxDeliveryAttempts)
     {
         if (string.IsNullOrWhiteSpace(topicName))
         {
@@ -25,7 +25,7 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEven
             return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Webhook url is required"));
         }
 
-        if (eventTypeNames == null || eventTypeNames.Count == 0)
+        if (topicType == "Topic" && (eventTypeNames == null || eventTypeNames.Count == 0))
         {
             return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Event type ids are required"));
         }

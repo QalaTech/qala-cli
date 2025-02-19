@@ -36,9 +36,9 @@ public class QalaCliBaseFixture : IDisposable
 
     public readonly List<EventType> AvailableEventTypes =
     [
-        new() { Id = Guid.NewGuid(), Type = "Type 1", Description = "Test Event Description", Schema="{\"name\":\"Test\"}", ContentType="application/json", Encoding="utf-8", Categories = ["cat1", "cat2"] },
-        new() { Id = Guid.NewGuid(), Type = "Type 2", Description = "Test Event Description 2", Schema="{\"name\":\"Test2\"}", ContentType="application/json", Encoding="utf-8", Categories = ["cat3", "cat4"] },
-        new() { Id = Guid.NewGuid(), Type = "Type 3", Description = "Test Event Description 3", Schema="{\"name\":\"Test3\"}", ContentType="application/json", Encoding="utf-8", Categories = ["cat5", "cat6"] }
+        new() { Id = Guid.NewGuid(), Type = "TestEvent1", Description = "Test Event Description", Schema="{\"name\":\"Test\"}", ContentType="application/json", Encoding="utf-8", Categories = ["cat1", "cat2"] },
+        new() { Id = Guid.NewGuid(), Type = "TestEvent2", Description = "Test Event Description 2", Schema="{\"name\":\"Test2\"}", ContentType="application/json", Encoding="utf-8", Categories = ["cat3", "cat4"] },
+        new() { Id = Guid.NewGuid(), Type = "TestEvent3", Description = "Test Event Description 3", Schema="{\"name\":\"Test3\"}", ContentType="application/json", Encoding="utf-8", Categories = ["cat5", "cat6"] }
     ];
 
     public List<Topic> AvailableTopics =
@@ -376,7 +376,7 @@ public class QalaCliBaseFixture : IDisposable
 
         SubscriptionGatewayMock.Setup(
             s => s.UpdateSubscriptionAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Guid>>(), It.IsAny<int>()))
-                    .ReturnsAsync((string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts) =>
+                    .ReturnsAsync((string topicType, string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts) =>
                     {
                         var subscription = AvailableSubscriptions.FirstOrDefault(s => s.Id == subscriptionId);
                         if (subscription != null)
