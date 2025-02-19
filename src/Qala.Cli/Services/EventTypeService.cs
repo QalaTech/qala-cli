@@ -11,7 +11,7 @@ public class EventTypeService(IEventTypeGateway eventTypeGateway) : IEventTypeSe
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            return await Task.FromResult<Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>>(new GetEventTypeErrorResponse("Invalid name"));
+            return await Task.FromResult<Either<GetEventTypeErrorResponse, GetEventTypeSuccessResponse>>(new GetEventTypeErrorResponse("Event Type name is required"));
         }
 
         var eventTypes = await eventTypeGateway.ListEventTypesAsync();
