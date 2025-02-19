@@ -114,7 +114,7 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
     {
         try
         {
-            var response = await httpClient.PostAsJsonAsync($"topics/{topicName}/subscriptions/{subscriptionId}/rotate-webhook-secret", new{});
+            var response = await httpClient.PostAsJsonAsync($"topics/{topicName}/subscriptions/{subscriptionId}/rotate-webhook-secret", new { });
 
             if (!response.IsSuccessStatusCode)
             {
@@ -130,7 +130,7 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
         }
     }
 
-    public async Task<Subscription?> UpdateSubscriptionAsync(string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts)
+    public async Task<Subscription?> UpdateSubscriptionAsync(string topicType, string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts)
     {
         try
         {
@@ -140,7 +140,8 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
                 Description = description,
                 WebhookUrl = webhookUrl,
                 EventTypeIds = eventTypeIds,
-                MaxDeliveryAttempts = maxDeliveryAttempts
+                MaxDeliveryAttempts = maxDeliveryAttempts,
+                TopicType = topicType
             });
 
             if (!response.IsSuccessStatusCode)

@@ -198,7 +198,7 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEven
         return await Task.FromResult<Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>>(new RotateWebhookSecretSuccessResponse(secret));
     }
 
-    public async Task<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>> UpdateSubscriptionAsync(string topicName, string subscriptionName, string? newName, string? description, string? webhookUrl, List<string>? eventTypeNames, int? maxDeliveryAttempts)
+    public async Task<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>> UpdateSubscriptionAsync(string topicType, string topicName, string subscriptionName, string? newName, string? description, string? webhookUrl, List<string>? eventTypeNames, int? maxDeliveryAttempts)
     {
         if (string.IsNullOrWhiteSpace(topicName))
         {
@@ -270,6 +270,7 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEven
         }
 
         var updatedSubscription = await subscriptionGateway.UpdateSubscriptionAsync(
+                topicType,
                 topicName,
                 subscription.Id,
                 subscription.Name,

@@ -20,6 +20,8 @@ using Qala.Cli.Data.Utils;
 using System.Text.Json.Serialization;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using Qala.Cli.Configurations;
+using Spectre.Console.Cli;
 
 namespace Qala.Cli.Integration.Tests.Fixtures;
 
@@ -77,6 +79,8 @@ public class QalaCliBaseFixture : IDisposable
 
     public Mock<ISourceGateway> SourceGatewayMock = new();
 
+    public CommandApp App { get; set; }
+
     public required IMediator Mediator { get; init; }
 
     public QalaCliBaseFixture()
@@ -92,6 +96,9 @@ public class QalaCliBaseFixture : IDisposable
         InitializeDataServices(services);
         InitializeCommandHandlers(services);
         InitializeServices(services);
+
+        var registrar = new TypeRegistrar(services);
+        App = new CommandApp(registrar);
 
         var serviceProvider = services.BuildServiceProvider();
         Mediator = serviceProvider.GetRequiredService<IMediator>();
@@ -368,7 +375,7 @@ public class QalaCliBaseFixture : IDisposable
                     });
 
         SubscriptionGatewayMock.Setup(
-            s => s.UpdateSubscriptionAsync(It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Guid>>(), It.IsAny<int>()))
+            s => s.UpdateSubscriptionAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Guid>>(), It.IsAny<int>()))
                     .ReturnsAsync((string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts) =>
                     {
                         var subscription = AvailableSubscriptions.FirstOrDefault(s => s.Id == subscriptionId);
