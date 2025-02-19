@@ -103,7 +103,7 @@ public class SourceService(ISourceGateway sourceGateway) : ISourceService
 
         if (configuration != null)
         {
-            if (configuration.AllowedHttpMethods != null)
+            if (configuration.AllowedHttpMethods != null && configuration.AllowedHttpMethods.Any())
             {
                 source.Configuration.AllowedHttpMethods = configuration.AllowedHttpMethods;
             }

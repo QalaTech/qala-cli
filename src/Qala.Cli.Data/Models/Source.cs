@@ -18,7 +18,7 @@ public class SourceConfiguration
 {
     public List<HttpMethod> AllowedHttpMethods { get; set; } = [];
     [JsonConverter(typeof(AuthenticationSchemeConverter))]
-    public AuthenticationScheme AuthenticationScheme { get; set; } = new NoAuthenticationScheme();
+    public AuthenticationScheme? AuthenticationScheme { get; set; }
     public List<string> WhitelistedIpRanges { get; set; } = [];
 }
 

@@ -171,6 +171,9 @@ public class UpdateSourceCommand(IMediator mediator, IAnsiConsole console) : Asy
                     }
                 }
                 break;
+            default:
+                configuration.AuthenticationScheme = null;
+                break;
         }
 
         return configuration;
