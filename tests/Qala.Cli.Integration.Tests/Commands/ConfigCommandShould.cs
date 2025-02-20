@@ -32,6 +32,10 @@ public class ConfigCommandShould(QalaCliBaseFixture fixture) : IClassFixture<Qal
         {
             ExtractSuccessExpectedOutput(expectedOutput, expectedConsole);
         }
+        else
+        {
+            ExtractFailedExpectedOutput(expectedOutput, expectedConsole);
+        }
 
         var inputArguments = new ConfigArgument()
         {
@@ -81,5 +85,12 @@ public class ConfigCommandShould(QalaCliBaseFixture fixture) : IClassFixture<Qal
         }
 
         return (key, environmentId);
+    }
+
+    public void ExtractFailedExpectedOutput(string[] expectedOutput, TestConsole expectedConsole)
+    {
+        expectedConsole.MarkupLine("Processing request...");
+        expectedConsole.MarkupLine("[red bold]Error during Configuration configuration:[/]");
+        expectedConsole.MarkupLine(expectedOutput[0]);
     }
 }

@@ -10,21 +10,11 @@ public class TestsUtils
         Assert.Equal(expectedSuccess, result == 0);
 
         var actualLines = console.Lines;
-        if (expectedSuccess)
-        {
-            var expectedLines = expectedConsole.Lines;
+        var expectedLines = expectedConsole.Lines;
 
-            for (int i = 0; i < expectedLines.Count; i++)
-            {
-                Assert.Contains(expectedLines[i], actualLines);
-            }
-        }
-        else
+        for (int i = 0; i < expectedLines.Count; i++)
         {
-            for (int i = 0; i < expectedOutput.Length; i++)
-            {
-                Assert.Contains(expectedOutput[i], actualLines);
-            }
+            Assert.Contains(expectedLines[i], actualLines);
         }
     }
 

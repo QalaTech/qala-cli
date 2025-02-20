@@ -33,6 +33,10 @@ public class CreateEnvironmentCommandShould(QalaCliBaseFixture fixture) : IClass
         {
             ExtractSuccessExpectedOutput(expectedOutput, expectedConsole);
         }
+        else
+        {
+            ExtractFailedExpectedOutput(expectedOutput, expectedConsole);
+        }
 
         var inputArguments = new CreateEnvironmentArgument()
         {
@@ -78,6 +82,13 @@ public class CreateEnvironmentCommandShould(QalaCliBaseFixture fixture) : IClass
         var disableSchemaValidation = disableSchemaValidationIndex != -1;
 
         return (name, region, type, disableSchemaValidation);
+    }
+
+    public void ExtractFailedExpectedOutput(string[] expectedOutput, TestConsole expectedConsole)
+    {
+        expectedConsole.MarkupLine("Processing request...");
+        expectedConsole.MarkupLine($"[red bold]Error during Environment creation:[/]");
+        expectedConsole.MarkupLine($"[red]{expectedOutput[0]}[/]");
     }
 
     public void ExtractSuccessExpectedOutput(string[] expectedOutput, TestConsole expectedConsole)

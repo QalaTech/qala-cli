@@ -88,6 +88,11 @@ public class EnvironmentService(
     {
         try
         {
+            if (environmentId == Guid.Empty)
+            {
+                return await Task.FromResult<Either<SetEnvironmentErrorResponse, SetEnvironmentSuccessResponse>>(new SetEnvironmentErrorResponse("Environment ID is required"));
+            }
+
             var organization = await organizationGateway.GetOrganizationAsync();
             if (organization is null)
             {
