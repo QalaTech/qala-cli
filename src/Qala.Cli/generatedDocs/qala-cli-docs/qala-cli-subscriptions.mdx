@@ -8,14 +8,14 @@ tags: [qala, q-flow, documentation, cli, subscriptions]
 image: ../docs/img/logo_no_lettering.svg
 description: No description available.
 sidebar_label: subscriptions
-sidebar_position: 7
+sidebar_position: 6
 draft: true
 hide_table_of_contents: false
 pagination_next: null
-pagination_prev: references/references-intro
+pagination_prev: references/qala-cli-docs/qala-cli-docs
 hide_title: true
-toc_max_heading_level: 2
-sidebar_class_name: hidden
+toc_min_heading_level: 3
+toc_max_heading_level: 3
 ---
 
 import HeroBanner from '../../../src/components/HeroBanner/HeroBanner';
@@ -26,7 +26,7 @@ import HeroBanner from '../../../src/components/HeroBanner/HeroBanner';
     backgroundColor='transparent'
 />
 
-# `subscriptions` Commands
+## Commands
 
 <table>
 <tr><th>Command</th><th>Description</th></tr>
@@ -42,15 +42,15 @@ CLI.</td></tr>
 ID.</td></tr>
 <tr><td><a href="qala-cli-secret" title="Learn about secret">secret</a></td><td>No description available.</td></tr>
 </table>
-## `list`
+### `list`
 this command lists all the subscriptions available in your 
 environment for a specific topic or source.
 
 **Options:**
 <table>
 <tr><th>Option</th><th>Description</th></tr>
-<tr><td>`source`</td><td>No description.</td></tr>
-<tr><td>`topic`</td><td>No description.</td></tr>
+<tr><td>`source`</td><td>The name of the source.</td></tr>
+<tr><td>`topic`</td><td>The name of the topic.</td></tr>
 </table>
 **Examples:**
 ```sh
@@ -59,7 +59,7 @@ qala subscriptions ls --source  <SOURCE_NAME>
 ```
 
 
-## `inspect`
+### `inspect`
 this command retrieves the subscription with the specified 
 ID.
 
@@ -77,7 +77,7 @@ qala subscriptions i --source <SOURCE_NAME>  -s <SUBSCRIPTION_NAME>
 ```
 
 
-## `create`
+### `create`
 this command creates a new subscription for the Qala 
 CLI.
 
@@ -100,7 +100,7 @@ qala sub create -n <SUBSCRIPTION_NAME>  --topic <TOPIC_NAME> -d <DESCRIPTION> -e
 ```
 
 
-## `update`
+### `update`
 this command updates an existing subscription for the Qala 
 CLI.
 
@@ -123,7 +123,7 @@ qala sub update <SUBSCRIPTION_NAME> --topic  <TOPIC_NAME> -n <NEW_NAME> -d <DESC
 ```
 
 
-## `delete`
+### `delete`
 this command deletes the subscription with the specified 
 ID.
 

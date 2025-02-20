@@ -15,7 +15,7 @@ public class GenerateMarkdownHandler : IRequestHandler<GenerateMarkdownRequest, 
     private const string CategoryJsonFileName = "generatedDocs/qala-cli-docs/_category_.json";
     private const string MainMarkdownFile = "generatedDocs/qala-cli-docs/qala-cli-docs.mdx";
     private const string DocsFolder = "generatedDocs/qala-cli-docs";
-    private static int sidebarPosition = 2;
+    private static int sidebarPosition = 1;
 
     public Task<Either<GenerateMarkdownErrorResponse, GenerateMarkdownSuccessResponse>> Handle(GenerateMarkdownRequest request, CancellationToken cancellationToken)
     {
@@ -87,10 +87,9 @@ public class GenerateMarkdownHandler : IRequestHandler<GenerateMarkdownRequest, 
         var categoryJsonContent = new
         {
             label = "Qala CLI Documentation",
-            className = "theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item",
             position = 1,
-            collapsible = false,
-            collapsed = false,
+            collapsible = true,
+            collapsed = true,
             link = new
             {
                 type = "doc",
@@ -110,10 +109,10 @@ public class GenerateMarkdownHandler : IRequestHandler<GenerateMarkdownRequest, 
         List<string> tags = ["qala", "q-flow", "documentation", "cli", commandName];
 
         var sb = new StringBuilder();
-        AddFrontMatter(sb, fileName, commandName, description, tags, position);
+        AddFrontMatter(sb, fileName, commandName, description, tags, position, false);
         AddHeroBanner(sb, commandName, description);
 
-        sb.AppendLine($"# `{commandName}` Commands\n");
+        sb.AppendLine($"## Commands\n");
 
         sb.AppendLine("<table>");
         sb.AppendLine("<tr><th>Command</th><th>Description</th></tr>");
@@ -166,9 +165,10 @@ public class GenerateMarkdownHandler : IRequestHandler<GenerateMarkdownRequest, 
         sb.AppendLine($"draft: true");
         sb.AppendLine($"hide_table_of_contents: false");
         sb.AppendLine($"pagination_next: null");
-        sb.AppendLine($"pagination_prev: references/references-intro");
+        sb.AppendLine($"pagination_prev: {(sidebarPosition == 1 ? "references/references-intro" : "references/qala-cli-docs/qala-cli-docs")}");
         sb.AppendLine($"hide_title: true");
-        sb.AppendLine($"toc_max_heading_level: 2");
+        sb.AppendLine($"toc_min_heading_level: 3");
+        sb.AppendLine($"toc_max_heading_level: 3");
         if (hideInSidebar)
         {
             sb.AppendLine("sidebar_class_name: hidden");
@@ -182,7 +182,7 @@ public class GenerateMarkdownHandler : IRequestHandler<GenerateMarkdownRequest, 
         string commandName = command.Attribute("Name")?.Value ?? "Unknown";
         string description = command.Element("Description")?.Value ?? "No description available.";
 
-        sb.AppendLine($"## `{commandName}`");
+        sb.AppendLine($"### `{commandName}`");
         sb.AppendLine($"{description}\n");
 
         var parameters = command.Element("Parameters");

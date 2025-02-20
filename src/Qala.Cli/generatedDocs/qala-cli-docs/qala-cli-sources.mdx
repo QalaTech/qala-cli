@@ -8,14 +8,14 @@ tags: [qala, q-flow, documentation, cli, sources]
 image: ../docs/img/logo_no_lettering.svg
 description: No description available.
 sidebar_label: sources
-sidebar_position: 6
+sidebar_position: 5
 draft: true
 hide_table_of_contents: false
 pagination_next: null
-pagination_prev: references/references-intro
+pagination_prev: references/qala-cli-docs/qala-cli-docs
 hide_title: true
-toc_max_heading_level: 2
-sidebar_class_name: hidden
+toc_min_heading_level: 3
+toc_max_heading_level: 3
 ---
 
 import HeroBanner from '../../../src/components/HeroBanner/HeroBanner';
@@ -26,7 +26,7 @@ import HeroBanner from '../../../src/components/HeroBanner/HeroBanner';
     backgroundColor='transparent'
 />
 
-# `sources` Commands
+## Commands
 
 <table>
 <tr><th>Command</th><th>Description</th></tr>
@@ -41,7 +41,7 @@ CLI.</td></tr>
 <tr><td><a href="#delete" title="Learn about delete">delete</a></td><td>this command deletes the source with the specified 
 NAME.</td></tr>
 </table>
-## `list`
+### `list`
 this command lists all the sources available in your 
 environment.
 
@@ -51,7 +51,7 @@ qala sources ls
 ```
 
 
-## `inspect`
+### `inspect`
 this command retrieves the source with the specified 
 NAME.
 
@@ -65,7 +65,7 @@ qala sources inspect <SOURCE_NAME>
 ```
 
 
-## `create`
+### `create`
 this command creates a new source for the Qala 
 CLI.
 
@@ -105,7 +105,7 @@ qala sources create -n <SOURCE_NAME> -d  <DESCRIPTION> -m <METHODS_COMMA_SEPERAT
 ```
 
 
-## `update`
+### `update`
 this command updates an existing source for the Qala 
 CLI.
 
@@ -145,7 +145,7 @@ qala sources update <SOURCE_NAME> -n  <NEW_NAME> -d <DESCRIPTION> -m <METHODS_CO
 ```
 
 
-## `delete`
+### `delete`
 this command deletes the source with the specified 
 NAME.
 

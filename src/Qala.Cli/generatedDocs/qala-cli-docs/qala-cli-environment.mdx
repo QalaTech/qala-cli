@@ -8,14 +8,14 @@ tags: [qala, q-flow, documentation, cli, environment]
 image: ../docs/img/logo_no_lettering.svg
 description: No description available.
 sidebar_label: environment
-sidebar_position: 3
+sidebar_position: 2
 draft: true
 hide_table_of_contents: false
 pagination_next: null
-pagination_prev: references/references-intro
+pagination_prev: references/qala-cli-docs/qala-cli-docs
 hide_title: true
-toc_max_heading_level: 2
-sidebar_class_name: hidden
+toc_min_heading_level: 3
+toc_max_heading_level: 3
 ---
 
 import HeroBanner from '../../../src/components/HeroBanner/HeroBanner';
@@ -26,7 +26,7 @@ import HeroBanner from '../../../src/components/HeroBanner/HeroBanner';
     backgroundColor='transparent'
 />
 
-# `environment` Commands
+## Commands
 
 <table>
 <tr><th>Command</th><th>Description</th></tr>
@@ -39,7 +39,7 @@ CLI.</td></tr>
 <tr><td><a href="#update" title="Learn about update">update</a></td><td>this command updates the current environment for the Qala 
 CLI.</td></tr>
 </table>
-## `create`
+### `create`
 this command creates a new environment for the Qala 
 CLI.
 
@@ -57,7 +57,7 @@ environment create -n <NAME> -r  <REGION> -t <TYPE> --disableSchemaValidation
 ```
 
 
-## `current`
+### `current`
 this command retrieves the current environment for the Qala 
 CLI.
 
@@ -67,7 +67,7 @@ environment current
 ```
 
 
-## `set`
+### `set`
 this command sets the current environment for the Qala 
 CLI.
 
@@ -82,7 +82,7 @@ environment set -e <ENVIRONMENT_ID>
 ```
 
 
-## `update`
+### `update`
 this command updates the current environment for the Qala 
 CLI.
 
