@@ -57,7 +57,7 @@ public class TopicService(ITopicGateway topicGateway, IEventTypeGateway eventTyp
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            return await Task.FromResult<Either<GetTopicErrorResponse, GetTopicSuccessResponse>>(new GetTopicErrorResponse("Name is required"));
+            return await Task.FromResult<Either<GetTopicErrorResponse, GetTopicSuccessResponse>>(new GetTopicErrorResponse("Topic name is required"));
         }
 
         var topic = await topicGateway.GetTopicAsync(name);
@@ -79,7 +79,7 @@ public class TopicService(ITopicGateway topicGateway, IEventTypeGateway eventTyp
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicErrorResponse("Name is required"));
+            return await Task.FromResult<Either<UpdateTopicErrorResponse, UpdateTopicSuccessResponse>>(new UpdateTopicErrorResponse("Topic name is required"));
         }
 
         var topic = await topicGateway.GetTopicAsync(name);
