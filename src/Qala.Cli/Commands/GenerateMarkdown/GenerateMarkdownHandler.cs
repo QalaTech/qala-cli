@@ -12,8 +12,9 @@ public record GenerateMarkdownRequest() : IRequest<Either<GenerateMarkdownErrorR
 public class GenerateMarkdownHandler : IRequestHandler<GenerateMarkdownRequest, Either<GenerateMarkdownErrorResponse, GenerateMarkdownSuccessResponse>>
 {
     private const string XmlFileName = "generatedDocs/qala-cli-xmldoc.xml";
-    private const string MainMarkdownFile = "generatedDocs/qala-cli-docs.mdx";
-    private const string DocsFolder = "generatedDocs";
+    private const string CategoryJsonFileName = "generatedDocs/qala-cli-docs/_category_.json";
+    private const string MainMarkdownFile = "generatedDocs/qala-cli-docs/qala-cli-docs.mdx";
+    private const string DocsFolder = "generatedDocs/qala-cli-docs";
     private static int sidebarPosition = 2;
 
     public Task<Either<GenerateMarkdownErrorResponse, GenerateMarkdownSuccessResponse>> Handle(GenerateMarkdownRequest request, CancellationToken cancellationToken)
@@ -24,6 +25,9 @@ public class GenerateMarkdownHandler : IRequestHandler<GenerateMarkdownRequest, 
         }
 
         Directory.CreateDirectory(DocsFolder);
+
+        GenerateCategoryJsonFile();
+
         XDocument doc = XDocument.Load(XmlFileName);
 
         StringBuilder mainSb = new StringBuilder();
@@ -44,12 +48,12 @@ public class GenerateMarkdownHandler : IRequestHandler<GenerateMarkdownRequest, 
                 string commandName = command.Attribute("Name")?.Value ?? "Unknown";
                 string description = command.Element("Description")?.Value ?? "No description available.";
                 var subCommands = command.Elements("Command").ToList();
-                string fileName = $"qala-cli-{commandName}.mdx";
+                string fileName = $"qala-cli-{commandName}";
 
                 if (subCommands.Count != 0)
                 {
                     mainSb.AppendLine($"<tr><td><a href=\"{fileName}\" title=\"Learn about {commandName}\">{commandName}</a></td><td>{description}</td></tr>");
-                    GenerateSubCommandMarkdown(command, $"{DocsFolder}/{fileName}", sidebarPosition++);
+                    GenerateSubCommandMarkdown(command, $"{DocsFolder}/{fileName}.mdx", sidebarPosition++);
                 }
                 else
                 {
@@ -78,6 +82,25 @@ public class GenerateMarkdownHandler : IRequestHandler<GenerateMarkdownRequest, 
         return Task.FromResult<Either<GenerateMarkdownErrorResponse, GenerateMarkdownSuccessResponse>>(new GenerateMarkdownSuccessResponse());
     }
 
+    private static void GenerateCategoryJsonFile()
+    {
+        var categoryJsonContent = new
+        {
+            label = "Qala CLI Documentation",
+            className = "theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item",
+            position = 1,
+            collapsible = false,
+            collapsed = false,
+            link = new
+            {
+                type = "doc",
+                id = "qala-cli-docs"
+            }
+        };
+
+        File.WriteAllText(CategoryJsonFileName, System.Text.Json.JsonSerializer.Serialize(categoryJsonContent));
+    }
+
     private static void GenerateSubCommandMarkdown(XElement command, string markdownPath, int position)
     {
         string commandName = command.Attribute("Name")?.Value ?? "Unknown";
@@ -100,12 +123,12 @@ public class GenerateMarkdownHandler : IRequestHandler<GenerateMarkdownRequest, 
             string subCommandName = subCommand.Attribute("Name")?.Value ?? "Unknown";
             string subDescription = subCommand.Element("Description")?.Value ?? "No description available.";
             var deeperSubCommands = subCommand.Elements("Command").ToList();
-            string subFileName = $"qala-cli-{subCommandName}.mdx";
+            string subFileName = $"qala-cli-{subCommandName}";
 
             if (deeperSubCommands.Count != 0)
             {
                 sb.AppendLine($"<tr><td><a href=\"{subFileName}\" title=\"Learn about {subCommandName}\">{subCommandName}</a></td><td>{subDescription}</td></tr>");
-                GenerateSubCommandMarkdown(subCommand, $"{DocsFolder}/{subFileName}", position++);
+                GenerateSubCommandMarkdown(subCommand, $"{DocsFolder}/{subFileName}.mdx", position++);
             }
             else
             {
@@ -198,7 +221,7 @@ public class GenerateMarkdownHandler : IRequestHandler<GenerateMarkdownRequest, 
 
     private static void AddHeroBanner(StringBuilder sb, string commandName, string commandDescription)
     {
-        sb.AppendLine("import HeroBanner from '../../src/components/HeroBanner/HeroBanner';");
+        sb.AppendLine("import HeroBanner from '../../../src/components/HeroBanner/HeroBanner';");
         sb.AppendLine();
         sb.AppendLine($"<HeroBanner");
         sb.AppendLine($"    title=\"{commandName}\"");
