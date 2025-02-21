@@ -50,9 +50,4 @@ public class UpdateEnvironmentCommand(IMediator mediator, IAnsiConsole console) 
                 );
             });
     }
-
-    public override ValidationResult Validate(CommandContext context, UpdateEnvironmentArgument argument)
-    {
-        return ValidationResult.Success();
-    }
 }
