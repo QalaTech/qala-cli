@@ -104,7 +104,7 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEven
     {
         if (string.IsNullOrWhiteSpace(topicName))
         {
-            return await Task.FromResult<Either<GetSubscriptionErrorResponse, GetSubscriptionSuccessResponse>>(new GetSubscriptionErrorResponse("Topic name is required"));
+            return await Task.FromResult<Either<GetSubscriptionErrorResponse, GetSubscriptionSuccessResponse>>(new GetSubscriptionErrorResponse("Either Topic name or Source name must be provided"));
         }
 
         if (string.IsNullOrWhiteSpace(subscriptionName))
