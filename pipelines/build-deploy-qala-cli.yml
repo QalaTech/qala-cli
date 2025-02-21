@@ -49,14 +49,6 @@ stages:
             command: 'restore'
             projects: '**/*.csproj'
 
-        # Run tests
-        # - ${{ if and(ne(variables['Build.Reason'], 'PullRequest'), in(variables['Build.SourceBranch'], 'refs/heads/release')) }}:
-        #   - task: DotNetCoreCLI@2
-        #     displayName: 'Run tests'
-        #     inputs:
-        #       command: 'test'
-        #       projects: '$(pathToTheProjectTestFile)'
-
         # Build and publish Release executables
         - task: PowerShell@2
           displayName: 'Publish Release executables'
@@ -98,17 +90,15 @@ stages:
           inputs:
             targetType: 'inline'
             script: |
-              # Fetch the previous version from a file or a variable
-              $previousVersion = "$(major).$(minor).$(patch)" # Default value if no previous version is found
-              if (Test-Path "$(Build.ArtifactStagingDirectory)/previousVersion.txt") {
-                $previousVersion = Get-Content "$(Build.ArtifactStagingDirectory)/currentVersion.txt"
+              # Extract the version from the branch name
+              $branchName = "$(Build.SourceBranchName)"
+              if ($branchName -match 'qala-cli-(\d+)\.(\d+)\.(\d+)') {
+                $major = [int]$matches[1]
+                $minor = [int]$matches[2]
+                $patch = [int]$matches[3]
+              } else {
+                throw "Branch name does not match the expected pattern 'qala-cli-{major}.{minor}.{patch}'"
               }
-
-              # Split the previous version into major, minor, and patch
-              $versionParts = $previousVersion -split '\.'
-              $major = [int]$versionParts[0]
-              $minor = [int]$versionParts[1]
-              $patch = [int]$versionParts[2]
 
               # Determine if the branch name starts with hotfix or HOTFIX
               if ($env:BUILD_SOURCEBRANCHNAME -match '^hotfix' -or $env:BUILD_SOURCEBRANCHNAME -match '^HOTFIX') {
@@ -339,7 +329,7 @@ stages:
             tagSource: 'userSpecifiedTag'
             tag: "$(releaseVersion)"
             isPreRelease: false
-            title: 'Release Release $(releaseVersion)'   
+            title: 'Release $(releaseVersion)'   
             assets: |
               $(Pipeline.Workspace)/releaseInstallerWindows/release/*/*.msi
               $(Pipeline.Workspace)/releaseInstallerLinux/release/*.tar.gz
