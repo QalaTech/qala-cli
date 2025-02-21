@@ -44,8 +44,11 @@ public class QalaCliBaseFixture : IDisposable
     public List<Topic> AvailableTopics =
     [
         new() { Id = Guid.NewGuid(), Name = "TestTopic", Description = "Test Topic Description", ProvisioningState = "Provisioning" },
-        new() { Id = Guid.NewGuid(), Name = "TestTopic2", Description = "Test Topic Description 2", ProvisioningState = "Provisioned" },
-        new() { Id = Guid.NewGuid(), Name = "TestTopic3", Description = "Test Topic Description 3", ProvisioningState = "Provisioned" }
+        new() { Id = Guid.NewGuid(), Name = "TestTopic2", Description = "Test Topic Description 2", ProvisioningState = "Provisioning" },
+        new() { Id = Guid.NewGuid(), Name = "TestTopic3", Description = "Test Topic Description 3", ProvisioningState = "Provisioning" },
+        new() { Id = Guid.NewGuid(), Name = "TestTopic4", Description = "Test Topic Description 4", ProvisioningState = "Provisioning" },
+        new() { Id = Guid.NewGuid(), Name = "TestTopic5", Description = "Test Topic Description 5", ProvisioningState = "Provisioning" },
+        new() { Id = Guid.NewGuid(), Name = "TestTopic6", Description = "Test Topic Description 6", ProvisioningState = "Provisioning" }
     ];
 
     public List<Source> AvailableSources =

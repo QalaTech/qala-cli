@@ -90,12 +90,9 @@ public class UpdateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
     {
         var subscriptionNameIndex = arguments.IndexOf("update");
         var subscriptionName = string.Empty;
-        if (subscriptionNameIndex != -1 && subscriptionNameIndex + 1 < arguments.Count)
+        if (subscriptionNameIndex != -1 && subscriptionNameIndex + 1 < arguments.Count && !arguments[subscriptionNameIndex + 1].StartsWith("-"))
         {
-            if (!arguments[subscriptionNameIndex + 1].StartsWith("-"))
-            {
-                subscriptionName = arguments[subscriptionNameIndex + 1];
-            }
+            subscriptionName = arguments[subscriptionNameIndex + 1];
         }
 
         var topicNameIndex = arguments.IndexOf("--topic");
