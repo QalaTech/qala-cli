@@ -100,17 +100,8 @@ stages:
                 throw "Branch name does not match the expected pattern 'qala-cli-{major}.{minor}.{patch}'"
               }
 
-              # Determine if the branch name starts with hotfix or HOTFIX
-              if ($env:BUILD_SOURCEBRANCHNAME -match '^hotfix' -or $env:BUILD_SOURCEBRANCHNAME -match '^HOTFIX') {
-                # Increment the patch version
-                $patch++
-              } else {
-                # Increment the minor version
-                $minor++
-              }
-
               # Set the release version
-              $releaseVersion = "v$major.$minor.$patch-release.$env:BUILD_BUILDID"
+              $releaseVersion = "v$major.$minor.$patch"
               Write-Host "##vso[task.setvariable variable=releaseVersion;isOutput=true]$releaseVersion"
               Write-Host "Release Version: $releaseVersion"
 
@@ -217,50 +208,50 @@ stages:
           displayName: 'Publish to Artifact Staging Directory'
           artifact: "releaseInstallerMacOS"
 
-        # Move the executable file into a bin folder inside the npm folder
-        - task: CopyFiles@2
-          displayName: 'Move the executable file into a bin folder inside the npm folder'
-          inputs:
-            SourceFolder: '$(Pipeline.Workspace)/releasePublishedFilesmacOS-latest/release/osx-arm64'
-            Contents: 'qala'
-            TargetFolder: '$(Build.SourcesDirectory)/build/npm/bin'
+        # # Move the executable file into a bin folder inside the npm folder
+        # - task: CopyFiles@2
+        #   displayName: 'Move the executable file into a bin folder inside the npm folder'
+        #   inputs:
+        #     SourceFolder: '$(Pipeline.Workspace)/releasePublishedFilesmacOS-latest/release/osx-arm64'
+        #     Contents: 'qala'
+        #     TargetFolder: '$(Build.SourcesDirectory)/build/npm/bin'
 
-        # Update the version in the package.json file
-        - task: PowerShell@2
-          displayName: 'Update the version in the package.json file'
-          inputs:
-            targetType: 'inline'
-            script: |
-              $packageJsonPath = "$(Build.SourcesDirectory)/build/npm/package.json"
-              $packageJson = Get-Content -Path $packageJsonPath -Raw | ConvertFrom-Json
-              $packageJson.version = "$(releaseVersion)"
-              $packageJson | ConvertTo-Json -Depth 32 | Set-Content -Path $packageJsonPath
+        # # Update the version in the package.json file
+        # - task: PowerShell@2
+        #   displayName: 'Update the version in the package.json file'
+        #   inputs:
+        #     targetType: 'inline'
+        #     script: |
+        #       $packageJsonPath = "$(Build.SourcesDirectory)/build/npm/package.json"
+        #       $packageJson = Get-Content -Path $packageJsonPath -Raw | ConvertFrom-Json
+        #       $packageJson.version = "$(releaseVersion)"
+        #       $packageJson | ConvertTo-Json -Depth 32 | Set-Content -Path $packageJsonPath
 
-        # Install Node.js
-        - task: NodeTool@0
-          displayName: 'Install Node.js'
-          condition: succeeded()
-          inputs:
-            versionSpec: '20.x'
+        # # Install Node.js
+        # - task: NodeTool@0
+        #   displayName: 'Install Node.js'
+        #   condition: succeeded()
+        #   inputs:
+        #     versionSpec: '20.x'
 
-        # Authenticate npm
-        - task: npmAuthenticate@0
-          displayName: 'Authenticate npm'
-          condition: succeeded()
-          inputs:
-            workingFile: '$(Build.SourcesDirectory)/build/npm/.npmrc'
-            customEndpoint: '$(npmConnection)'
+        # # Authenticate npm
+        # - task: npmAuthenticate@0
+        #   displayName: 'Authenticate npm'
+        #   condition: succeeded()
+        #   inputs:
+        #     workingFile: '$(Build.SourcesDirectory)/build/npm/.npmrc'
+        #     customEndpoint: '$(npmConnection)'
 
-        # Publish npm package
-        - task: Npm@1
-          displayName: 'Publish Release npm package'
-          condition: succeeded()
-          inputs:
-            command: 'custom'
-            customCommand: 'publish --access public'
-            workingDir: '$(Build.SourcesDirectory)/build/npm'
-            publishRegistry: 'useExternalRegistry'
-            publishEndpoint: '$(npmConnection)'
+        # # Publish npm package
+        # - task: Npm@1
+        #   displayName: 'Publish Release npm package'
+        #   condition: succeeded()
+        #   inputs:
+        #     command: 'custom'
+        #     customCommand: 'publish --access public'
+        #     workingDir: '$(Build.SourcesDirectory)/build/npm'
+        #     publishRegistry: 'useExternalRegistry'
+        #     publishEndpoint: '$(npmConnection)'
 
     - job: PackageLinux
       displayName: "Package Linux Tarball"
