@@ -61,7 +61,9 @@ public class QalaCliBaseFixture : IDisposable
     [
         new() { Id = Guid.NewGuid(), Name = "TestSubscription", Description = "Test Subscription Description", ProvisioningState = "Provisioning", MaxDeliveryAttempts = 3, DeadletterCount = 1, WebhookSecret = Guid.NewGuid().ToString() },
         new() { Id = Guid.NewGuid(), Name = "TestSubscription2", Description = "Test Subscription Description 2", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 2, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription3", Description = "Test Subscription Description 3", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 3, WebhookSecret = Guid.NewGuid().ToString() }
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription3", Description = "Test Subscription Description 3", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 3, WebhookSecret = Guid.NewGuid().ToString() },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription4", Description = "Test Subscription Description 4", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 4, WebhookSecret = Guid.NewGuid().ToString() },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription5", Description = "Test Subscription Description 5", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 5, WebhookSecret = Guid.NewGuid().ToString() }
     ];
 
     public List<string> AvailableApiKeys =
