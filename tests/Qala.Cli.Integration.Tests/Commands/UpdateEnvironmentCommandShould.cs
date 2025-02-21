@@ -79,7 +79,7 @@ public class UpdateEnvironmentCommandShould(QalaCliBaseFixture fixture) : IClass
         var expectedEnvironment = fixture.AvailableEnvironments.FirstOrDefault(e => e.Id == Guid.Parse(expectedOutput[0]));
 
         expectedConsole.MarkupLine("Processing request...");
-        expectedConsole.MarkupLine($"[green bold]Environment updated successfully:[/]");
+        expectedConsole.MarkupLine($"[green bold]Environment updated successfully.[/]");
         expectedConsole.Write(new Grid()
             .AddColumns(5)
             .AddRow(

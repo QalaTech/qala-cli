@@ -21,7 +21,7 @@ public static class BaseCommands
                 console.MarkupLine($"[green bold]{entityName} created successfully:[/]");
                 break;
             case CommandAction.Update:
-                console.MarkupLine($"[green bold]{entityName} updated successfully:[/]");
+                console.MarkupLine($"[green bold]{entityName} updated successfully.[/]");
                 break;
             case CommandAction.Delete:
                 console.MarkupLine($"[green bold]{entityName} deleted successfully.[/]");
