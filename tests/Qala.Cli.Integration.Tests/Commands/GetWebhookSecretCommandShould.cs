@@ -30,7 +30,7 @@ public class GetWebhookSecretCommandShould(QalaCliBaseFixture fixture) : IClassF
         var console = new TestConsole();
         var command = new GetWebhookSecretCommand(fixture.Mediator, console);
         var arguments = input.Split(' ').ToList();
-        var context = new CommandContext(arguments, _remainingArguments, "subscription secret inspect", null);
+        var context = new CommandContext(arguments, _remainingArguments, "subscriptions secret inspect", null);
         var (TopicName, SourceName, SubscriptionName) = ExtractArgumentsValues(arguments);
 
         var expectedConsole = new TestConsole();

@@ -177,7 +177,7 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEven
     {
         if (string.IsNullOrWhiteSpace(topicName))
         {
-            return await Task.FromResult<Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>>(new RotateWebhookSecretErrorResponse("Topic name is required"));
+            return await Task.FromResult<Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>>(new RotateWebhookSecretErrorResponse("Either Topic name or Source name must be provided"));
         }
 
         if (string.IsNullOrWhiteSpace(subscriptionName))
