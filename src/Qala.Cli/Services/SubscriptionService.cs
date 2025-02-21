@@ -211,7 +211,7 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEven
     {
         if (string.IsNullOrWhiteSpace(topicName))
         {
-            return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Topic name is required"));
+            return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Either Topic name or Source name must be provided"));
         }
 
         if (string.IsNullOrWhiteSpace(subscriptionName))
@@ -268,9 +268,9 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEven
             }
         }
 
-        if (maxDeliveryAttempts is not null)
+        if (maxDeliveryAttempts != null && maxDeliveryAttempts != 0)
         {
-            if (maxDeliveryAttempts <= 0 && maxDeliveryAttempts > 10)
+            if (maxDeliveryAttempts <= 0 || maxDeliveryAttempts > 10)
             {
                 return await Task.FromResult<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>>(new UpdateSubscriptionErrorResponse("Max delivery attempts should be a value between 0 and 10"));
             }
