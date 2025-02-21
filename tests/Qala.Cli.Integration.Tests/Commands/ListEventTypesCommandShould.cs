@@ -15,6 +15,8 @@ public class ListEventTypesCommandShould(QalaCliBaseFixture fixture) : IClassFix
     [Theory]
     [InlineData("events list", true, null, null)]
     [InlineData("events ls", true, null, null)]
+    [InlineData("ev list", true, null, null)]
+    [InlineData("ev ls", true, null, null)]
     public async Task Execute(string input, bool expectedSuccess, string[] expectedValidationResult, string[] expectedOutput)
     {
         // Arrange

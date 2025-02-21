@@ -15,6 +15,8 @@ public class ListTopicsCommandShould(QalaCliBaseFixture fixture) : IClassFixture
     [Theory]
     [InlineData("topics list", true, null, null)]
     [InlineData("topics ls", true, null, null)]
+    [InlineData("tp list", true, null, null)]
+    [InlineData("tp ls", true, null, null)]
     public async Task Execute(string input, bool expectedSuccess, string[] expectedValidationResult, string[] expectedOutput)
     {
         // Arrange
