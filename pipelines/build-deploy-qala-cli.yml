@@ -316,7 +316,7 @@ stages:
           inputs:
             gitHubConnection: '$(gitHubConnection)'
             repositoryName: '$(repositoryName)'
-            target: '$(Build.SourceBranchName)'
+            target: '$(Build.SourceBranch)'
             tagSource: 'userSpecifiedTag'
             tag: "$(releaseVersion)"
             isPreRelease: true
