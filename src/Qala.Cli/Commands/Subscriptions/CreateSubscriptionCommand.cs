@@ -80,6 +80,11 @@ public class CreateSubscriptionCommand(IMediator mediator, IAnsiConsole console)
             return ValidationResult.Error("At least one event type name is required.");
         }
 
+        if (argument.MaxDeliveryAttempts < 0 || argument.MaxDeliveryAttempts > 10)
+        {
+            return ValidationResult.Error("Max delivery attempts should be between 0 and 10.");
+        }
+
         return ValidationResult.Success();
     }
 }

@@ -12,12 +12,17 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEven
     {
         if (string.IsNullOrWhiteSpace(topicName))
         {
-            return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Topic name is required"));
+            return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Either Topic name or Source name must be provided"));
         }
 
         if (string.IsNullOrWhiteSpace(name))
         {
             return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Name is required"));
+        }
+
+        if (string.IsNullOrWhiteSpace(description))
+        {
+            return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Description is required"));
         }
 
         if (string.IsNullOrWhiteSpace(webhookUrl))
@@ -30,9 +35,9 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEven
             return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Event type ids are required"));
         }
 
-        if (maxDeliveryAttempts <= 0)
+        if (maxDeliveryAttempts < 0 || maxDeliveryAttempts > 10)
         {
-            return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Max delivery attempts should be greater than 0"));
+            return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Max delivery attempts should be between 0 and 10"));
         }
 
         List<Guid> eventTypeIds = [];
