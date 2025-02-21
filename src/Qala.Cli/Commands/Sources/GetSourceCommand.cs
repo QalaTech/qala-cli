@@ -38,7 +38,7 @@ public class GetSourceCommand(IMediator mediator, IAnsiConsole console) : AsyncC
                                     new Text(success.Source.Description),
                                     new Text(success.Source.SourceType.ToString()),
                                     new Text(string.Join(", ", success.Source.Configuration.AllowedHttpMethods)),
-                                    new Text(success.Source.Configuration.AuthenticationScheme.Type.ToString()),
+                                    new Text(success.Source.Configuration.AuthenticationScheme!.Type.ToString()),
                                     new Text(string.Join(", ", success.Source.Configuration.WhitelistedIpRanges))
                                 )
                             );
@@ -53,5 +53,15 @@ public class GetSourceCommand(IMediator mediator, IAnsiConsole console) : AsyncC
                         }
                     );
             });
+    }
+
+    public override ValidationResult Validate(CommandContext context, GetSourceArgument argument)
+    {
+        if (string.IsNullOrWhiteSpace(argument.Name))
+        {
+            return ValidationResult.Error("Source name is required.");
+        }
+
+        return ValidationResult.Success();
     }
 }

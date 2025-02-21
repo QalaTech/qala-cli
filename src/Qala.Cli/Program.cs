@@ -129,7 +129,7 @@ app.Configure(config =>
             .WithExample("qala sub update <SUBSCRIPTION_NAME> --topic <TOPIC_NAME> -n <NEW_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>");
         s.AddCommand<DeleteSubscriptionCommand>("delete")
             .WithDescription("this command deletes the subscription with the specified ID.")
-            .WithExample("qala sub delete --topic <TOPIC_NAME> -s <SUBSCRIPTION_NAME>");
+            .WithExample("qala sub delete --topic <TOPIC_NAME> --subscription <SUBSCRIPTION_NAME>");
         s.AddBranch("secret", ws =>
         {
             ws.AddCommand<GetWebhookSecretCommand>("inspect")
