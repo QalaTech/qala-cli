@@ -33,4 +33,14 @@ public class DeleteSourceCommand(IMediator mediator, IAnsiConsole console) : Asy
                     );
             });
     }
+
+    public override ValidationResult Validate(CommandContext context, DeleteSourceArgument argument)
+    {
+        if (string.IsNullOrWhiteSpace(argument.Name))
+        {
+            return ValidationResult.Error("Source name is required.");
+        }
+
+        return ValidationResult.Success();
+    }
 }
