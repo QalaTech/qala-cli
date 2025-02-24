@@ -11,8 +11,8 @@ variables:
   pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj' 
   pathToTheProjectTestFile: '$(Build.SourcesDirectory)/tests/Qala.Cli.Integration.Tests/Qala.Cli.Integration.Tests.csproj' 
   runtimeIdentifiers: 'win-x64;win-arm64;linux-x64;osx-arm64'
-  gitHubConnection: 'github.com_tvcosta'
-  npmConnection: 'npm_tiagoqalatech'
+  gitHubConnection: 'QalaTech'
+  npmConnection: 'QalaTech_NPM'
   repositoryName: 'QalaTech/qala-cli'
   major: 1
   minor: 0
@@ -226,13 +226,6 @@ stages:
               $packageJson = Get-Content -Path $packageJsonPath -Raw | ConvertFrom-Json
               $packageJson.version = "$(releaseVersion)"
               $packageJson | ConvertTo-Json -Depth 32 | Set-Content -Path $packageJsonPath
-
-        # Install Node.js
-        - task: NodeTool@0
-          displayName: 'Install Node.js'
-          condition: succeeded()
-          inputs:
-            versionSpec: '20.x'
 
         # Authenticate npm
         - task: npmAuthenticate@0
