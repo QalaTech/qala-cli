@@ -82,7 +82,7 @@ git push origin <your-branch-name>
 ```
 
 ### 7. Open a Pull Request
-Go to the original repository and click on `New Pull Request`. Select your branch and submit the pull request with a meaningful description.
+Go to the original repository and click on `New Pull Request`. Select your branch and submit the pull request by selecting the right template and filling in.
 
 Here's a [What is a Pull Request?](https://yangsu.github.io/pull-request-tutorial/) information.
 
