@@ -5,7 +5,7 @@ resources:
 trigger:
   branches:
     include:
-      - release/*
+      - releases/*
 
 variables:
   pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj' 
