@@ -52,7 +52,7 @@ public class GenerateMarkdownHandler : IRequestHandler<GenerateMarkdownRequest, 
 
                 if (subCommands.Count != 0)
                 {
-                    mainSb.AppendLine($"<tr><td><a href=\"{fileName}\" title=\"Learn about {commandName}\">{commandName}</a></td><td>{description}</td></tr>");
+                    mainSb.AppendLine($"<tr><td><a href=\"/docs/references/qala-cli-docs/{fileName}\" title=\"Learn about {commandName}\">{commandName}</a></td><td>{description}</td></tr>");
                     GenerateSubCommandMarkdown(command, $"{DocsFolder}/{fileName}.mdx", sidebarPosition++);
                 }
                 else
@@ -126,7 +126,7 @@ public class GenerateMarkdownHandler : IRequestHandler<GenerateMarkdownRequest, 
 
             if (deeperSubCommands.Count != 0)
             {
-                sb.AppendLine($"<tr><td><a href=\"{subFileName}\" title=\"Learn about {subCommandName}\">{subCommandName}</a></td><td>{subDescription}</td></tr>");
+                sb.AppendLine($"<tr><td><a href=\"/docs/references/qala-cli-docs/{subFileName}\" title=\"Learn about {subCommandName}\">{subCommandName}</a></td><td>{subDescription}</td></tr>");
                 GenerateSubCommandMarkdown(subCommand, $"{DocsFolder}/{subFileName}.mdx", position++);
             }
             else
