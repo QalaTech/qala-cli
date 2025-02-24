@@ -625,8 +625,8 @@ Kind="scalar" ClrType="System.String">
         </Option>
       </Parameters>
       <Examples>
-        <Example commandLine="qala sub delete --topic &lt;TOPIC_NAME&gt; -s 
-&lt;SUBSCRIPTION_NAME&gt;" />
+        <Example commandLine="qala sub delete --topic &lt;TOPIC_NAME&gt; 
+--subscription &lt;SUBSCRIPTION_NAME&gt;" />
       </Examples>
     </Command>
     <!--SECRET-->

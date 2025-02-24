@@ -11,7 +11,7 @@ variables:
   pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj' 
   pathToTheProjectTestFile: '$(Build.SourcesDirectory)/tests/Qala.Cli.Integration.Tests/Qala.Cli.Integration.Tests.csproj' 
   runtimeIdentifiers: 'win-x64;win-arm64;linux-x64;osx-arm64'
-  gitHubConnection: 'QalaTech'
+  gitHubConnection: 'github.com_release'
   npmConnection: 'QalaTech_NPM'
   repositoryName: 'QalaTech/qala-cli'
   major: 1
@@ -208,13 +208,29 @@ stages:
           displayName: 'Publish to Artifact Staging Directory'
           artifact: "releaseInstallerMacOS"
 
-        # Move the executable file into a bin folder inside the npm folder
+        # Move the executable files into a bin folder inside the npm folder
         - task: CopyFiles@2
           displayName: 'Move the executable file into a bin folder inside the npm folder'
           inputs:
             SourceFolder: '$(Pipeline.Workspace)/releasePublishedFilesmacOS-latest/release/osx-arm64'
             Contents: 'qala'
             TargetFolder: '$(Build.SourcesDirectory)/build/npm/bin'
+
+        # Move the config.yaml file into the npm folder
+        - task: CopyFiles@2
+          displayName: 'Move the config.yaml file into a bin folder inside the npm folder'
+          inputs:
+            SourceFolder: '$(Pipeline.Workspace)/releasePublishedFilesmacOS-latest/release/osx-arm64'
+            Contents: 'config.yaml'
+            TargetFolder: '$(Build.SourcesDirectory)/build/npm/bin'
+
+        # Move the README.md file into the npm folder
+        - task: CopyFiles@2
+          displayName: 'Move the README.md file into the npm folder'
+          inputs:
+            SourceFolder: '$(Build.SourcesDirectory)'
+            Contents: 'README.md'
+            TargetFolder: '$(Build.SourcesDirectory)/build/npm'
 
         # Update the version in the package.json file
         - task: PowerShell@2
