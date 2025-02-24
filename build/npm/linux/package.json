@@ -37,6 +37,5 @@
   "files": [
     "bin/qala",
     "bin/config.yaml"
-  ],
-  "readme": "../../README.md"
+  ]
 }
