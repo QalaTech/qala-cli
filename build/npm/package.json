@@ -1,5 +1,5 @@
 {
-  "name": "qala-cli",
+  "name": "@qala/qala-cli",
   "version": "1.0.0",
   "description": "Qala CLI is a command-line interface tool designed to simplify and automate various tasks for developers that are using the Qala Q-Flow.",
   "main": "index.js",
@@ -9,6 +9,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/QalaTech/qala-cli.git"
+  },
+  "bin": {
+    "qala": "./bin/qala"
   },
   "keywords": [
     "qala",
@@ -24,12 +27,15 @@
     "url": "https://github.com/QalaTech/qala-cli/issues"
   },
   "homepage": "https://qalatech.io",
-  "bin": "./index.js",
   "os": [
     "darwin"
   ],
   "cpu": [
     "arm64"
+  ],
+  "files": [
+    "bin/qala",
+    "bin/config.yaml"
   ],
   "readme": "../../README.md"
 }

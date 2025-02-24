@@ -17,8 +17,7 @@ variables:
   pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj' 
   pathToTheProjectTestFile: '$(Build.SourcesDirectory)/tests/Qala.Cli.Integration.Tests/Qala.Cli.Integration.Tests.csproj' 
   runtimeIdentifiers: 'win-x64;win-arm64;linux-x64;osx-arm64'
-  gitHubConnection: 'github.com_tvcosta'
-  npmConnection: 'npm_tiagoqalatech'
+  gitHubConnection: 'QalaTech'
   repositoryName: 'QalaTech/qala-cli'
   major: 1
   minor: 0
@@ -91,12 +90,12 @@ stages:
             projects: '**/*.csproj'
 
         # Run tests
-        # - task: DotNetCoreCLI@2
-        #   displayName: 'Run tests'
-        #   condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), in(variables['Build.SourceBranch'], 'refs/heads/master'))
-        #   inputs:
-        #     command: 'test'
-        #     projects: '$(pathToTheProjectTestFile)'
+        - task: DotNetCoreCLI@2
+          displayName: 'Run tests'
+          condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), in(variables['Build.SourceBranch'], 'refs/heads/master'))
+          inputs:
+            command: 'test'
+            projects: '$(pathToTheProjectTestFile)'
 
         # Build and publish Alpha executables
         - task: PowerShell@2
