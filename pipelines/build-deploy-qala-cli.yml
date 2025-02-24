@@ -41,6 +41,40 @@ stages:
       pool: 
         vmImage: '$(vmImage)'
       steps: 
+        # Modify the config.yaml with variable values from the pipeline
+        - task: PowerShell@2
+          displayName: "Generate and Replace config.yaml"
+          inputs:
+            targetType: 'inline'
+            script: |
+              $configPath = "$(Build.SourcesDirectory)/src/Qala.Cli/config.yaml"
+
+              # Ensure the directory exists
+              if (!(Test-Path -Path (Split-Path -Path $configPath))) {
+                  New-Item -ItemType Directory -Path (Split-Path -Path $configPath) -Force
+              }
+
+              # Fetch environment variables properly
+              $authUrl = $env:AUTH_URL
+              $authClientId = $env:AUTH_CLIENT_ID
+              $managementApi = $env:MANAGEMENT_API
+
+              # Generate new config.yaml content
+              $configContent = @"
+              Auth:
+                URL: "$authUrl"
+                ClientID: "$authClientId"
+                Audience: "$managementApi"
+
+              Management-API:
+                URL: "$managementApi/v1"
+              "@
+
+              # Overwrite the existing config.yaml
+              $configContent | Set-Content -Path $configPath -Encoding utf8 -Force
+
+              Write-Host "Replaced existing config.yaml successfully!"
+
         # Restore NuGet Packages
         - task: DotNetCoreCLI@2
           displayName: 'Restore NuGet Packages'
@@ -295,7 +329,7 @@ stages:
         - task: CopyFiles@2
           displayName: 'Move the executable file into a bin folder inside the npm folder'
           inputs:
-            SourceFolder: '$(Pipeline.Workspace)/releasePublishedFilesmacOS-latest/release/linux-x64'
+            SourceFolder: '$(Pipeline.Workspace)/releasePublishedFilesubuntu-latest/release/linux-x64'
             Contents: 'qala'
             TargetFolder: '$(Build.SourcesDirectory)/build/npm/linux/bin'
 
@@ -303,7 +337,7 @@ stages:
         - task: CopyFiles@2
           displayName: 'Move the config.yaml file into a bin folder inside the npm folder'
           inputs:
-            SourceFolder: '$(Pipeline.Workspace)/releasePublishedFilesmacOS-latest/release/linux-x64'
+            SourceFolder: '$(Pipeline.Workspace)/releasePublishedFilesubuntu-latest/release/linux-x64'
             Contents: 'config.yaml'
             TargetFolder: '$(Build.SourcesDirectory)/build/npm/linux/bin'
 
