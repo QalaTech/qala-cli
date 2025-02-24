@@ -27,7 +27,6 @@
     "url": "https://github.com/QalaTech/qala-cli/issues"
   },
   "homepage": "https://qalatech.io",
-  "bin": "./index.js",
   "os": [
     "darwin"
   ],
@@ -35,7 +34,8 @@
     "arm64"
   ],
   "files": [
-    "bin/qala"
+    "bin/qala",
+    "bin/config.yaml"
   ],
   "readme": "../../README.md"
 }
