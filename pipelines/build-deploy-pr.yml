@@ -1,0 +1,59 @@
+resources:
+  repositories:
+    - repository: self
+
+pr:
+  autoCancel: false
+  branches:
+    include:
+      - master
+      - release/*
+
+variables:
+  pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj' 
+  pathToTheProjectTestFile: '$(Build.SourcesDirectory)/tests/Qala.Cli.Integration.Tests/Qala.Cli.Integration.Tests.csproj' 
+  runtimeIdentifiers: 'win-x64;win-arm64;linux-x64;osx-arm64'
+  gitHubConnection: 'QalaTech'
+  repositoryName: 'QalaTech/qala-cli'
+  major: 1
+  minor: 0
+  patch: $[counter(variables['major'], 0)]
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:              
+- stage: Build
+  displayName: "Build CLI Application"
+  jobs:
+    - job: Build
+      displayName: "Build and Package CLI"
+      strategy:
+        matrix:
+          Windows:
+            vmImage: 'windows-latest'
+            runtimeIdentifiers: 'win-x64;win-arm64'
+          Linux:
+            vmImage: 'ubuntu-latest'
+            runtimeIdentifiers: 'linux-x64'
+          macOS:
+            vmImage: 'macOS-latest'
+            runtimeIdentifiers: 'osx-arm64'
+      pool: 
+        vmImage: '$(vmImage)'
+      steps: 
+        # Restore NuGet Packages
+        - task: DotNetCoreCLI@2
+          displayName: 'Restore NuGet Packages'
+          condition: succeeded()
+          inputs:
+            command: 'restore'
+            projects: '**/*.csproj'
+
+        # Run tests
+        - task: DotNetCoreCLI@2
+          displayName: 'Run tests'
+          condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'), in(variables['Build.SourceBranch'], 'refs/heads/master'))
+          inputs:
+            command: 'test'
+            projects: '$(pathToTheProjectTestFile)'
