@@ -52,7 +52,7 @@ Create a branch from master:
 
 ```sh
 # Assuming you are in master
-git checkout -b feature/<issue-id>
+git checkout -b features/<issue-id>
 ```
 
 #### 3.2 Bug fixing
@@ -60,7 +60,7 @@ git checkout -b feature/<issue-id>
 Create a branch from the latest release branch:
 
 ```sh
-git checkout release/<latest-version>
+git checkout releases/<latest-version>
 git checkout -b hotfix/<issue-id>
 ```
 
@@ -88,7 +88,7 @@ Here's a [What is a Pull Request?](https://yangsu.github.io/pull-request-tutoria
 
 Be sure to make the `PR`to the branch that you originally branched:
 - If new feature, from `master`
-- if bug fixing. from `release/<latest-version>`
+- if bug fixing. from `releases/<latest-version>`
 
 ## Code of Conduct
 By contributing, you agree to follow our [Code of Conduct](CODE_OF_CONDUCT.md).
