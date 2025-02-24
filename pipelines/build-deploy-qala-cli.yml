@@ -214,7 +214,7 @@ stages:
           inputs:
             SourceFolder: '$(Pipeline.Workspace)/releasePublishedFilesmacOS-latest/release/osx-arm64'
             Contents: 'qala'
-            TargetFolder: '$(Build.SourcesDirectory)/build/npm/bin'
+            TargetFolder: '$(Build.SourcesDirectory)/build/npm/macos/bin'
 
         # Move the config.yaml file into the npm folder
         - task: CopyFiles@2
@@ -222,7 +222,7 @@ stages:
           inputs:
             SourceFolder: '$(Pipeline.Workspace)/releasePublishedFilesmacOS-latest/release/osx-arm64'
             Contents: 'config.yaml'
-            TargetFolder: '$(Build.SourcesDirectory)/build/npm/bin'
+            TargetFolder: '$(Build.SourcesDirectory)/build/npm/macos/bin'
 
         # Move the README.md file into the npm folder
         - task: CopyFiles@2
@@ -230,7 +230,7 @@ stages:
           inputs:
             SourceFolder: '$(Build.SourcesDirectory)'
             Contents: 'README.md'
-            TargetFolder: '$(Build.SourcesDirectory)/build/npm'
+            TargetFolder: '$(Build.SourcesDirectory)/build/npm/macos'
 
         # Update the version in the package.json file
         - task: PowerShell@2
@@ -238,7 +238,7 @@ stages:
           inputs:
             targetType: 'inline'
             script: |
-              $packageJsonPath = "$(Build.SourcesDirectory)/build/npm/package.json"
+              $packageJsonPath = "$(Build.SourcesDirectory)/build/npm/macos/package.json"
               $packageJson = Get-Content -Path $packageJsonPath -Raw | ConvertFrom-Json
               $packageJson.version = "$(releaseVersion)"
               $packageJson | ConvertTo-Json -Depth 32 | Set-Content -Path $packageJsonPath
@@ -248,7 +248,7 @@ stages:
           displayName: 'Authenticate npm'
           condition: succeeded()
           inputs:
-            workingFile: '$(Build.SourcesDirectory)/build/npm/.npmrc'
+            workingFile: '$(Build.SourcesDirectory)/build/npm/macos/.npmrc'
             customEndpoint: '$(npmConnection)'
 
         # Publish npm package
@@ -258,7 +258,7 @@ stages:
           inputs:
             command: 'custom'
             customCommand: 'publish --access public'
-            workingDir: '$(Build.SourcesDirectory)/build/npm'
+            workingDir: '$(Build.SourcesDirectory)/build/npm/macos'
             publishRegistry: 'useExternalRegistry'
             publishEndpoint: '$(npmConnection)'
 
@@ -290,6 +290,60 @@ stages:
         - publish: '$(Build.ArtifactStagingDirectory)'
           displayName: 'Publish to Artifact Staging Directory'
           artifact: "releaseInstallerLinux"
+
+        # Move the executable files into a bin folder inside the npm folder
+        - task: CopyFiles@2
+          displayName: 'Move the executable file into a bin folder inside the npm folder'
+          inputs:
+            SourceFolder: '$(Pipeline.Workspace)/releasePublishedFilesmacOS-latest/release/linux-x64'
+            Contents: 'qala'
+            TargetFolder: '$(Build.SourcesDirectory)/build/npm/linux/bin'
+
+        # Move the config.yaml file into the npm folder
+        - task: CopyFiles@2
+          displayName: 'Move the config.yaml file into a bin folder inside the npm folder'
+          inputs:
+            SourceFolder: '$(Pipeline.Workspace)/releasePublishedFilesmacOS-latest/release/linux-x64'
+            Contents: 'config.yaml'
+            TargetFolder: '$(Build.SourcesDirectory)/build/npm/linux/bin'
+
+        # Move the README.md file into the npm folder
+        - task: CopyFiles@2
+          displayName: 'Move the README.md file into the npm folder'
+          inputs:
+            SourceFolder: '$(Build.SourcesDirectory)'
+            Contents: 'README.md'
+            TargetFolder: '$(Build.SourcesDirectory)/build/npm/linux'
+
+        # Update the version in the package.json file
+        - task: PowerShell@2
+          displayName: 'Update the version in the package.json file'
+          inputs:
+            targetType: 'inline'
+            script: |
+              $packageJsonPath = "$(Build.SourcesDirectory)/build/npm/linux/package.json"
+              $packageJson = Get-Content -Path $packageJsonPath -Raw | ConvertFrom-Json
+              $packageJson.version = "$(releaseVersion)"
+              $packageJson | ConvertTo-Json -Depth 32 | Set-Content -Path $packageJsonPath
+
+        # Authenticate npm
+        - task: npmAuthenticate@0
+          displayName: 'Authenticate npm'
+          condition: succeeded()
+          inputs:
+            workingFile: '$(Build.SourcesDirectory)/build/npm/linux/.npmrc'
+            customEndpoint: '$(npmConnection)'
+
+        # Publish npm package
+        - task: Npm@1
+          displayName: 'Publish Release npm package'
+          condition: succeeded()
+          inputs:
+            command: 'custom'
+            customCommand: 'publish --access public'
+            workingDir: '$(Build.SourcesDirectory)/build/npm/linux'
+            publishRegistry: 'useExternalRegistry'
+            publishEndpoint: '$(npmConnection)'
 
     - job: GithubRelease
       displayName: Create Github Release
