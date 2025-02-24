@@ -10,6 +10,9 @@
     "type": "git",
     "url": "git+https://github.com/QalaTech/qala-cli.git"
   },
+  "bin": {
+    "qala": "./bin/qala"
+  },
   "keywords": [
     "qala",
     "qflow",
@@ -30,6 +33,9 @@
   ],
   "cpu": [
     "arm64"
+  ],
+  "files": [
+    "bin/qala"
   ],
   "readme": "../../README.md"
 }
