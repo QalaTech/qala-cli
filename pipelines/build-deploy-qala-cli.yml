@@ -41,11 +41,21 @@ stages:
       pool: 
         vmImage: '$(vmImage)'
       steps: 
-        # Modify the config.yaml with variable values from the pipeline
+        # Restore NuGet Packages
+        - task: DotNetCoreCLI@2
+          displayName: 'Restore NuGet Packages'
+          condition: succeeded()
+          inputs:
+            command: 'restore'
+            projects: '**/*.csproj'
+
+        # Build and publish Release executables
         - task: PowerShell@2
-          displayName: "Generate and Replace config.yaml"
+          displayName: 'Publish Release executables'
+          condition: succeeded()
           inputs:
             targetType: 'inline'
+            workingDirectory: $(Build.SourcesDirectory)/src/Qala.Cli
             script: |
               $configPath = "$(Build.SourcesDirectory)/src/Qala.Cli/config.yaml"
 
@@ -76,22 +86,6 @@ stages:
 
               Write-Host "Replaced existing config.yaml successfully!"
 
-        # Restore NuGet Packages
-        - task: DotNetCoreCLI@2
-          displayName: 'Restore NuGet Packages'
-          condition: succeeded()
-          inputs:
-            command: 'restore'
-            projects: '**/*.csproj'
-
-        # Build and publish Release executables
-        - task: PowerShell@2
-          displayName: 'Publish Release executables'
-          condition: succeeded()
-          inputs:
-            targetType: 'inline'
-            workingDirectory: $(Build.SourcesDirectory)/src/Qala.Cli
-            script: |
               $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
               # Check if the pathToTheProjectFile file exists
               if (Test-Path $(pathToTheProjectFile)) {
