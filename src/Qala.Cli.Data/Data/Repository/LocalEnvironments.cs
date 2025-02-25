@@ -17,7 +17,7 @@ public class LocalEnvironments : ILocalEnvironments
             StartInfo = new ProcessStartInfo
             {
                 FileName = "/bin/bash",
-                Arguments = $"-c \"source {GetShellConfigFile()} && echo ${variable}\"",
+                Arguments = $"-c \"echo ${variable}\"",
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
@@ -42,19 +42,33 @@ public class LocalEnvironments : ILocalEnvironments
             return;
         }
 
-        var proc = new Process
+        string shellConfigFile = GetShellConfigFile();
+        string[] lines = File.ReadAllLines(shellConfigFile);
+        bool variableFound = false;
+
+        for (int i = 0; i < lines.Length; i++)
         {
-            StartInfo = new ProcessStartInfo
+            if (lines[i].StartsWith($"export {variable}="))
             {
-                FileName = "/bin/bash",
-                Arguments = $"-c \"echo 'export {variable}={value}' >> {GetShellConfigFile()}\"",
-                RedirectStandardOutput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
+                variableFound = true;
+                if (value != null)
+                {
+                    lines[i] = $"export {variable}={value}";
+                }
+                else
+                {
+                    lines[i] = string.Empty; // Mark for removal
+                }
             }
-        };
-        proc.Start();
-        proc.WaitForExit();
+        }
+
+        if (!variableFound && value != null)
+        {
+            Array.Resize(ref lines, lines.Length + 1);
+            lines[^1] = $"export {variable}={value}";
+        }
+
+        File.WriteAllLines(shellConfigFile, lines.Where(line => !string.IsNullOrWhiteSpace(line)));
     }
 
     private static string GetShellConfigFile()

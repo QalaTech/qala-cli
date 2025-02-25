@@ -126,7 +126,8 @@ public class AuthService(IConfiguration configuration, ILocalEnvironments localE
             }).ToList();
 
             localEnvironments.SetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_AUTH_TOKEN], token);
-            
+            localEnvironments.SetLocalEnvironment(Constants.LocalVariable[LocalVariableType.QALA_API_KEY], null);
+
             return new LoginSuccessResponse(token, environments);
         }
         catch (Exception ex)
@@ -151,4 +152,4 @@ public class AuthService(IConfiguration configuration, ILocalEnvironments localE
 
         return httpClient;
     }
-} 
+}
