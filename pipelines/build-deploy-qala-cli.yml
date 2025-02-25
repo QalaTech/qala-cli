@@ -57,6 +57,23 @@ stages:
             targetType: 'inline'
             workingDirectory: $(Build.SourcesDirectory)/src/Qala.Cli
             script: |
+              # Fetch environment variables properly
+              $authUrl = $env:AUTH_URL
+              $authClientId = $env:AUTH_CLIENT_ID
+              $authAudience = $env:AUTH_AUDIENCE
+              $managementApi = $env:MANAGEMENT_API
+
+              # Generate new config.yaml content
+              $configContent = @"
+              Auth:
+                URL: "$authUrl"
+                ClientID: "$authClientId"
+                Audience: "$authAudience"
+
+              Management-API:
+                URL: "$managementApi"
+              "@
+
               $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
               # Check if the pathToTheProjectFile file exists
               if (Test-Path $(pathToTheProjectFile)) {
@@ -77,23 +94,6 @@ stages:
                 if (!(Test-Path -Path (Split-Path -Path $configPath))) {
                     New-Item -ItemType Directory -Path (Split-Path -Path $configPath) -Force
                 }
-
-                # Fetch environment variables properly
-                $authUrl = $env:AUTH_URL
-                $authClientId = $env:AUTH_CLIENT_ID
-                $authAudience = $env:AUTH_AUDIENCE
-                $managementApi = $env:MANAGEMENT_API
-
-                # Generate new config.yaml content
-                $configContent = @"
-                Auth:
-                  URL: "$authUrl"
-                  ClientID: "$authClientId"
-                  Audience: "$authAudience"
-
-                Management-API:
-                  URL: "$managementApi"
-                "@
 
                 # Overwrite the existing config.yaml
                 $configContent | Set-Content -Path $configPath -Encoding utf8 -Force
