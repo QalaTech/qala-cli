@@ -57,35 +57,6 @@ stages:
             targetType: 'inline'
             workingDirectory: $(Build.SourcesDirectory)/src/Qala.Cli
             script: |
-              $configPath = "$(Build.SourcesDirectory)/src/Qala.Cli/config.yaml"
-
-              # Ensure the directory exists
-              if (!(Test-Path -Path (Split-Path -Path $configPath))) {
-                  New-Item -ItemType Directory -Path (Split-Path -Path $configPath) -Force
-              }
-
-              # Fetch environment variables properly
-              $authUrl = $env:AUTH_URL
-              $authClientId = $env:AUTH_CLIENT_ID
-              $authAudience = $env:AUTH_AUDIENCE
-              $managementApi = $env:MANAGEMENT_API
-
-              # Generate new config.yaml content
-              $configContent = @"
-              Auth:
-                URL: "$authUrl"
-                ClientID: "$authClientId"
-                Audience: "$authAudience"
-
-              Management-API:
-                URL: "$managementApi"
-              "@
-
-              # Overwrite the existing config.yaml
-              $configContent | Set-Content -Path $configPath -Encoding utf8 -Force
-
-              Write-Host "Replaced existing config.yaml successfully!"
-
               $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
               # Check if the pathToTheProjectFile file exists
               if (Test-Path $(pathToTheProjectFile)) {
@@ -97,6 +68,37 @@ stages:
               foreach ($rid in $runtimeIdentifiers) {
                 Write-Host "Publishing Release version for runtime: $rid"
                 dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Build.ArtifactStagingDirectory)/release/$rid"
+                Write-Host "Published Release version for runtime: $rid"
+
+                Write-Host "Changing config.yaml file for runtime: $rid"
+                $configPath = "$(Build.ArtifactStagingDirectory)/release/$rid/config.yaml"
+
+                # Ensure the directory exists
+                if (!(Test-Path -Path (Split-Path -Path $configPath))) {
+                    New-Item -ItemType Directory -Path (Split-Path -Path $configPath) -Force
+                }
+
+                # Fetch environment variables properly
+                $authUrl = $env:AUTH_URL
+                $authClientId = $env:AUTH_CLIENT_ID
+                $authAudience = $env:AUTH_AUDIENCE
+                $managementApi = $env:MANAGEMENT_API
+
+                # Generate new config.yaml content
+                $configContent = @"
+                Auth:
+                  URL: "$authUrl"
+                  ClientID: "$authClientId"
+                  Audience: "$authAudience"
+
+                Management-API:
+                  URL: "$managementApi"
+                "@
+
+                # Overwrite the existing config.yaml
+                $configContent | Set-Content -Path $configPath -Encoding utf8 -Force
+
+                Write-Host "Replaced existing config.yaml successfully for runtime: $rid!"
               }
         
         # Publish the Release executables as an artifact
@@ -174,7 +176,7 @@ stages:
               $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
               foreach ($rid in $runtimeIdentifiers) {
                 Write-Host "Generating the msi file for runtime: $rid"
-                wix build $(Build.SourcesDirectory)/build/wix/qala.wxs -d Version="$(major).$(minor)" -d QalaExecutable="$(Pipeline.Workspace)/releasePublishedFileswindows-latest/release/$rid/qala.exe" -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/release/$rid/qala-cli-$(releaseVersion)-$rid.msi"
+                wix build $(Build.SourcesDirectory)/build/wix/qala.wxs -d Version="$(major).$(minor)" -d QalaExecutable="$(Pipeline.Workspace)/releasePublishedFileswindows-latest/release/$rid/qala.exe" -d QalaConfig="$(Pipeline.Workspace)/releasePublishedFileswindows-latest/release/$rid/config.yaml" -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/release/$rid/qala-cli-$(releaseVersion)-$rid.msi"
               }
         
         # Move all installers and executables to the artifact staging directory

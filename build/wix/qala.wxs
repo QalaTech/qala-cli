@@ -34,7 +34,7 @@
                     <Component Id="ServiceExecutable">
                         <File Id="QalaCliExe" Source="$(var.QalaExecutable)" KeyPath="yes" />
                         <File Id="QalaCliBatchFile" Name="qala.bat" Source=".\build\wix\qala.bat" KeyPath="no" />
-                        <File Id="QalaCliConfig" Source=".\src\Qala.Cli\config.yaml" KeyPath="no" />
+                        <File Id="QalaCliConfig" Source="$(var.QalaConfig)" KeyPath="no" />
                         <!-- Add the installation directory to the PATH environment variable -->
                         <Environment Id="AddToPath" Name="PATH" Value="[INSTALLFOLDER]" Permanent="no" Part="last" Action="set" System="yes" />
                     </Component>
