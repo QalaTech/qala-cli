@@ -90,11 +90,11 @@ stages:
               }
               foreach ($rid in $runtimeIdentifiers) {
                 Write-Host "Publishing Release version for runtime: $rid"
-                dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Build.ArtifactStagingDirectory)/release/$rid"
+                dotnet publish $(pathToTheProjectFile) -r $rid --self-contained true -p:PublishSingleFile=true -o "$(Build.ArtifactStagingDirectory)/alpha/$rid"
                 Write-Host "Published Release version for runtime: $rid"
 
                 Write-Host "Changing config.yaml file for runtime: $rid"
-                $configPath = "$(Build.ArtifactStagingDirectory)/release/$rid/config.yaml"
+                $configPath = "$(Build.ArtifactStagingDirectory)/alpha/$rid/config.yaml"
 
                 # Ensure the directory exists
                 if (!(Test-Path -Path (Split-Path -Path $configPath))) {
@@ -222,7 +222,7 @@ stages:
                 $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
                 foreach ($rid in $runtimeIdentifiers) {
                   Write-Host "Generating the msi file for runtime: $rid"
-                  wix build $(Build.SourcesDirectory)/build/wix/qala.wxs -d Version="$(major).$(minor)" -d QalaExecutable="$(Pipeline.Workspace)/releasePublishedFileswindows-latest/release/$rid/qala.exe" -d QalaConfig="$(Pipeline.Workspace)/releasePublishedFileswindows-latest/release/$rid/config.yaml" -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/release/$rid/qala-cli-$(releaseVersion)-$rid.msi"
+                  wix build $(Build.SourcesDirectory)/build/wix/qala.wxs -d Version="$(major).$(minor)" -d QalaExecutable="$(Pipeline.Workspace)/releasePublishedFileswindows-latest/alpha/$rid/qala.exe" -d QalaConfig="$(Pipeline.Workspace)/releasePublishedFileswindows-latest/alpha/$rid/config.yaml" -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/alpha/$rid/qala-cli-$(releaseVersion)-$rid.msi"
                 }
           
           # Move all installers and executables to the artifact staging directory
