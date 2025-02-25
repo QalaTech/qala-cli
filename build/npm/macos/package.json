@@ -1,5 +1,5 @@
 {
-  "name": "@qala/qala-cli-macos",
+  "name": "@qala/qala-cli-macos-test",
   "version": "1.0.0",
   "description": "Qala CLI is a command-line interface tool for macOS, designed to simplify and automate various tasks for developers that are using the Qala Q-Flow.",
   "main": "index.js",
