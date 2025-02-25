@@ -57,6 +57,7 @@ stages:
               # Fetch environment variables properly
               $authUrl = $env:AUTH_URL
               $authClientId = $env:AUTH_CLIENT_ID
+              $authAudience = $env:AUTH_AUDIENCE
               $managementApi = $env:MANAGEMENT_API
 
               # Generate new config.yaml content
@@ -64,10 +65,10 @@ stages:
               Auth:
                 URL: "$authUrl"
                 ClientID: "$authClientId"
-                Audience: "$managementApi"
+                Audience: "$authAudience"
 
               Management-API:
-                URL: "$managementApi/v1"
+                URL: "$managementApi"
               "@
 
               # Overwrite the existing config.yaml
