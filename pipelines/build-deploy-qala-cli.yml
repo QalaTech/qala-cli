@@ -260,8 +260,16 @@ stages:
           displayName: 'Move the README.md file into the npm folder'
           inputs:
             SourceFolder: '$(Build.SourcesDirectory)'
-            Contents: 'README.md'
+            Contents: 'README.MD'
             TargetFolder: '$(Build.SourcesDirectory)/build/npm/macos'
+
+        # Print the current content of $(Build.SourcesDirectory) and also their folders
+        - task: PowerShell@2
+          displayName: 'Print content of $(Build.SourcesDirectory)'
+          inputs:
+            targetType: 'inline'
+            script: |
+              Get-ChildItem -Path "$(Build.SourcesDirectory)" -Recurse | Format-List
 
         # Print the current content of $(Build.SourcesDirectory)/build/npm/macos and also their folders
         - task: PowerShell@2
