@@ -29,12 +29,12 @@ stages:
       displayName: "Build and Package CLI"
       strategy:
         matrix:
-          # Windows:
-          #   vmImage: 'windows-latest'
-          #   runtimeIdentifiers: 'win-x64;win-arm64'
-          # Linux:
-          #   vmImage: 'ubuntu-latest'
-          #   runtimeIdentifiers: 'linux-x64'
+          Windows:
+            vmImage: 'windows-latest'
+            runtimeIdentifiers: 'win-x64;win-arm64'
+          Linux:
+            vmImage: 'ubuntu-latest'
+            runtimeIdentifiers: 'linux-x64'
           macOS:
             vmImage: 'macOS-latest'
             runtimeIdentifiers: 'osx-arm64'
@@ -140,75 +140,75 @@ stages:
               $newVersion = "$major.$minor.$patch"
               Set-Content -Path "$(Build.ArtifactStagingDirectory)/currentVersion.txt" -Value $newVersion
 
-    # - job: PackageWindows
-    #   displayName: "Package Windows MSI files"
-    #   dependsOn: ReleaseVersion
-    #   condition: succeeded()
-    #   variables:
-    #     runtimeIdentifiers: 'win-x64;win-arm64'
-    #     releaseVersion: $[ dependencies.ReleaseVersion.outputs['SetReleaseVersion.releaseVersion'] ]
-    #   pool: 
-    #     vmImage: 'windows-latest'
-    #   steps: 
-    #     # Download previous published files artifact
-    #     - download: current
-    #       displayName: 'Download previous published files artifact'
-    #       artifact: "releasePublishedFileswindows-latest"
+    - job: PackageWindows
+      displayName: "Package Windows MSI files"
+      dependsOn: ReleaseVersion
+      condition: succeeded()
+      variables:
+        runtimeIdentifiers: 'win-x64;win-arm64'
+        releaseVersion: $[ dependencies.ReleaseVersion.outputs['SetReleaseVersion.releaseVersion'] ]
+      pool: 
+        vmImage: 'windows-latest'
+      steps: 
+        # Download previous published files artifact
+        - download: current
+          displayName: 'Download previous published files artifact'
+          artifact: "releasePublishedFileswindows-latest"
 
-    #     # Install WiX Toolset and UI extensions
-    #     - task: PowerShell@2
-    #       displayName: 'Install WiX Toolset and UI extensions'
-    #       inputs:
-    #         workingDirectory: $(Build.SourcesDirectory)
-    #         targetType: 'inline'
-    #         script: |
-    #           dotnet tool install --global wix --version 5.0.2
-    #           wix extension add WixToolset.UI.wixext/5.0.2
+        # Install WiX Toolset and UI extensions
+        - task: PowerShell@2
+          displayName: 'Install WiX Toolset and UI extensions'
+          inputs:
+            workingDirectory: $(Build.SourcesDirectory)
+            targetType: 'inline'
+            script: |
+              dotnet tool install --global wix --version 5.0.2
+              wix extension add WixToolset.UI.wixext/5.0.2
         
-    #     # Create installers for each runtime identifiers
-    #     - task: PowerShell@2
-    #       displayName: 'Create installers for each runtime identifiers'
-    #       condition: succeeded()
-    #       inputs:
-    #         workingDirectory: $(Build.SourcesDirectory)
-    #         targetType: 'inline'
-    #         script: |
-    #           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-    #           foreach ($rid in $runtimeIdentifiers) {
-    #             Write-Host "Generating the msi file for runtime: $rid"
-    #             wix build $(Build.SourcesDirectory)/build/wix/qala.wxs -d Version="$(major).$(minor)" -d QalaExecutable="$(Pipeline.Workspace)/releasePublishedFileswindows-latest/release/$rid/qala.exe" -d QalaConfig="$(Pipeline.Workspace)/releasePublishedFileswindows-latest/release/$rid/config.yaml" -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/release/$rid/qala-cli-$(releaseVersion)-$rid.msi"
-    #           }
+        # Create installers for each runtime identifiers
+        - task: PowerShell@2
+          displayName: 'Create installers for each runtime identifiers'
+          condition: succeeded()
+          inputs:
+            workingDirectory: $(Build.SourcesDirectory)
+            targetType: 'inline'
+            script: |
+              $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
+              foreach ($rid in $runtimeIdentifiers) {
+                Write-Host "Generating the msi file for runtime: $rid"
+                wix build $(Build.SourcesDirectory)/build/wix/qala.wxs -d Version="$(major).$(minor)" -d QalaExecutable="$(Pipeline.Workspace)/releasePublishedFileswindows-latest/release/$rid/qala.exe" -d QalaConfig="$(Pipeline.Workspace)/releasePublishedFileswindows-latest/release/$rid/config.yaml" -ext WixToolset.UI.wixext -o "$(Pipeline.Workspace)/release/$rid/qala-cli-$(releaseVersion)-$rid.msi"
+              }
         
-    #     # Move all installers and executables to the artifact staging directory
-    #     - task: PowerShell@2
-    #       displayName: 'Move all installers and executables to the artifact staging directory'
-    #       condition: succeeded()
-    #       inputs:
-    #         targetType: 'inline'
-    #         script: |
-    #           $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
-    #           foreach ($rid in $runtimeIdentifiers) {
-    #             Write-Host "Moving installer and executables for runtime: $rid"
-    #             $releaseDir = "$(Build.ArtifactStagingDirectory)/release"
-    #             $ridDir = "$releaseDir/$rid"
+        # Move all installers and executables to the artifact staging directory
+        - task: PowerShell@2
+          displayName: 'Move all installers and executables to the artifact staging directory'
+          condition: succeeded()
+          inputs:
+            targetType: 'inline'
+            script: |
+              $runtimeIdentifiers = "$(runtimeIdentifiers)".Split(";")
+              foreach ($rid in $runtimeIdentifiers) {
+                Write-Host "Moving installer and executables for runtime: $rid"
+                $releaseDir = "$(Build.ArtifactStagingDirectory)/release"
+                $ridDir = "$releaseDir/$rid"
 
-    #             if (-not (Test-Path -Path $releaseDir)) {
-    #               Write-Host "Creating directory: $releaseDir"
-    #               New-Item -ItemType Directory -Path $releaseDir
-    #             }
+                if (-not (Test-Path -Path $releaseDir)) {
+                  Write-Host "Creating directory: $releaseDir"
+                  New-Item -ItemType Directory -Path $releaseDir
+                }
 
-    #             if (-not (Test-Path -Path $ridDir)) {
-    #               Write-Host "Creating directory: $ridDir"
-    #               New-Item -ItemType Directory -Path $ridDir
-    #             }
+                if (-not (Test-Path -Path $ridDir)) {
+                  Write-Host "Creating directory: $ridDir"
+                  New-Item -ItemType Directory -Path $ridDir
+                }
 
-    #             Move-Item -Path "$(Pipeline.Workspace)/release/$rid/qala-cli-$(releaseVersion)-$rid.msi" -Destination $ridDir -Force
-    #           }
+                Move-Item -Path "$(Pipeline.Workspace)/release/$rid/qala-cli-$(releaseVersion)-$rid.msi" -Destination $ridDir -Force
+              }
 
-    #     # Publish the Release Windows package into the artifact staging directory
-    #     - publish: '$(Build.ArtifactStagingDirectory)'
-    #       displayName: 'Publish to Artifact Staging Directory'
-    #       artifact: "releaseInstallerWindows"
+        # Publish the Release Windows package into the artifact staging directory
+        - publish: '$(Build.ArtifactStagingDirectory)'
+          displayName: 'Publish to Artifact Staging Directory'
+          artifact: "releaseInstallerWindows"
         
     - job: PackageMacOS
       displayName: "Package macOS NPM module"
@@ -263,22 +263,6 @@ stages:
             Contents: 'README.MD'
             TargetFolder: '$(Build.SourcesDirectory)/build/npm/macos'
 
-        # Print the current content of $(Build.SourcesDirectory) and also their folders
-        - task: PowerShell@2
-          displayName: 'Print content of $(Build.SourcesDirectory)'
-          inputs:
-            targetType: 'inline'
-            script: |
-              Get-ChildItem -Path "$(Build.SourcesDirectory)" -Recurse | Format-List
-
-        # Print the current content of $(Build.SourcesDirectory)/build/npm/macos and also their folders
-        - task: PowerShell@2
-          displayName: 'Print content of macos npm folder'
-          inputs:
-            targetType: 'inline'
-            script: |
-              Get-ChildItem -Path "$(Build.SourcesDirectory)/build/npm/macos" -Recurse | Format-List
-
         # Update the version in the package.json file
         - task: PowerShell@2
           displayName: 'Update the version in the package.json file'
@@ -290,149 +274,149 @@ stages:
               $packageJson.version = "$(releaseVersion)"
               $packageJson | ConvertTo-Json -Depth 32 | Set-Content -Path $packageJsonPath
 
-        # # Authenticate npm
-        # - task: npmAuthenticate@0
-        #   displayName: 'Authenticate npm'
-        #   condition: succeeded()
-        #   inputs:
-        #     workingFile: '$(Build.SourcesDirectory)/build/npm/macos/.npmrc'
-        #     customEndpoint: '$(npmConnection)'
+        # Authenticate npm
+        - task: npmAuthenticate@0
+          displayName: 'Authenticate npm'
+          condition: succeeded()
+          inputs:
+            workingFile: '$(Build.SourcesDirectory)/build/npm/macos/.npmrc'
+            customEndpoint: '$(npmConnection)'
 
-        # # Publish npm package
-        # - task: Npm@1
-        #   displayName: 'Publish Release npm package'
-        #   condition: succeeded()
-        #   inputs:
-        #     command: 'custom'
-        #     customCommand: 'publish --access public'
-        #     workingDir: '$(Build.SourcesDirectory)/build/npm/macos'
-        #     publishRegistry: 'useExternalRegistry'
-        #     publishEndpoint: '$(npmConnection)'
+        # Publish npm package
+        - task: Npm@1
+          displayName: 'Publish Release npm package'
+          condition: succeeded()
+          inputs:
+            command: 'custom'
+            customCommand: 'publish --access public'
+            workingDir: '$(Build.SourcesDirectory)/build/npm/macos'
+            publishRegistry: 'useExternalRegistry'
+            publishEndpoint: '$(npmConnection)'
 
-    # - job: PackageLinux
-    #   displayName: "Package Linux Tarball"
-    #   dependsOn: ReleaseVersion
-    #   condition: succeeded()
-    #   variables:
-    #     releaseVersion: $[ dependencies.ReleaseVersion.outputs['SetReleaseVersion.releaseVersion'] ]
-    #   pool:
-    #     vmImage: 'ubuntu-latest'
-    #   steps:
-    #     # Download previous published files artifact
-    #     - download: current
-    #       displayName: 'Download previous published files artifact'
-    #       artifact: "releasePublishedFilesubuntu-latest"
+    - job: PackageLinux
+      displayName: "Package Linux Tarball"
+      dependsOn: ReleaseVersion
+      condition: succeeded()
+      variables:
+        releaseVersion: $[ dependencies.ReleaseVersion.outputs['SetReleaseVersion.releaseVersion'] ]
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+        # Download previous published files artifact
+        - download: current
+          displayName: 'Download previous published files artifact'
+          artifact: "releasePublishedFilesubuntu-latest"
 
-    #     # Package linux tarball
-    #     - task: ArchiveFiles@2
-    #       displayName: 'Package linux tarball'
-    #       inputs:
-    #         rootFolderOrFile: '$(Pipeline.Workspace)/releasePublishedFilesubuntu-latest/release/linux-x64/qala'
-    #         includeRootFolder: false
-    #         archiveType: 'tar'
-    #         tarCompression: 'gz'
-    #         archiveFile: '$(Build.ArtifactStagingDirectory)/release/qala-cli-$(releaseVersion)-linux-x64.tar.gz'
+        # Package linux tarball
+        - task: ArchiveFiles@2
+          displayName: 'Package linux tarball'
+          inputs:
+            rootFolderOrFile: '$(Pipeline.Workspace)/releasePublishedFilesubuntu-latest/release/linux-x64/qala'
+            includeRootFolder: false
+            archiveType: 'tar'
+            tarCompression: 'gz'
+            archiveFile: '$(Build.ArtifactStagingDirectory)/release/qala-cli-$(releaseVersion)-linux-x64.tar.gz'
 
-    #     # Publish the Release Linux package into the artifact staging directory
-    #     - publish: '$(Build.ArtifactStagingDirectory)'
-    #       displayName: 'Publish to Artifact Staging Directory'
-    #       artifact: "releaseInstallerLinux"
+        # Publish the Release Linux package into the artifact staging directory
+        - publish: '$(Build.ArtifactStagingDirectory)'
+          displayName: 'Publish to Artifact Staging Directory'
+          artifact: "releaseInstallerLinux"
 
-    #     # Move the executable files into a bin folder inside the npm folder
-    #     - task: CopyFiles@2
-    #       displayName: 'Move the executable file into a bin folder inside the npm folder'
-    #       inputs:
-    #         SourceFolder: '$(Pipeline.Workspace)/releasePublishedFilesubuntu-latest/release/linux-x64'
-    #         Contents: 'qala'
-    #         TargetFolder: '$(Build.SourcesDirectory)/build/npm/linux/bin'
+        # Move the executable files into a bin folder inside the npm folder
+        - task: CopyFiles@2
+          displayName: 'Move the executable file into a bin folder inside the npm folder'
+          inputs:
+            SourceFolder: '$(Pipeline.Workspace)/releasePublishedFilesubuntu-latest/release/linux-x64'
+            Contents: 'qala'
+            TargetFolder: '$(Build.SourcesDirectory)/build/npm/linux/bin'
 
-    #     # Move the config.yaml file into the npm folder
-    #     - task: CopyFiles@2
-    #       displayName: 'Move the config.yaml file into a bin folder inside the npm folder'
-    #       inputs:
-    #         SourceFolder: '$(Pipeline.Workspace)/releasePublishedFilesubuntu-latest/release/linux-x64'
-    #         Contents: 'config.yaml'
-    #         TargetFolder: '$(Build.SourcesDirectory)/build/npm/linux/bin'
+        # Move the config.yaml file into the npm folder
+        - task: CopyFiles@2
+          displayName: 'Move the config.yaml file into a bin folder inside the npm folder'
+          inputs:
+            SourceFolder: '$(Pipeline.Workspace)/releasePublishedFilesubuntu-latest/release/linux-x64'
+            Contents: 'config.yaml'
+            TargetFolder: '$(Build.SourcesDirectory)/build/npm/linux/bin'
 
-    #     # Move the README.md file into the npm folder
-    #     - task: CopyFiles@2
-    #       displayName: 'Move the README.md file into the npm folder'
-    #       inputs:
-    #         SourceFolder: '$(Build.SourcesDirectory)'
-    #         Contents: 'README.md'
-    #         TargetFolder: '$(Build.SourcesDirectory)/build/npm/linux'
+        # Move the README.md file into the npm folder
+        - task: CopyFiles@2
+          displayName: 'Move the README.md file into the npm folder'
+          inputs:
+            SourceFolder: '$(Build.SourcesDirectory)'
+            Contents: 'README.md'
+            TargetFolder: '$(Build.SourcesDirectory)/build/npm/linux'
 
-    #     # Update the version in the package.json file
-    #     - task: PowerShell@2
-    #       displayName: 'Update the version in the package.json file'
-    #       inputs:
-    #         targetType: 'inline'
-    #         script: |
-    #           $packageJsonPath = "$(Build.SourcesDirectory)/build/npm/linux/package.json"
-    #           $packageJson = Get-Content -Path $packageJsonPath -Raw | ConvertFrom-Json
-    #           $packageJson.version = "$(releaseVersion)"
-    #           $packageJson | ConvertTo-Json -Depth 32 | Set-Content -Path $packageJsonPath
+        # Update the version in the package.json file
+        - task: PowerShell@2
+          displayName: 'Update the version in the package.json file'
+          inputs:
+            targetType: 'inline'
+            script: |
+              $packageJsonPath = "$(Build.SourcesDirectory)/build/npm/linux/package.json"
+              $packageJson = Get-Content -Path $packageJsonPath -Raw | ConvertFrom-Json
+              $packageJson.version = "$(releaseVersion)"
+              $packageJson | ConvertTo-Json -Depth 32 | Set-Content -Path $packageJsonPath
 
-    #     # Authenticate npm
-    #     - task: npmAuthenticate@0
-    #       displayName: 'Authenticate npm'
-    #       condition: succeeded()
-    #       inputs:
-    #         workingFile: '$(Build.SourcesDirectory)/build/npm/linux/.npmrc'
-    #         customEndpoint: '$(npmConnection)'
+        # Authenticate npm
+        - task: npmAuthenticate@0
+          displayName: 'Authenticate npm'
+          condition: succeeded()
+          inputs:
+            workingFile: '$(Build.SourcesDirectory)/build/npm/linux/.npmrc'
+            customEndpoint: '$(npmConnection)'
 
-    #     # Publish npm package
-    #     - task: Npm@1
-    #       displayName: 'Publish Release npm package'
-    #       condition: succeeded()
-    #       inputs:
-    #         command: 'custom'
-    #         customCommand: 'publish --access public'
-    #         workingDir: '$(Build.SourcesDirectory)/build/npm/linux'
-    #         publishRegistry: 'useExternalRegistry'
-    #         publishEndpoint: '$(npmConnection)'
+        # Publish npm package
+        - task: Npm@1
+          displayName: 'Publish Release npm package'
+          condition: succeeded()
+          inputs:
+            command: 'custom'
+            customCommand: 'publish --access public'
+            workingDir: '$(Build.SourcesDirectory)/build/npm/linux'
+            publishRegistry: 'useExternalRegistry'
+            publishEndpoint: '$(npmConnection)'
 
-    # - job: GithubRelease
-    #   displayName: Create Github Release
-    #   dependsOn:
-    #     - ReleaseVersion
-    #     - PackageWindows
-    #     - PackageMacOS
-    #     - PackageLinux
-    #   condition: succeeded()
-    #   variables:
-    #     releaseVersion: $[ dependencies.ReleaseVersion.outputs['SetReleaseVersion.releaseVersion'] ]
-    #   pool:
-    #     vmImage: 'ubuntu-latest'
-    #   steps:
-    #     # Download previous installer linux file in artifact
-    #     - download: current
-    #       displayName: 'Download previous package linux file in artifact'
-    #       artifact: "releaseInstallerLinux"
+    - job: GithubRelease
+      displayName: Create Github Release
+      dependsOn:
+        - ReleaseVersion
+        - PackageWindows
+        - PackageMacOS
+        - PackageLinux
+      condition: succeeded()
+      variables:
+        releaseVersion: $[ dependencies.ReleaseVersion.outputs['SetReleaseVersion.releaseVersion'] ]
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+        # Download previous installer linux file in artifact
+        - download: current
+          displayName: 'Download previous package linux file in artifact'
+          artifact: "releaseInstallerLinux"
 
-    #     # Download previous installer windows file in artifact
-    #     - download: current
-    #       displayName: 'Download previous package windows file in artifact'
-    #       artifact: "releaseInstallerWindows"
+        # Download previous installer windows file in artifact
+        - download: current
+          displayName: 'Download previous package windows file in artifact'
+          artifact: "releaseInstallerWindows"
 
-    #     # Download previous installer macos file in artifact
-    #     - download: current
-    #       displayName: 'Download previous package macOS file in artifact'
-    #       artifact: "releaseInstallerMacOS"
+        # Download previous installer macos file in artifact
+        - download: current
+          displayName: 'Download previous package macOS file in artifact'
+          artifact: "releaseInstallerMacOS"
         
-    #     # Create GitHub Release Release with Windows and Linux assets
-    #     - task: GithubRelease@1 
-    #       displayName: 'Create GitHub Release Release'
-    #       inputs:
-    #         gitHubConnection: '$(gitHubConnection)'
-    #         repositoryName: '$(repositoryName)'
-    #         target: '$(Build.SourceBranch)'
-    #         tagSource: 'userSpecifiedTag'
-    #         tag: "$(releaseVersion)"
-    #         isPreRelease: true
-    #         title: 'Release $(releaseVersion)'   
-    #         assets: |
-    #           $(Pipeline.Workspace)/releaseInstallerMacOS/release/*.tar.gz
-    #           $(Pipeline.Workspace)/releaseInstallerWindows/release/*/*.msi
-    #           $(Pipeline.Workspace)/releaseInstallerLinux/release/*.tar.gz
-    #           $(Pipeline.Workspace)/releaseInstallerMacOS/release/*.tar.gz
+        # Create GitHub Release Release with Windows and Linux assets
+        - task: GithubRelease@1 
+          displayName: 'Create GitHub Release Release'
+          inputs:
+            gitHubConnection: '$(gitHubConnection)'
+            repositoryName: '$(repositoryName)'
+            target: '$(Build.SourceBranch)'
+            tagSource: 'userSpecifiedTag'
+            tag: "$(releaseVersion)"
+            isPreRelease: true
+            title: 'Release $(releaseVersion)'   
+            assets: |
+              $(Pipeline.Workspace)/releaseInstallerMacOS/release/*.tar.gz
+              $(Pipeline.Workspace)/releaseInstallerWindows/release/*/*.msi
+              $(Pipeline.Workspace)/releaseInstallerLinux/release/*.tar.gz
+              $(Pipeline.Workspace)/releaseInstallerMacOS/release/*.tar.gz
