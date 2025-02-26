@@ -143,12 +143,11 @@ public class CreateSourceCommand(IMediator mediator, IAnsiConsole console) : Asy
             configuration.WhitelistedIpRanges = argument.IpWhitelisting;
         }
 
-        if (string.IsNullOrWhiteSpace(argument.AuthenticationType))
+        var authScheme = AuthSchemeType.None;
+        if (!string.IsNullOrWhiteSpace(argument.AuthenticationType))
         {
-            return configuration;
+            authScheme = Enum.Parse<AuthSchemeType>(argument.AuthenticationType);
         }
-
-        var authScheme = Enum.Parse<AuthSchemeType>(argument.AuthenticationType);
 
         switch (authScheme)
         {
