@@ -17,7 +17,7 @@ public class LocalEnvironments : ILocalEnvironments
             StartInfo = new ProcessStartInfo
             {
                 FileName = "/bin/bash",
-                Arguments = $"-c \"echo ${variable}\"",
+                Arguments = $"-c \"source {GetShellConfigFile()} && echo ${variable}\"",
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true

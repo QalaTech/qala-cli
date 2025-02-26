@@ -50,6 +50,8 @@ public class ConfigCommandShould(QalaCliBaseFixture fixture) : IClassFixture<Qal
         // Assert
         TestsUtils.AssertValidationOutput(expectedValidationResult, resultValidation);
         TestsUtils.AssertConsoleOutput(result, expectedSuccess, expectedOutput, console, expectedConsole);
+        console.Dispose();
+        expectedConsole.Dispose();
     }
 
     public void ExtractSuccessExpectedOutput(string[] expectedOutput, TestConsole expectedConsole)

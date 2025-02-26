@@ -142,27 +142,16 @@ public class QalaCliBaseFixture : IDisposable
 
     public static void InitializeEnvironmentVariables(string? apiKey = null, string? envId = null, string? authToken = null)
     {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
             System.Environment.SetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_API_KEY], apiKey, EnvironmentVariableTarget.User);
             System.Environment.SetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID], envId, EnvironmentVariableTarget.User);
             System.Environment.SetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_AUTH_TOKEN], authToken, EnvironmentVariableTarget.User);
-            return;
         }
 
-        var proc = new Process
-        {
-            StartInfo = new ProcessStartInfo
-            {
-                FileName = "/bin/bash",
-                Arguments = $"-c \"echo 'unset {Constants.LocalVariable[LocalVariableType.QALA_API_KEY]} {Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID]} {Constants.LocalVariable[LocalVariableType.QALA_AUTH_TOKEN]}' >> {GetShellConfigFile()}\"",
-                RedirectStandardOutput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            }
-        };
-        proc.Start();
-        proc.WaitForExit();
+        UnsetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_API_KEY]);
+        UnsetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_ENVIRONMENT_ID]);
+        UnsetEnvironmentVariable(Constants.LocalVariable[LocalVariableType.QALA_AUTH_TOKEN]);
 
         if (!string.IsNullOrWhiteSpace(apiKey))
         {
@@ -178,23 +167,6 @@ public class QalaCliBaseFixture : IDisposable
         {
             SetEnvironmentVariableNonWindows(Constants.LocalVariable[LocalVariableType.QALA_AUTH_TOKEN], authToken);
         }
-    }
-
-    private static void SetEnvironmentVariableNonWindows(string variable, string value)
-    {
-        var proc = new Process
-        {
-            StartInfo = new ProcessStartInfo
-            {
-                FileName = "/bin/bash",
-                Arguments = $"-c \"echo 'export {variable}={value}' >> {GetShellConfigFile()}\"",
-                RedirectStandardOutput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            }
-        };
-        proc.Start();
-        proc.WaitForExit();
     }
 
     private void InitializeOrganizationGatewayMock()
@@ -500,6 +472,53 @@ public class QalaCliBaseFixture : IDisposable
         services.AddSingleton<ITopicGateway>(TopicGatewayMock.Object);
         services.AddSingleton<ISubscriptionGateway>(SubscriptionGatewayMock.Object);
         services.AddSingleton<ISourceGateway>(SourceGatewayMock.Object);
+    }
+
+    private static void SetEnvironmentVariableNonWindows(string variable, string value)
+    {
+        string shellConfigFile = GetShellConfigFile();
+        string[] lines = File.ReadAllLines(shellConfigFile);
+        bool variableFound = false;
+
+        for (int i = 0; i < lines.Length; i++)
+        {
+            if (lines[i].StartsWith($"export {variable}="))
+            {
+                variableFound = true;
+                if (value != null)
+                {
+                    lines[i] = $"export {variable}={value}";
+                }
+                else
+                {
+                    lines[i] = string.Empty; // Mark for removal
+                }
+            }
+        }
+
+        if (!variableFound && value != null)
+        {
+            Array.Resize(ref lines, lines.Length + 1);
+            lines[^1] = $"export {variable}={value}";
+        }
+
+        File.WriteAllLines(shellConfigFile, lines.Where(line => !string.IsNullOrWhiteSpace(line)));
+    }
+
+    private static void UnsetEnvironmentVariable(string variable)
+    {
+        string shellConfigFile = GetShellConfigFile();
+        string[] lines = File.ReadAllLines(shellConfigFile);
+
+        for (int i = 0; i < lines.Length; i++)
+        {
+            if (lines[i].StartsWith($"export {variable}="))
+            {
+                lines[i] = string.Empty; // Mark for removal
+            }
+        }
+
+        File.WriteAllLines(shellConfigFile, lines.Where(line => !string.IsNullOrWhiteSpace(line)));
     }
 
     private static string GetShellConfigFile()
