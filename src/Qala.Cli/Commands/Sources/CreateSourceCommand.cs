@@ -196,6 +196,9 @@ public class CreateSourceCommand(IMediator mediator, IAnsiConsole console) : Asy
                     }
                 }
                 break;
+            default:
+                configuration.AuthenticationScheme = new NoAuthenticationScheme();
+                break;
         }
 
         return configuration;
