@@ -9,21 +9,22 @@ using Spectre.Console.Testing;
 
 namespace Qala.Cli.Integration.Tests.Commands;
 
-public class UpdateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClassFixture<QalaCliBaseFixture>, ITestExecution<(string SubscriptionName, string TopicName, string SourceName, string NewName, string Description, string Webhook, List<string> EventTypeNames, int MaxDeliveryAttempts)>
+public class UpdateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClassFixture<QalaCliBaseFixture>, ITestExecution<(string SubscriptionName, string TopicName, string SourceName, string NewName, string Description, string Webhook, List<string> EventTypeNames, int MaxDeliveryAttempts, string Audience)>
 {
     private readonly IRemainingArguments _remainingArguments = new Mock<IRemainingArguments>().Object;
+    private bool isTopicSubscription { get; set; }
 
     [Theory]
-    [InlineData("subscriptions update TestSubscription --topic TestTopic --name TestSubscriptionUpdated", true, null, new string[] { "TestSubscription", "", "TestSubscriptionUpdated", "", "", "", "" })]
-    [InlineData("sub update TestSubscription2 --topic TestTopic -n TestSubscriptionUpdated", true, null, new string[] { "TestSubscription2", "", "TestSubscriptionUpdated", "", "", "", "" })]
-    [InlineData("subscriptions update TestSubscription3 --topic TestTopic --name TestSubscriptionUpdated --description TestSubscriptionDescriptionUpdated", true, null, new string[] { "TestSubscription3", "", "TestSubscriptionUpdated", "TestSubscriptionDescriptionUpdated", "", "", "" })]
-    [InlineData("sub update TestSubscription4 --topic TestTopic -n TestSubscriptionUpdated -d TestSubscriptionDescriptionUpdated", true, null, new string[] { "TestSubscription4", "", "TestSubscriptionUpdated", "TestSubscriptionDescriptionUpdated", "", "", "" })]
-    [InlineData("subscriptions update TestSubscription5 --topic TestTopic --name TestSubscriptionUpdated --description TestSubscriptionDescriptionUpdated --url https://test.webhook.io", true, null, new string[] { "TestSubscription5", "", "TestSubscriptionUpdated", "TestSubscriptionDescriptionUpdated", "https://test.webhook.io", "", "" })]
-    [InlineData("sub update TestSubscription6 --topic TestTopic -n TestSubscriptionUpdated -d TestSubscriptionDescriptionUpdated -u https://test.webhook.io", true, null, new string[] { "TestSubscription6", "", "TestSubscriptionUpdated", "TestSubscriptionDescriptionUpdated", "https://test.webhook.io", "", "" })]
-    [InlineData("subscriptions update TestSubscription7 --topic TestTopic --name TestSubscriptionUpdated --description TestSubscriptionDescriptionUpdated --url https://test.webhook.io --events TestEvent1,TestEvent2,TestEvent3", true, null, new string[] { "TestSubscription7", "", "TestSubscriptionUpdated", "TestSubscriptionDescriptionUpdated", "https://test.webhook.io", "TestEvent1,TestEvent2,TestEvent3", "" })]
-    [InlineData("sub update TestSubscription8 --topic TestTopic -n TestSubscriptionUpdated -d TestSubscriptionDescriptionUpdated -u https://test.webhook.io -e TestEvent1,TestEvent2,TestEvent3", true, null, new string[] { "TestSubscription8", "", "TestSubscriptionUpdated", "TestSubscriptionDescriptionUpdated", "https://test.webhook.io", "TestEvent1,TestEvent2,TestEvent3", "" })]
-    [InlineData("subscriptions update TestSubscription9 --topic TestTopic --name TestSubscriptionUpdated --description TestSubscriptionDescriptionUpdated --url https://test.webhook.io --events TestEvent1,TestEvent2,TestEvent3 --max-attempts 5", true, null, new string[] { "TestSubscription9", "", "TestSubscriptionUpdated", "TestSubscriptionDescriptionUpdated", "https://test.webhook.io", "TestEvent1,TestEvent2,TestEvent3", "5" })]
-    [InlineData("sub update TestSubscription10 --topic TestTopic -n TestSubscriptionUpdated -d TestSubscriptionDescriptionUpdated -u https://test.webhook.io -e TestEvent1,TestEvent2,TestEvent3 -m 5", true, null, new string[] { "TestSubscription10", "", "TestSubscriptionUpdated", "TestSubscriptionDescriptionUpdated", "https://test.webhook.io", "TestEvent1,TestEvent2,TestEvent3", "5" })]
+    [InlineData("subscriptions update TestSubscription --topic TestTopic --name TestSubscriptionUpdated", true, null, new string[] { "TestSubscription", "", "TestSubscriptionUpdated", "", "", "", "", "" })]
+    [InlineData("sub update TestSubscription2 --topic TestTopic -n TestSubscriptionUpdated", true, null, new string[] { "TestSubscription2", "", "TestSubscriptionUpdated", "", "", "", "", "" })]
+    [InlineData("subscriptions update TestSubscription3 --topic TestTopic --name TestSubscriptionUpdated --description TestSubscriptionDescriptionUpdated", true, null, new string[] { "TestSubscription3", "", "TestSubscriptionUpdated", "TestSubscriptionDescriptionUpdated", "", "", "", "" })]
+    [InlineData("sub update TestSubscription4 --topic TestTopic -n TestSubscriptionUpdated -d TestSubscriptionDescriptionUpdated", true, null, new string[] { "TestSubscription4", "", "TestSubscriptionUpdated", "TestSubscriptionDescriptionUpdated", "", "", "", "" })]
+    [InlineData("subscriptions update TestSubscription5 --topic TestTopic --name TestSubscriptionUpdated --description TestSubscriptionDescriptionUpdated --url https://test.webhook.io", true, null, new string[] { "TestSubscription5", "", "TestSubscriptionUpdated", "TestSubscriptionDescriptionUpdated", "https://test.webhook.io", "", "", "" })]
+    [InlineData("sub update TestSubscription6 --topic TestTopic -n TestSubscriptionUpdated -d TestSubscriptionDescriptionUpdated -u https://test.webhook.io", true, null, new string[] { "TestSubscription6", "", "TestSubscriptionUpdated", "TestSubscriptionDescriptionUpdated", "https://test.webhook.io", "", "", "" })]
+    [InlineData("subscriptions update TestSubscription7 --topic TestTopic --name TestSubscriptionUpdated --description TestSubscriptionDescriptionUpdated --url https://test.webhook.io --events TestEvent1,TestEvent2,TestEvent3", true, null, new string[] { "TestSubscription7", "", "TestSubscriptionUpdated", "TestSubscriptionDescriptionUpdated", "https://test.webhook.io", "TestEvent1,TestEvent2,TestEvent3", "", "" })]
+    [InlineData("sub update TestSubscription8 --topic TestTopic -n TestSubscriptionUpdated -d TestSubscriptionDescriptionUpdated -u https://test.webhook.io -e TestEvent1,TestEvent2,TestEvent3", true, null, new string[] { "TestSubscription8", "", "TestSubscriptionUpdated", "TestSubscriptionDescriptionUpdated", "https://test.webhook.io", "TestEvent1,TestEvent2,TestEvent3", "", "" })]
+    [InlineData("subscriptions update TestSubscription9 --topic TestTopic --name TestSubscriptionUpdated --description TestSubscriptionDescriptionUpdated --url https://test.webhook.io --events TestEvent1,TestEvent2,TestEvent3 --max-attempts 5", true, null, new string[] { "TestSubscription9", "", "TestSubscriptionUpdated", "TestSubscriptionDescriptionUpdated", "https://test.webhook.io", "TestEvent1,TestEvent2,TestEvent3", "5", "" })]
+    [InlineData("sub update TestSubscription10 --topic TestTopic -n TestSubscriptionUpdated -d TestSubscriptionDescriptionUpdated -u https://test.webhook.io -e TestEvent1,TestEvent2,TestEvent3 -m 5", true, null, new string[] { "TestSubscription10", "", "TestSubscriptionUpdated", "TestSubscriptionDescriptionUpdated", "https://test.webhook.io", "TestEvent1,TestEvent2,TestEvent3", "5", "" })]
     [InlineData("subscriptions update TestSubscription11 --source TestSource --name TestSubscriptionUpdated", true, null, new string[] { "TestSubscription11", "", "TestSubscriptionUpdated", "", "", "", "" })]
     [InlineData("sub update TestSubscription12 --source TestSource -n TestSubscriptionUpdated", true, null, new string[] { "TestSubscription12", "", "TestSubscriptionUpdated", "", "", "", "" })]
     [InlineData("subscriptions update TestSubscription13 --source TestSource --name TestSubscriptionUpdated --description TestSubscriptionDescriptionUpdated", true, null, new string[] { "TestSubscription13", "", "TestSubscriptionUpdated", "TestSubscriptionDescriptionUpdated", "", "", "" })]
@@ -46,6 +47,7 @@ public class UpdateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
     [InlineData("sub update TestSubscription23 --topic TestTopic -n TestSubscriptionUpdated -d TestSubscriptionDescriptionUpdated -u https://test.webhook.io -e TestEvent1,TestEvent2,TestEvent3 -m 12", false, null, new string[] { "Max delivery attempts should be a value between 0 and 10" })]
     [InlineData("subscriptions update TestSubscription24 --source TestSource --name TestSubscriptionUpdated --description TestSubscriptionDescriptionUpdated --url https://test.webhook.io --max-attempts 12", false, null, new string[] { "Max delivery attempts should be a value between 0 and 10" })]
     [InlineData("sub update TestSubscription25 --source TestSource -n TestSubscriptionUpdated -d TestSubscriptionDescriptionUpdated -u https://test.webhook.io -m 12", false, null, new string[] { "Max delivery attempts should be a value between 0 and 10" })]
+    [InlineData("sub update TestSubscription26 --topic TestTopic -n TestSubscriptionUpdated -d TestSubscriptionDescriptionUpdated -u https://test.webhook.io -e TestEvent1,TestEvent2,TestEvent3 -m 5 -a audienceUpdated", true, null, new string[] { "TestSubscription26", "", "TestSubscriptionUpdated", "TestSubscriptionDescriptionUpdated", "https://test.webhook.io", "TestEvent1,TestEvent2,TestEvent3", "5", "audienceUpdated" })]
     public async Task Execute(string input, bool expectedSuccess, string[] expectedValidationResult, string[] expectedOutput)
     {
         // Arrange
@@ -53,11 +55,12 @@ public class UpdateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
         var command = new UpdateSubscriptionCommand(fixture.Mediator, console);
         var arguments = input.Split(' ').ToList();
         var context = new CommandContext(arguments, _remainingArguments, "update", null);
-        var (SubscriptionName, TopicName, SourceName, NewName, Description, Webhook, EventTypeNames, MaxDeliveryAttempts) = ExtractArgumentsValues(arguments);
+        var (SubscriptionName, TopicName, SourceName, NewName, Description, Webhook, EventTypeNames, MaxDeliveryAttempts, Audience) = ExtractArgumentsValues(arguments);
 
         var expectedConsole = new TestConsole();
         if (expectedSuccess)
         {
+            isTopicSubscription = string.IsNullOrWhiteSpace(SourceName);
             ExtractSuccessExpectedOutput(expectedOutput, expectedConsole);
         }
         else
@@ -74,7 +77,8 @@ public class UpdateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
             Description = Description,
             WebhookUrl = Webhook,
             EventTypeNames = EventTypeNames,
-            MaxDeliveryAttempts = MaxDeliveryAttempts
+            MaxDeliveryAttempts = MaxDeliveryAttempts,
+            Audience = Audience
         };
 
         // Act
@@ -86,7 +90,7 @@ public class UpdateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
         TestsUtils.AssertConsoleOutput(result, expectedSuccess, expectedOutput, console, expectedConsole);
     }
 
-    public (string SubscriptionName, string TopicName, string SourceName, string NewName, string Description, string Webhook, List<string> EventTypeNames, int MaxDeliveryAttempts) ExtractArgumentsValues(List<string> arguments)
+    public (string SubscriptionName, string TopicName, string SourceName, string NewName, string Description, string Webhook, List<string> EventTypeNames, int MaxDeliveryAttempts, string Audience) ExtractArgumentsValues(List<string> arguments)
     {
         var subscriptionNameIndex = arguments.IndexOf("update");
         var subscriptionName = string.Empty;
@@ -144,7 +148,14 @@ public class UpdateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
             int.TryParse(arguments[maxAttemptsIndex + 1], out maxAttempts);
         }
 
-        return (subscriptionName, topicName, sourceName, newName, description, webhook, events, maxAttempts);
+        var audienceIndex = arguments.IndexOf("-a") != -1 ? arguments.IndexOf("-a") : arguments.IndexOf("--audience");
+        var audience = string.Empty;
+        if (audienceIndex != -1 && audienceIndex + 1 < arguments.Count)
+        {
+            audience = arguments[audienceIndex + 1];
+        }
+
+        return (subscriptionName, topicName, sourceName, newName, description, webhook, events, maxAttempts, audience);
     }
 
     public void ExtractFailedExpectedOutput(string[] expectedOutput, TestConsole expectedConsole)
@@ -165,29 +176,51 @@ public class UpdateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
             Description = string.IsNullOrWhiteSpace(expectedOutput[3]) ? currentSubscritpion.Description : expectedOutput[3],
             WebhookUrl = string.IsNullOrWhiteSpace(expectedOutput[4]) ? currentSubscritpion.WebhookUrl : expectedOutput[4],
             EventTypes = string.IsNullOrWhiteSpace(expectedOutput[5]) ? currentSubscritpion.EventTypes : expectedOutput[5].Split(',').Select(et => new EventType() { Type = et }).ToList(),
-            MaxDeliveryAttempts = string.IsNullOrWhiteSpace(expectedOutput[6]) ? currentSubscritpion.MaxDeliveryAttempts : int.Parse(expectedOutput[6])
+            MaxDeliveryAttempts = string.IsNullOrWhiteSpace(expectedOutput[6]) ? currentSubscritpion.MaxDeliveryAttempts : int.Parse(expectedOutput[6]),
+            Audience = isTopicSubscription ? string.IsNullOrWhiteSpace(expectedOutput[7]) ? currentSubscritpion.Audience : expectedOutput[7] : string.Empty
         };
 
         expectedConsole.MarkupLine("Processing request...");
         expectedConsole.MarkupLine($"[green bold]Subscription updated successfully.[/]");
-        expectedConsole.Write(new Grid()
-            .AddColumns(6)
-            .AddRow(
-                new Text("Id", new Style(decoration: Decoration.Bold)),
-                new Text("Name", new Style(decoration: Decoration.Bold)),
-                new Text("Description", new Style(decoration: Decoration.Bold)),
-                new Text("Webhook Url", new Style(decoration: Decoration.Bold)),
-                new Text("Event Types", new Style(decoration: Decoration.Bold)),
-                new Text("Max Delivery Attempts", new Style(decoration: Decoration.Bold))
-            )
-            .AddRow(
-                new Text(expectedSubscription.Id.ToString()),
-                new Text(expectedSubscription.Name),
-                new Text(expectedSubscription.Description),
-                new Text(expectedSubscription.WebhookUrl),
-                new Text(string.Join(", ", expectedSubscription.EventTypes.Select(et => et.Type))),
-                new Text(expectedSubscription.MaxDeliveryAttempts.ToString())
-            )
-        );
+        var grid = isTopicSubscription ?
+            new Grid()
+                .AddColumns(7)
+                .AddRow(
+                    new Text("Id", new Style(decoration: Decoration.Bold)),
+                    new Text("Name", new Style(decoration: Decoration.Bold)),
+                    new Text("Description", new Style(decoration: Decoration.Bold)),
+                    new Text("Webhook Url", new Style(decoration: Decoration.Bold)),
+                    new Text("Event Types", new Style(decoration: Decoration.Bold)),
+                    new Text("Max Delivery Attempts", new Style(decoration: Decoration.Bold)),
+                    new Text("Audience", new Style(decoration: Decoration.Bold))
+                )
+                .AddRow(
+                    new Text(expectedSubscription.Id.ToString()),
+                    new Text(expectedSubscription.Name),
+                    new Text(expectedSubscription.Description),
+                    new Text(expectedSubscription.WebhookUrl),
+                    new Text(string.Join(", ", expectedSubscription.EventTypes.Select(et => et.Type))),
+                    new Text(expectedSubscription.MaxDeliveryAttempts.ToString()),
+                    new Text(expectedSubscription.Audience ?? string.Empty)
+                ) :
+            new Grid()
+                .AddColumns(6)
+                .AddRow(
+                    new Text("Id", new Style(decoration: Decoration.Bold)),
+                    new Text("Name", new Style(decoration: Decoration.Bold)),
+                    new Text("Description", new Style(decoration: Decoration.Bold)),
+                    new Text("Webhook Url", new Style(decoration: Decoration.Bold)),
+                    new Text("Event Types", new Style(decoration: Decoration.Bold)),
+                    new Text("Max Delivery Attempts", new Style(decoration: Decoration.Bold))
+                )
+                .AddRow(
+                    new Text(expectedSubscription.Id.ToString()),
+                    new Text(expectedSubscription.Name),
+                    new Text(expectedSubscription.Description),
+                    new Text(expectedSubscription.WebhookUrl),
+                    new Text(string.Join(", ", expectedSubscription.EventTypes.Select(et => et.Type))),
+                    new Text(expectedSubscription.MaxDeliveryAttempts.ToString())
+                );
+        expectedConsole.Write(grid);
     }
 }

@@ -21,7 +21,8 @@ public class ListSubscriptionsCommand(IMediator mediator, IAnsiConsole console) 
                         success =>
                         {
                             BaseCommands.DisplaySuccessMessage("Subscriptions", BaseCommands.CommandAction.List, console);
-                            var grid = new Grid()
+                            var grid = success.Subscriptions.Select(s => string.IsNullOrWhiteSpace(s.Audience)).Length() == 0 ?
+                            new Grid()
                                 .AddColumns(5)
                                 .AddRow(
                                     new Text("Id", new Style(decoration: Decoration.Bold)),
@@ -29,17 +30,41 @@ public class ListSubscriptionsCommand(IMediator mediator, IAnsiConsole console) 
                                     new Text("Description", new Style(decoration: Decoration.Bold)),
                                     new Text("Provisioning State", new Style(decoration: Decoration.Bold)),
                                     new Text("Event Types", new Style(decoration: Decoration.Bold))
+                                ) :
+                            new Grid()
+                                .AddColumns(6)
+                                .AddRow(
+                                    new Text("Id", new Style(decoration: Decoration.Bold)),
+                                    new Text("Name", new Style(decoration: Decoration.Bold)),
+                                    new Text("Description", new Style(decoration: Decoration.Bold)),
+                                    new Text("Provisioning State", new Style(decoration: Decoration.Bold)),
+                                    new Text("Event Types", new Style(decoration: Decoration.Bold)),
+                                    new Text("Audience", new Style(decoration: Decoration.Bold))
                                 );
 
                             foreach (var subscription in success.Subscriptions)
                             {
-                                grid.AddRow(
-                                    new Text(subscription.Id.ToString()),
-                                    new Text(subscription.Name),
-                                    new Text(subscription.Description),
-                                    new Text(subscription.ProvisioningState),
-                                    new Text(string.Join(", ", subscription.EventTypes.Select(et => et.Type)))
-                                );
+                                if (string.IsNullOrWhiteSpace(subscription.Audience))
+                                {
+                                    grid.AddRow(
+                                        new Text(subscription.Id.ToString()),
+                                        new Text(subscription.Name),
+                                        new Text(subscription.Description),
+                                        new Text(subscription.ProvisioningState),
+                                        new Text(string.Join(", ", subscription.EventTypes.Select(et => et.Type)))
+                                    );
+                                }
+                                else
+                                {
+                                    grid.AddRow(
+                                        new Text(subscription.Id.ToString()),
+                                        new Text(subscription.Name),
+                                        new Text(subscription.Description),
+                                        new Text(subscription.ProvisioningState),
+                                        new Text(string.Join(", ", subscription.EventTypes.Select(et => et.Type))),
+                                        new Text(subscription.Audience ?? string.Empty)
+                                    );
+                                }
                             }
 
                             console.Write(grid);

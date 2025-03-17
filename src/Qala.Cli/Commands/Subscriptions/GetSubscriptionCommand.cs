@@ -21,29 +21,53 @@ public class GetSubscriptionCommand(IMediator mediator, IAnsiConsole console) : 
                         success =>
                         {
                             BaseCommands.DisplaySuccessMessage("Subscription", BaseCommands.CommandAction.Get, console);
-                            var grid = new Grid()
-                                .AddColumns(8)
-                                .AddRow(
-                                    new Text("Id", new Style(decoration: Decoration.Bold)),
-                                    new Text("Name", new Style(decoration: Decoration.Bold)),
-                                    new Text("Description", new Style(decoration: Decoration.Bold)),
-                                    new Text("Webhook Url", new Style(decoration: Decoration.Bold)),
-                                    new Text("Provisioning State", new Style(decoration: Decoration.Bold)),
-                                    new Text("Event Types", new Style(decoration: Decoration.Bold)),
-                                    new Text("Max Delivery Attempts", new Style(decoration: Decoration.Bold)),
-                                    new Text("Deadletters count", new Style(decoration: Decoration.Bold))
-                                );
-
-                            grid.AddRow(
-                                new Text(success.Subscription.Id.ToString()),
-                                new Text(success.Subscription.Name),
-                                new Text(success.Subscription.Description),
-                                new Text(success.Subscription.WebhookUrl),
-                                new Text(success.Subscription.ProvisioningState),
-                                new Text(string.Join(", ", success.Subscription.EventTypes.Select(et => et.Type))),
-                                new Text(success.Subscription.MaxDeliveryAttempts.ToString()),
-                                new Text(success.Subscription.DeadletterCount.ToString())
-                            );
+                            var grid = string.IsNullOrWhiteSpace(success.Subscription.Audience) ?
+                                new Grid()
+                                    .AddColumns(8)
+                                    .AddRow(
+                                        new Text("Id", new Style(decoration: Decoration.Bold)),
+                                        new Text("Name", new Style(decoration: Decoration.Bold)),
+                                        new Text("Description", new Style(decoration: Decoration.Bold)),
+                                        new Text("Webhook Url", new Style(decoration: Decoration.Bold)),
+                                        new Text("Provisioning State", new Style(decoration: Decoration.Bold)),
+                                        new Text("Event Types", new Style(decoration: Decoration.Bold)),
+                                        new Text("Max Delivery Attempts", new Style(decoration: Decoration.Bold)),
+                                        new Text("Deadletters count", new Style(decoration: Decoration.Bold))
+                                    )
+                                    .AddRow(
+                                        new Text(success.Subscription.Id.ToString()),
+                                        new Text(success.Subscription.Name),
+                                        new Text(success.Subscription.Description),
+                                        new Text(success.Subscription.WebhookUrl),
+                                        new Text(success.Subscription.ProvisioningState),
+                                        new Text(string.Join(", ", success.Subscription.EventTypes.Select(et => et.Type))),
+                                        new Text(success.Subscription.MaxDeliveryAttempts.ToString()),
+                                        new Text(success.Subscription.DeadletterCount.ToString())
+                                    ) :
+                                new Grid()
+                                    .AddColumns(9)
+                                    .AddRow(
+                                        new Text("Id", new Style(decoration: Decoration.Bold)),
+                                        new Text("Name", new Style(decoration: Decoration.Bold)),
+                                        new Text("Description", new Style(decoration: Decoration.Bold)),
+                                        new Text("Webhook Url", new Style(decoration: Decoration.Bold)),
+                                        new Text("Provisioning State", new Style(decoration: Decoration.Bold)),
+                                        new Text("Event Types", new Style(decoration: Decoration.Bold)),
+                                        new Text("Max Delivery Attempts", new Style(decoration: Decoration.Bold)),
+                                        new Text("Deadletters count", new Style(decoration: Decoration.Bold)),
+                                        new Text("Audience", new Style(decoration: Decoration.Bold))
+                                    )
+                                    .AddRow(
+                                        new Text(success.Subscription.Id.ToString()),
+                                        new Text(success.Subscription.Name),
+                                        new Text(success.Subscription.Description),
+                                        new Text(success.Subscription.WebhookUrl),
+                                        new Text(success.Subscription.ProvisioningState),
+                                        new Text(string.Join(", ", success.Subscription.EventTypes.Select(et => et.Type))),
+                                        new Text(success.Subscription.MaxDeliveryAttempts.ToString()),
+                                        new Text(success.Subscription.DeadletterCount.ToString()),
+                                        new Text(success.Subscription.Audience ?? string.Empty)
+                                    );
 
                             console.Write(grid);
 
