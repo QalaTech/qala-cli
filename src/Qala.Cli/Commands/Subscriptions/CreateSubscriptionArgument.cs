@@ -34,4 +34,8 @@ public class CreateSubscriptionArgument : CommandSettings
     [CommandOption("-m|--max-attempts <MAX_DELIVERY_ATTEMPTS>")]
     [Description("The maximum delivery attempts of the subscription.")]
     public int MaxDeliveryAttempts { get; set; } = 0;
+
+    [CommandOption("-a|--audience <AUDIENCE>")]
+    [Description("The audience to scope the subscription - for topics.")]
+    public string Audience { get; set; } = string.Empty;
 }

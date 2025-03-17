@@ -97,29 +97,53 @@ public class GetSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClassFi
 
         expectedConsole.MarkupLine("Processing request...");
         expectedConsole.MarkupLine($"[green bold]Subscription retrieved successfully:[/]");
-        var grid = new Grid()
-            .AddColumns(8)
-            .AddRow(
-                new Text("Id", new Style(decoration: Decoration.Bold)),
-                new Text("Name", new Style(decoration: Decoration.Bold)),
-                new Text("Description", new Style(decoration: Decoration.Bold)),
-                new Text("Webhook Url", new Style(decoration: Decoration.Bold)),
-                new Text("Provisioning State", new Style(decoration: Decoration.Bold)),
-                new Text("Event Types", new Style(decoration: Decoration.Bold)),
-                new Text("Max Delivery Attempts", new Style(decoration: Decoration.Bold)),
-                new Text("Deadletters count", new Style(decoration: Decoration.Bold))
-            );
-
-        grid.AddRow(
-            new Text(expectedSubscription!.Id.ToString()),
-            new Text(expectedSubscription.Name),
-            new Text(expectedSubscription.Description),
-            new Text(expectedSubscription.WebhookUrl),
-            new Text(expectedSubscription.ProvisioningState),
-            new Text(string.Join(", ", expectedSubscription.EventTypes.Select(et => et.Type))),
-            new Text(expectedSubscription.MaxDeliveryAttempts.ToString()),
-            new Text(expectedSubscription.DeadletterCount.ToString())
-        );
+        var grid = string.IsNullOrWhiteSpace(expectedSubscription.Audience) ?
+            new Grid()
+                .AddColumns(8)
+                .AddRow(
+                    new Text("Id", new Style(decoration: Decoration.Bold)),
+                    new Text("Name", new Style(decoration: Decoration.Bold)),
+                    new Text("Description", new Style(decoration: Decoration.Bold)),
+                    new Text("Webhook Url", new Style(decoration: Decoration.Bold)),
+                    new Text("Provisioning State", new Style(decoration: Decoration.Bold)),
+                    new Text("Event Types", new Style(decoration: Decoration.Bold)),
+                    new Text("Max Delivery Attempts", new Style(decoration: Decoration.Bold)),
+                    new Text("Deadletters count", new Style(decoration: Decoration.Bold))
+                )
+                .AddRow(
+                    new Text(expectedSubscription.Id.ToString()),
+                    new Text(expectedSubscription.Name),
+                    new Text(expectedSubscription.Description),
+                    new Text(expectedSubscription.WebhookUrl),
+                    new Text(expectedSubscription.ProvisioningState),
+                    new Text(string.Join(", ", expectedSubscription.EventTypes.Select(et => et.Type))),
+                    new Text(expectedSubscription.MaxDeliveryAttempts.ToString()),
+                    new Text(expectedSubscription.DeadletterCount.ToString())
+                ) :
+            new Grid()
+                .AddColumns(9)
+                .AddRow(
+                    new Text("Id", new Style(decoration: Decoration.Bold)),
+                    new Text("Name", new Style(decoration: Decoration.Bold)),
+                    new Text("Description", new Style(decoration: Decoration.Bold)),
+                    new Text("Webhook Url", new Style(decoration: Decoration.Bold)),
+                    new Text("Provisioning State", new Style(decoration: Decoration.Bold)),
+                    new Text("Event Types", new Style(decoration: Decoration.Bold)),
+                    new Text("Max Delivery Attempts", new Style(decoration: Decoration.Bold)),
+                    new Text("Deadletters count", new Style(decoration: Decoration.Bold)),
+                    new Text("Audience", new Style(decoration: Decoration.Bold))
+                )
+                .AddRow(
+                    new Text(expectedSubscription.Id.ToString()),
+                    new Text(expectedSubscription.Name),
+                    new Text(expectedSubscription.Description),
+                    new Text(expectedSubscription.WebhookUrl),
+                    new Text(expectedSubscription.ProvisioningState),
+                    new Text(string.Join(", ", expectedSubscription.EventTypes.Select(et => et.Type))),
+                    new Text(expectedSubscription.MaxDeliveryAttempts.ToString()),
+                    new Text(expectedSubscription.DeadletterCount.ToString()),
+                    new Text(expectedSubscription.Audience ?? string.Empty)
+                );
 
         expectedConsole.Write(grid);
     }

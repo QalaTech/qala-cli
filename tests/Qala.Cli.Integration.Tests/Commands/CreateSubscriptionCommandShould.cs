@@ -9,12 +9,15 @@ using Spectre.Console.Testing;
 
 namespace Qala.Cli.Integration.Tests.Commands;
 
-public class CreateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClassFixture<QalaCliBaseFixture>, ITestExecution<(string TopicName, string SourceName, string Name, string Description, string WebhookUrl, List<string> EventTypeNames, int MaxDeliveryAttempts)>
+public class CreateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClassFixture<QalaCliBaseFixture>, ITestExecution<(string TopicName, string SourceName, string Name, string Description, string WebhookUrl, List<string> EventTypeNames, int MaxDeliveryAttempts, string Audience)>
 {
     private readonly IRemainingArguments _remainingArguments = new Mock<IRemainingArguments>().Object;
+    private bool isTopicSubscription { get; set; }
 
     [Theory]
-    [InlineData("subscription create --topic TestTopic --name NewlyCreatedTestSubscription --description newly-subscription-description --url http://test.com --events TestEvent1,TestEvent2,TestEvent3 --max-attempts 5", true, null, new string[] { "60ef03bb-f5a7-4c81-addf-38e2b360bff5", "NewlyCreatedTestSubscription", "newly-subscription-description", "http://test.com", "TestEvent1,TestEvent2,TestEvent3", "5" })]
+    [InlineData("subscription create --topic TestTopic1 --name NewlyCreatedTestSubscription --description newly-subscription-description --url http://test.com --events TestEvent1,TestEvent2,TestEvent3 --max-attempts 5", true, null, new string[] { "60ef03bb-f5a7-4c81-addf-38e2b360bff5", "NewlyCreatedTestSubscription", "newly-subscription-description", "http://test.com", "TestEvent1,TestEvent2,TestEvent3", "5", "" })]
+    [InlineData("subscription create --topic TestTopic2 --name NewlyCreatedTestSubscription --description newly-subscription-description --url http://test.com --events TestEvent1,TestEvent2,TestEvent3 --max-attempts 5 -a audience", true, null, new string[] { "60ef03bb-f5a7-4c81-addf-38e2b360bff5", "NewlyCreatedTestSubscription", "newly-subscription-description", "http://test.com", "TestEvent1,TestEvent2,TestEvent3", "5", "audience" })]
+    [InlineData("subscription create --topic TestTopic3 --name NewlyCreatedTestSubscription --description newly-subscription-description --url http://test.com --events TestEvent1,TestEvent2,TestEvent3 --max-attempts 5 --audience audience", true, null, new string[] { "60ef03bb-f5a7-4c81-addf-38e2b360bff5", "NewlyCreatedTestSubscription", "newly-subscription-description", "http://test.com", "TestEvent1,TestEvent2,TestEvent3", "5", "audience" })]
     [InlineData("subscription create --source TestSource --name NewlyCreatedTestSubscription --description newly-subscription-description --url http://test.com --max-attempts 5", true, null, new string[] { "60ef03bb-f5a7-4c81-addf-38e2b360bff5", "NewlyCreatedTestSubscription", "newly-subscription-description", "http://test.com", "TestEvent1,TestEvent2,TestEvent3", "5" })]
     [InlineData("subscription create --name NewlyCreatedTestSubscription --description newly-subscription-description --url http://test.com --max-attempts 5", false, new string[] { "Either Topic name or Source name must be provided." }, new string[] { "Either Topic name or Source name must be provided" })]
     [InlineData("subscription create --source TestSource --description newly-subscription-description --url http://test.com --max-attempts 5", false, new string[] { "Subscription name is required." }, new string[] { "Name is required" })]
@@ -31,11 +34,12 @@ public class CreateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
         var command = new CreateSubscriptionCommand(fixture.Mediator, console);
         var arguments = input.Split(' ').ToList();
         var context = new CommandContext(arguments, _remainingArguments, "create", null);
-        var (topicName, sourceName, name, description, webhookUrl, eventTypeNames, maxDeliveryAttempts) = ExtractArgumentsValues(arguments);
+        var (topicName, sourceName, name, description, webhookUrl, eventTypeNames, maxDeliveryAttempts, audience) = ExtractArgumentsValues(arguments);
 
         var expectedConsole = new TestConsole();
         if (expectedSuccess)
         {
+            isTopicSubscription = string.IsNullOrWhiteSpace(sourceName);
             ExtractSuccessExpectedOutput(expectedOutput, expectedConsole);
         }
         else
@@ -51,7 +55,8 @@ public class CreateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
             Description = description,
             WebhookUrl = webhookUrl,
             EventTypeNames = eventTypeNames,
-            MaxDeliveryAttempts = maxDeliveryAttempts
+            MaxDeliveryAttempts = maxDeliveryAttempts,
+            Audience = audience
         };
 
         // Act
@@ -63,7 +68,7 @@ public class CreateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
         TestsUtils.AssertConsoleOutput(result, expectedSuccess, expectedOutput, console, expectedConsole);
     }
 
-    public (string TopicName, string SourceName, string Name, string Description, string WebhookUrl, List<string> EventTypeNames, int MaxDeliveryAttempts) ExtractArgumentsValues(List<string> arguments)
+    public (string TopicName, string SourceName, string Name, string Description, string WebhookUrl, List<string> EventTypeNames, int MaxDeliveryAttempts, string Audience) ExtractArgumentsValues(List<string> arguments)
     {
         var topicNameIndex = arguments.IndexOf("--topic");
         var topicName = string.Empty;
@@ -114,7 +119,14 @@ public class CreateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
             maxDeliveryAttempts = int.Parse(arguments[maxDeliveryAttemptsIndex + 1]);
         }
 
-        return (topicName, sourceName, name, description, webhookUrl, eventTypeNames, maxDeliveryAttempts);
+        var audienceIndex = arguments.IndexOf("--audience") != -1 ? arguments.IndexOf("--audience") : arguments.IndexOf("-a");
+        var audience = string.Empty;
+        if (audienceIndex != -1 && audienceIndex + 1 < arguments.Count)
+        {
+            audience = arguments[audienceIndex + 1];
+        }
+
+        return (topicName, sourceName, name, description, webhookUrl, eventTypeNames, maxDeliveryAttempts, audience);
     }
 
     public void ExtractFailedExpectedOutput(string[] expectedOutput, TestConsole expectedConsole)
@@ -133,29 +145,52 @@ public class CreateSubscriptionCommandShould(QalaCliBaseFixture fixture) : IClas
             Description = expectedOutput[2],
             WebhookUrl = expectedOutput[3],
             EventTypes = expectedOutput[4].Split(',').Select(et => new EventType() { Type = et }).ToList(),
-            MaxDeliveryAttempts = int.Parse(expectedOutput[5])
+            MaxDeliveryAttempts = int.Parse(expectedOutput[5]),
+            Audience = expectedOutput.Length == 7 ? expectedOutput[6] : string.Empty
         };
 
         expectedConsole.MarkupLine($"[green]Subscription created successfully:[/]");
         expectedConsole.MarkupLine("Processing request...");
-        expectedConsole.Write(new Grid()
-            .AddColumns(6)
-            .AddRow(
-                new Text("Id", new Style(decoration: Decoration.Bold)),
-                new Text("Name", new Style(decoration: Decoration.Bold)),
-                new Text("Description", new Style(decoration: Decoration.Bold)),
-                new Text("Webhook Url", new Style(decoration: Decoration.Bold)),
-                new Text("Event Types", new Style(decoration: Decoration.Bold)),
-                new Text("Max Delivery Attempts", new Style(decoration: Decoration.Bold))
-            )
-            .AddRow(
-                new Text(expectedSubscription.Id.ToString()),
-                new Text(expectedSubscription.Name),
-                new Text(expectedSubscription.Description),
-                new Text(expectedSubscription.WebhookUrl),
-                new Text(string.Join(", ", expectedSubscription.EventTypes.Select(et => et.Type))),
-                new Text(expectedSubscription.MaxDeliveryAttempts.ToString())
-            )
-        );
+        var grid = isTopicSubscription ?
+            new Grid()
+                .AddColumns(7)
+                .AddRow(
+                    new Text("Id", new Style(decoration: Decoration.Bold)),
+                    new Text("Name", new Style(decoration: Decoration.Bold)),
+                    new Text("Description", new Style(decoration: Decoration.Bold)),
+                    new Text("Webhook Url", new Style(decoration: Decoration.Bold)),
+                    new Text("Event Types", new Style(decoration: Decoration.Bold)),
+                    new Text("Max Delivery Attempts", new Style(decoration: Decoration.Bold)),
+                    new Text("Audience", new Style(decoration: Decoration.Bold))
+                )
+                .AddRow(
+                    new Text(expectedSubscription.Id.ToString()),
+                    new Text(expectedSubscription.Name),
+                    new Text(expectedSubscription.Description),
+                    new Text(expectedSubscription.WebhookUrl),
+                    new Text(string.Join(", ", expectedSubscription.EventTypes.Select(et => et.Type))),
+                    new Text(expectedSubscription.MaxDeliveryAttempts.ToString()),
+                    new Text(expectedSubscription.Audience ?? string.Empty)
+                ) :
+            new Grid()
+                .AddColumns(6)
+                .AddRow(
+                    new Text("Id", new Style(decoration: Decoration.Bold)),
+                    new Text("Name", new Style(decoration: Decoration.Bold)),
+                    new Text("Description", new Style(decoration: Decoration.Bold)),
+                    new Text("Webhook Url", new Style(decoration: Decoration.Bold)),
+                    new Text("Event Types", new Style(decoration: Decoration.Bold)),
+                    new Text("Max Delivery Attempts", new Style(decoration: Decoration.Bold))
+                )
+                .AddRow(
+                    new Text(expectedSubscription.Id.ToString()),
+                    new Text(expectedSubscription.Name),
+                    new Text(expectedSubscription.Description),
+                    new Text(expectedSubscription.WebhookUrl),
+                    new Text(string.Join(", ", expectedSubscription.EventTypes.Select(et => et.Type))),
+                    new Text(expectedSubscription.MaxDeliveryAttempts.ToString())
+                );
+
+        expectedConsole.Write(grid);
     }
 }

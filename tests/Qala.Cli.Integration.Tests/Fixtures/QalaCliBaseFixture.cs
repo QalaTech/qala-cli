@@ -68,31 +68,32 @@ public class QalaCliBaseFixture : IDisposable
 
     public List<Subscription> AvailableSubscriptions =
     [
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription", Description = "Test Subscription Description", ProvisioningState = "Provisioning", MaxDeliveryAttempts = 3, DeadletterCount = 1, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription2", Description = "Test Subscription Description 2", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 2, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription3", Description = "Test Subscription Description 3", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 3, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription4", Description = "Test Subscription Description 4", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 4, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription5", Description = "Test Subscription Description 5", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 5, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription6", Description = "Test Subscription Description 6", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 6, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription7", Description = "Test Subscription Description 7", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 7, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription8", Description = "Test Subscription Description 8", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 8, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription9", Description = "Test Subscription Description 9", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 9, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription10", Description = "Test Subscription Description 10", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 10, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription11", Description = "Test Subscription Description 11", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 11, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription12", Description = "Test Subscription Description 12", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 12, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription13", Description = "Test Subscription Description 13", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 13, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription14", Description = "Test Subscription Description 14", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 14, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription15", Description = "Test Subscription Description 15", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 15, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription16", Description = "Test Subscription Description 16", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 16, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription17", Description = "Test Subscription Description 17", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 17, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription18", Description = "Test Subscription Description 18", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 18, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription19", Description = "Test Subscription Description 19", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 19, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription20", Description = "Test Subscription Description 20", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 20, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription21", Description = "Test Subscription Description 21", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 21, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription22", Description = "Test Subscription Description 22", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 22, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription23", Description = "Test Subscription Description 23", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 22, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription24", Description = "Test Subscription Description 24", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 22, WebhookSecret = Guid.NewGuid().ToString() },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscription25", Description = "Test Subscription Description 25", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 22, WebhookSecret = Guid.NewGuid().ToString() }
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription", Description = "Test Subscription Description", ProvisioningState = "Provisioning", MaxDeliveryAttempts = 3, DeadletterCount = 1, WebhookSecret = Guid.NewGuid().ToString(), Audience = "audience" },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription2", Description = "Test Subscription Description 2", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 2, WebhookSecret = Guid.NewGuid().ToString(), Audience = "audience2" },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription3", Description = "Test Subscription Description 3", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 3, WebhookSecret = Guid.NewGuid().ToString(), Audience = "audience3" },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription4", Description = "Test Subscription Description 4", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 4, WebhookSecret = Guid.NewGuid().ToString(), Audience = "audience4" },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription5", Description = "Test Subscription Description 5", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 5, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription6", Description = "Test Subscription Description 6", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 6, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription7", Description = "Test Subscription Description 7", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 7, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription8", Description = "Test Subscription Description 8", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 8, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription9", Description = "Test Subscription Description 9", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 9, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription10", Description = "Test Subscription Description 10", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 10, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription11", Description = "Test Subscription Description 11", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 11, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription12", Description = "Test Subscription Description 12", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 12, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription13", Description = "Test Subscription Description 13", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 13, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription14", Description = "Test Subscription Description 14", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 14, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription15", Description = "Test Subscription Description 15", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 15, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription16", Description = "Test Subscription Description 16", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 16, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription17", Description = "Test Subscription Description 17", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 17, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription18", Description = "Test Subscription Description 18", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 18, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription19", Description = "Test Subscription Description 19", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 19, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription20", Description = "Test Subscription Description 20", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 20, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription21", Description = "Test Subscription Description 21", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 21, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription22", Description = "Test Subscription Description 22", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 22, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription23", Description = "Test Subscription Description 23", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 22, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription24", Description = "Test Subscription Description 24", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 22, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription25", Description = "Test Subscription Description 25", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 22, WebhookSecret = Guid.NewGuid().ToString(), Audience = null },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscription26", Description = "Test Subscription Description 26", ProvisioningState = "Provisioned", MaxDeliveryAttempts = 3, DeadletterCount = 22, WebhookSecret = Guid.NewGuid().ToString(), Audience = "audience26" }
     ];
 
     public List<string> AvailableApiKeys =
@@ -357,8 +358,8 @@ public class QalaCliBaseFixture : IDisposable
                     .ReturnsAsync((string topicName, Guid subscriptionId) => AvailableSubscriptions.FirstOrDefault(s => s.Id == subscriptionId));
 
         SubscriptionGatewayMock.Setup(
-            s => s.CreateSubscriptionAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Guid>>(), It.IsAny<int>()))
-                    .ReturnsAsync((string topicName, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts) =>
+            s => s.CreateSubscriptionAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Guid>>(), It.IsAny<int>(), It.IsAny<string>()))
+                    .ReturnsAsync((string topicName, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts, string audience) =>
                     {
                         var newSubscription = new Subscription
                         {
@@ -369,7 +370,8 @@ public class QalaCliBaseFixture : IDisposable
                             EventTypes = AvailableEventTypes,
                             ProvisioningState = "Provisioning",
                             MaxDeliveryAttempts = maxDeliveryAttempts,
-                            DeadletterCount = 0
+                            DeadletterCount = 0,
+                            Audience = audience
                         };
 
                         AvailableSubscriptions.Add(newSubscription);
@@ -378,8 +380,8 @@ public class QalaCliBaseFixture : IDisposable
                     });
 
         SubscriptionGatewayMock.Setup(
-            s => s.UpdateSubscriptionAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Guid>>(), It.IsAny<int>()))
-                    .ReturnsAsync((string topicType, string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts) =>
+            s => s.UpdateSubscriptionAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Guid>>(), It.IsAny<int>(), It.IsAny<string>()))
+                    .ReturnsAsync((string topicType, string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts, string audience) =>
                     {
                         var subscription = AvailableSubscriptions.FirstOrDefault(s => s.Id == subscriptionId);
                         if (subscription != null)
@@ -390,6 +392,7 @@ public class QalaCliBaseFixture : IDisposable
                             subscription.WebhookUrl = webhookUrl;
                             subscription.EventTypes = AvailableEventTypes.Where(et => eventTypeIds.Contains(et.Id)).ToList();
                             subscription.MaxDeliveryAttempts = maxDeliveryAttempts;
+                            subscription.Audience = audience;
                         }
 
                         return subscription;

@@ -8,7 +8,7 @@ namespace Qala.Cli.Services;
 
 public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEventTypeGateway eventTypeGateway) : ISubscriptionService
 {
-    public async Task<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>> CreateSubscriptionAsync(string topicType, string topicName, string name, string description, string webhookUrl, List<string> eventTypeNames, int maxDeliveryAttempts)
+    public async Task<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>> CreateSubscriptionAsync(string topicType, string topicName, string name, string description, string webhookUrl, List<string> eventTypeNames, int maxDeliveryAttempts, string? audience)
     {
         if (string.IsNullOrWhiteSpace(topicName))
         {
@@ -40,6 +40,11 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEven
             return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Max delivery attempts should be between 0 and 10"));
         }
 
+        if (string.IsNullOrWhiteSpace(audience))
+        {
+            audience = string.Empty;
+        }
+
         List<Guid> eventTypeIds = [];
         if (topicType == "Topic")
         {
@@ -62,7 +67,7 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEven
             }
         }
 
-        var subscription = await subscriptionGateway.CreateSubscriptionAsync(topicName, name, description, webhookUrl, eventTypeIds, maxDeliveryAttempts);
+        var subscription = await subscriptionGateway.CreateSubscriptionAsync(topicName, name, description, webhookUrl, eventTypeIds, maxDeliveryAttempts, audience);
         if (subscription == null)
         {
             return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Failed to create subscription"));
@@ -207,7 +212,7 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEven
         return await Task.FromResult<Either<RotateWebhookSecretErrorResponse, RotateWebhookSecretSuccessResponse>>(new RotateWebhookSecretSuccessResponse(secret));
     }
 
-    public async Task<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>> UpdateSubscriptionAsync(string topicType, string topicName, string subscriptionName, string? newName, string? description, string? webhookUrl, List<string>? eventTypeNames, int? maxDeliveryAttempts)
+    public async Task<Either<UpdateSubscriptionErrorResponse, UpdateSubscriptionSuccessResponse>> UpdateSubscriptionAsync(string topicType, string topicName, string subscriptionName, string? newName, string? description, string? webhookUrl, List<string>? eventTypeNames, int? maxDeliveryAttempts, string? audience)
     {
         if (string.IsNullOrWhiteSpace(topicName))
         {
@@ -278,6 +283,11 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEven
             subscription.MaxDeliveryAttempts = (int)maxDeliveryAttempts;
         }
 
+        if (!string.IsNullOrWhiteSpace(audience))
+        {
+            subscription.Audience = audience;
+        }
+
         var updatedSubscription = await subscriptionGateway.UpdateSubscriptionAsync(
                 topicType,
                 topicName,
@@ -286,7 +296,8 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEven
                 subscription.Description,
                 subscription.WebhookUrl,
                 subscription.EventTypes.Select(e => e.Id).ToList(),
-                subscription.MaxDeliveryAttempts);
+                subscription.MaxDeliveryAttempts,
+                subscription.Audience ?? string.Empty);
 
         if (updatedSubscription == null)
         {

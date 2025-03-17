@@ -6,7 +6,7 @@ namespace Qala.Cli.Data.Gateway;
 
 public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
 {
-    public async Task<Subscription?> CreateSubscriptionAsync(string topicName, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts)
+    public async Task<Subscription?> CreateSubscriptionAsync(string topicName, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts, string audience)
     {
         try
         {
@@ -16,7 +16,8 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
                 Description = description,
                 WebhookUrl = webhookUrl,
                 EventTypeIds = eventTypeIds,
-                MaxDeliveryAttempts = maxDeliveryAttempts
+                MaxDeliveryAttempts = maxDeliveryAttempts,
+                Audience = audience
             });
 
             if (!response.IsSuccessStatusCode)
@@ -130,7 +131,7 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
         }
     }
 
-    public async Task<Subscription?> UpdateSubscriptionAsync(string topicType, string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts)
+    public async Task<Subscription?> UpdateSubscriptionAsync(string topicType, string topicName, Guid subscriptionId, string name, string description, string webhookUrl, List<Guid> eventTypeIds, int maxDeliveryAttempts, string audience)
     {
         try
         {
@@ -141,7 +142,8 @@ public class SubscriptionGateway(HttpClient httpClient) : ISubscriptionGateway
                 WebhookUrl = webhookUrl,
                 EventTypeIds = eventTypeIds,
                 MaxDeliveryAttempts = maxDeliveryAttempts,
-                TopicType = topicType
+                TopicType = topicType,
+                Audience = audience
             });
 
             if (!response.IsSuccessStatusCode)

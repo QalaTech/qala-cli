@@ -509,6 +509,11 @@ Settings="Qala.Cli.Commands.Subscriptions.CreateSubscriptionArgument">
       <Description>this command creates a new subscription for the Qala 
 CLI.</Description>
       <Parameters>
+        <Option Short="a" Long="audience" Value="AUDIENCE" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The audience to scope the subscription - for 
+topics.</Description>
+        </Option>
         <Option Short="d" Long="description" Value="DESCRIPTION" 
 Required="false" Kind="scalar" ClrType="System.String">
           <Description>The description of the subscription.</Description>
@@ -561,6 +566,11 @@ CLI.</Description>
 Kind="scalar" ClrType="System.String">
           <Description>The name of the subscription.</Description>
         </Argument>
+        <Option Short="a" Long="audience" Value="AUDIENCE" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The audience to scope the subscription - for 
+topics.</Description>
+        </Option>
         <Option Short="d" Long="description" Value="DESCRIPTION" 
 Required="false" Kind="scalar" ClrType="System.String">
           <Description>The description of the subscription.</Description>

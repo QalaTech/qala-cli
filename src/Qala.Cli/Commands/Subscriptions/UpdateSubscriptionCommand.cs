@@ -15,13 +15,14 @@ public class UpdateSubscriptionCommand(IMediator mediator, IAnsiConsole console)
             .SpinnerStyle(Style.Parse("yellow bold"))
             .StartAsync("Processing request...", async ctx =>
             {
-                return await mediator.Send(new UpdateSubscriptionRequest(argument.TopicName, argument.SourceName, argument.SubscriptionName, argument.NewName, argument.Description, argument.WebhookUrl, argument.EventTypeNames, argument.MaxDeliveryAttempts))
+                return await mediator.Send(new UpdateSubscriptionRequest(argument.TopicName, argument.SourceName, argument.SubscriptionName, argument.NewName, argument.Description, argument.WebhookUrl, argument.EventTypeNames, argument.MaxDeliveryAttempts, argument.Audience))
                     .ToAsync()
                     .Match(
                         success =>
                         {
                             BaseCommands.DisplaySuccessMessage("Subscription", BaseCommands.CommandAction.Update, console);
-                            console.Write(new Grid()
+                            var grid = string.IsNullOrWhiteSpace(argument.TopicName) ?
+                            new Grid()
                                 .AddColumns(6)
                                 .AddRow(
                                     new Text("Id", new Style(decoration: Decoration.Bold)),
@@ -38,8 +39,29 @@ public class UpdateSubscriptionCommand(IMediator mediator, IAnsiConsole console)
                                     new Text(success.Subscription.WebhookUrl),
                                     new Text(string.Join(", ", success.Subscription.EventTypes.Select(et => et.Type))),
                                     new Text(success.Subscription.MaxDeliveryAttempts.ToString())
+                                ) :
+                            new Grid()
+                                .AddColumns(7)
+                                .AddRow(
+                                    new Text("Id", new Style(decoration: Decoration.Bold)),
+                                    new Text("Name", new Style(decoration: Decoration.Bold)),
+                                    new Text("Description", new Style(decoration: Decoration.Bold)),
+                                    new Text("Webhook Url", new Style(decoration: Decoration.Bold)),
+                                    new Text("Event Types", new Style(decoration: Decoration.Bold)),
+                                    new Text("Max Delivery Attempts", new Style(decoration: Decoration.Bold)),
+                                    new Text("Audience", new Style(decoration: Decoration.Bold))
                                 )
-                            );
+                                .AddRow(
+                                    new Text(success.Subscription.Id.ToString()),
+                                    new Text(success.Subscription.Name),
+                                    new Text(success.Subscription.Description),
+                                    new Text(success.Subscription.WebhookUrl),
+                                    new Text(string.Join(", ", success.Subscription.EventTypes.Select(et => et.Type))),
+                                    new Text(success.Subscription.MaxDeliveryAttempts.ToString()),
+                                    new Text(success.Subscription.Audience ?? string.Empty)
+                                );
+
+                            console.Write(grid);
 
                             return 0;
                         },
