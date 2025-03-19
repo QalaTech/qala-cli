@@ -10,6 +10,7 @@ using Qala.Cli.Commands.Subscriptions;
 using Spectre.Console;
 using Qala.Cli.Commands.Sources;
 using Qala.Cli.Commands.GenerateMarkdown;
+using Qala.Cli.Commands.SubscriberGroups;
 
 var services = new ServiceCollection();
 var configuration = Configurations.SetupConfiguration();
@@ -143,6 +144,28 @@ app.Configure(config =>
         });
     })
     .WithAlias("sub");
+
+    config.AddBranch("subscriber-groups", sgp =>
+    {
+        sgp.AddCommand<ListSubscriberGroupsCommand>("list")
+            .WithDescription("this command lists all the subscriber groups available in your environment.")
+            .WithExample("qala subscriber-groups ls")
+            .WithAlias("ls");
+        sgp.AddCommand<GetSubscriberGroupCommand>("inspect")
+            .WithDescription("this command retrieves the subscriber group with the specified NAME.")
+            .WithExample("qala subscriber-groups inspect <SUBSCRIBER_GROUP_NAME>")
+            .WithAlias("i");
+        sgp.AddCommand<CreateSubscriberGroupCommand>("create")
+            .WithDescription("this command creates a new subscriber group for the Qala CLI.")
+            .WithExample("qala subscriber-groups create -n <NAME> -d <DESCRIPTION> -t <TOPICS_COMMA_SEPERATED_NAMES> -a <AUDIENCE>");
+        sgp.AddCommand<UpdateSubscriberGroupCommand>("update")
+            .WithDescription("this command updates an existing subscriber group for the Qala CLI.")
+            .WithExample("qala subscriber-groups update <SUBSCRIBER_GROUP_NAME> -n <NEW_NAME> -d <DESCRIPTION> -t <TOPICS_COMMA_SEPERATED_NAMES> -a <AUDIENCE>");
+        sgp.AddCommand<DeleteSubscriberGroupCommand>("delete")
+            .WithDescription("this command deletes the subscriber group with the specified NAME.")
+            .WithExample("qala subscriber-groups delete <SUBSCRIBER_GROUP_NAME>");
+    })
+    .WithAlias("sgp");
 });
 
 await app.RunAsync(args);

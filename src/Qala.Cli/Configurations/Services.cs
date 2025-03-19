@@ -23,6 +23,7 @@ public class Services
         services.AddTransient<ITopicService, TopicService>();
         services.AddTransient<ISubscriptionService, SubscriptionService>();
         services.AddTransient<ISourceService, SourceService>();
+        services.AddTransient<ISubscriberGroupService, SubscriberGroupService>();
     }
 
     public static void RegisterDataServices(IServiceCollection services, IConfiguration configuration)
@@ -41,6 +42,8 @@ public class Services
         services.AddHttpClient<ISubscriptionGateway, SubscriptionGateway>(client => BuildHttpClient(client, configuration))
             .AddHttpMessageHandler<DynamicHeaderHandler>();
         services.AddHttpClient<ISourceGateway, SourceGateway>(client => BuildHttpClient(client, configuration))
+            .AddHttpMessageHandler<DynamicHeaderHandler>();
+        services.AddHttpClient<ISubscriberGroupGateway, SubscriberGroupGateway>(client => BuildHttpClient(client, configuration))
             .AddHttpMessageHandler<DynamicHeaderHandler>();
     }
 
