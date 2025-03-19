@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using MediatR;
 using Qala.Cli.Utils;
 using Spectre.Console;
@@ -105,6 +106,11 @@ public class CreateSubscriptionCommand(IMediator mediator, IAnsiConsole console)
         if (argument.MaxDeliveryAttempts < 0 || argument.MaxDeliveryAttempts > 10)
         {
             return ValidationResult.Error("Max delivery attempts should be between 0 and 10.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(argument.Audience) && !Regex.Match(argument.Audience, ValidationHelper.AudiencesRegex, RegexOptions.IgnoreCase).Success)
+        {
+            return ValidationResult.Error("Audience entries must only contain alphanumerical values (A-Z, a-z, 0-9)");
         }
 
         return ValidationResult.Success();

@@ -694,4 +694,122 @@ Kind="scalar" ClrType="System.String">
       </Command>
     </Command>
   </Command>
+  <!--SUBSCRIBER-GROUPS-->
+  <Command Name="subscriber-groups" IsBranch="true" 
+Settings="Spectre.Console.Cli.CommandSettings">
+    <!--LIST-->
+    <Command Name="list" IsBranch="false" 
+ClrType="Qala.Cli.Commands.SubscriberGroups.ListSubscriberGroupsCommand" 
+Settings="Qala.Cli.Commands.SubscriberGroups.ListSubscriberGroupsArgument">
+      <Description>this command lists all the subscriber groups available in 
+your environment.</Description>
+      <Examples>
+        <Example commandLine="qala subscriber-groups ls" />
+      </Examples>
+    </Command>
+    <!--INSPECT-->
+    <Command Name="inspect" IsBranch="false" 
+ClrType="Qala.Cli.Commands.SubscriberGroups.GetSubscriberGroupCommand" 
+Settings="Qala.Cli.Commands.SubscriberGroups.GetSubscriberGroupArgument">
+      <Description>this command retrieves the subscriber group with the 
+specified NAME.</Description>
+      <Parameters>
+        <Argument Name="SUBSCRIBER_GROUP_NAME" Position="0" Required="true" 
+Kind="scalar" ClrType="System.String">
+          <Description>The Name of the subscriber group.</Description>
+        </Argument>
+      </Parameters>
+      <Examples>
+        <Example commandLine="qala subscriber-groups inspect 
+&lt;SUBSCRIBER_GROUP_NAME&gt;" />
+      </Examples>
+    </Command>
+    <!--CREATE-->
+    <Command Name="create" IsBranch="false" 
+ClrType="Qala.Cli.Commands.SubscriberGroups.CreateSubscriberGroupCommand" 
+Settings="Qala.Cli.Commands.SubscriberGroups.CreateSubscriberGroupArgument">
+      <Description>this command creates a new subscriber group for the Qala 
+CLI.</Description>
+      <Parameters>
+        <Option Short="a" Long="audience" Value="AUDIENCE" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The audience to scope the subscriber group.</Description>
+        </Option>
+        <Option Short="d" Long="description" Value="DESCRIPTION" 
+Required="false" Kind="scalar" ClrType="System.String">
+          <Description>The description of the subscriber group.</Description>
+        </Option>
+        <Option Short="n" Long="name" Value="NAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The name of the subscriber group.</Description>
+        </Option>
+        <Option Short="t" Long="topics" Value="TOPICS_COMMA_SEPERATED_NAMES" 
+Required="false" Kind="scalar" 
+ClrType="System.Collections.Generic.List`1[[System.String, 
+System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, 
+PublicKeyToken=7cec85d7bea7798e]]">
+          <Description>The comma separated list of topic names.</Description>
+        </Option>
+      </Parameters>
+      <Examples>
+        <Example commandLine="qala subscriber-groups create -n &lt;NAME&gt; -d 
+&lt;DESCRIPTION&gt; -t &lt;TOPICS_COMMA_SEPERATED_NAMES&gt; -a &lt;AUDIENCE&gt;"
+/>
+      </Examples>
+    </Command>
+    <!--UPDATE-->
+    <Command Name="update" IsBranch="false" 
+ClrType="Qala.Cli.Commands.SubscriberGroups.UpdateSubscriberGroupCommand" 
+Settings="Qala.Cli.Commands.SubscriberGroups.UpdateSubscriberGroupArgument">
+      <Description>this command updates an existing subscriber group for the 
+Qala CLI.</Description>
+      <Parameters>
+        <Argument Name="SUBSCRIPTION_NAME" Position="0" Required="true" 
+Kind="scalar" ClrType="System.String">
+          <Description>The name of the subscriber group.</Description>
+        </Argument>
+        <Option Short="a" Long="audience" Value="AUDIENCE" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The audience to scope the subscriber group.</Description>
+        </Option>
+        <Option Short="d" Long="description" Value="DESCRIPTION" 
+Required="false" Kind="scalar" ClrType="System.String">
+          <Description>The description of the subscriber group.</Description>
+        </Option>
+        <Option Short="n" Long="name" Value="NEW_NAME" Required="false" 
+Kind="scalar" ClrType="System.String">
+          <Description>The new name of the subscriber group.</Description>
+        </Option>
+        <Option Short="t" Long="topics" Value="TOPICS_COMMA_SEPERATED_NAMES" 
+Required="false" Kind="scalar" 
+ClrType="System.Collections.Generic.List`1[[System.String, 
+System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, 
+PublicKeyToken=7cec85d7bea7798e]]">
+          <Description>The comma separated list of topic names.</Description>
+        </Option>
+      </Parameters>
+      <Examples>
+        <Example commandLine="qala subscriber-groups update 
+&lt;SUBSCRIBER_GROUP_NAME&gt; -n &lt;NEW_NAME&gt; -d &lt;DESCRIPTION&gt; -t 
+&lt;TOPICS_COMMA_SEPERATED_NAMES&gt; -a &lt;AUDIENCE&gt;" />
+      </Examples>
+    </Command>
+    <!--DELETE-->
+    <Command Name="delete" IsBranch="false" 
+ClrType="Qala.Cli.Commands.SubscriberGroups.DeleteSubscriberGroupCommand" 
+Settings="Qala.Cli.Commands.SubscriberGroups.DeleteSubscriberGroupArgument">
+      <Description>this command deletes the subscriber group with the specified 
+NAME.</Description>
+      <Parameters>
+        <Argument Name="SUBSCRIBER_GROUP_NAME" Position="0" Required="true" 
+Kind="scalar" ClrType="System.String">
+          <Description>The Name of the subscriber group.</Description>
+        </Argument>
+      </Parameters>
+      <Examples>
+        <Example commandLine="qala subscriber-groups delete 
+&lt;SUBSCRIBER_GROUP_NAME&gt;" />
+      </Examples>
+    </Command>
+  </Command>
 </Model>

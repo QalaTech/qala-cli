@@ -22,6 +22,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using Qala.Cli.Configurations;
 using Spectre.Console.Cli;
+using Qala.Cli.Commands.SubscriberGroups;
 
 namespace Qala.Cli.Integration.Tests.Fixtures;
 
@@ -103,13 +104,27 @@ public class QalaCliBaseFixture : IDisposable
         "4f3628c4-70a4-4fe8-b23e-51eec93a90ab"
     ];
 
+    public List<SubscriberGroupPrincipal> AvailableSubscriberGroups =
+    [
+        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup", Description = "Test Subscriber Group Description", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic" } }, Audience = "audience" },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup2", Description = "Test Subscriber Group Description 2", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic2" } }, Audience = "audience2" },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup3", Description = "Test Subscriber Group Description 3", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic3" } }, Audience = "audience3" },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup4", Description = "Test Subscriber Group Description 4", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic4" } }, Audience = "audience4" },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup5", Description = "Test Subscriber Group Description 5", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic5" } }, Audience = "audience5" },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup6", Description = "Test Subscriber Group Description 6", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic6" } }, Audience = "audience6" },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup7", Description = "Test Subscriber Group Description 7", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic7" } }, Audience = "audience7" },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup8", Description = "Test Subscriber Group Description 8", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic8" } }, Audience = "audience8" },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup9", Description = "Test Subscriber Group Description 9", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic9" } }, Audience = "audience9" },
+        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup10", Description = "Test Subscriber Group Description 10", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic10" } }, Audience = "audience10" },
+    ];
+
     public Mock<IOrganizationGateway> OrganizationServiceMock = new();
     public Mock<IEnvironmentGateway> EnvironmentGatewayMock = new();
     public Mock<IEventTypeGateway> EventTypeGatewayMock = new();
     public Mock<ITopicGateway> TopicGatewayMock = new();
     public Mock<ISubscriptionGateway> SubscriptionGatewayMock = new();
-
     public Mock<ISourceGateway> SourceGatewayMock = new();
+    public Mock<ISubscriberGroupGateway> SubscriberGroupGatewayMock = new();
 
     public CommandApp App { get; set; }
 
@@ -123,6 +138,7 @@ public class QalaCliBaseFixture : IDisposable
         InitializeTopicGatewayMock();
         InitializeSourcesGatewayMock();
         InitializeSubscriptionGatewayMock();
+        InitializeSubscriberGroupGatewayMock();
 
         var services = new ServiceCollection();
         InitializeDataServices(services);
@@ -427,6 +443,58 @@ public class QalaCliBaseFixture : IDisposable
                     });
     }
 
+    private void InitializeSubscriberGroupGatewayMock()
+    {
+        SubscriberGroupGatewayMock.Setup(
+            s => s.ListSubscriberGroupsAsync())
+                    .ReturnsAsync(AvailableSubscriberGroups);
+
+        SubscriberGroupGatewayMock.Setup(
+            s => s.CreateSubscriberGroupAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Permission>>(), It.IsAny<string>()))
+                    .ReturnsAsync((string name, string description, List<Permission> permissions, string audience) =>
+                    {
+                        var newSubscriberGroup = new SubscriberGroupPrincipal
+                        {
+                            Id = new Guid("60ef03bb-f5a7-4c81-addf-38e2b360bff5"),
+                            Name = name,
+                            Description = description,
+                            AvailablePermissions = permissions,
+                            Audience = audience
+                        };
+
+                        AvailableSubscriberGroups.Add(newSubscriberGroup);
+
+                        return newSubscriberGroup;
+                    });
+
+        SubscriberGroupGatewayMock.Setup(
+            s => s.UpdateSubscriberGroupAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Permission>>(), It.IsAny<string>()))
+                    .ReturnsAsync((Guid id, string name, string description, List<Permission> permissions, string audience) =>
+                    {
+                        var subscriberGroup = AvailableSubscriberGroups.FirstOrDefault(s => s.Id == id);
+                        if (subscriberGroup != null)
+                        {
+                            subscriberGroup.Name = name;
+                            subscriberGroup.Description = description;
+                            subscriberGroup.AvailablePermissions = permissions;
+                            subscriberGroup.Audience = audience;
+                        }
+
+                        return subscriberGroup;
+                    });
+
+        SubscriberGroupGatewayMock.Setup(
+            s => s.DeleteSubscriberGroupAsync(It.IsAny<Guid>()))
+                    .Callback((Guid id) =>
+                    {
+                        var subscriberGroup = AvailableSubscriberGroups.FirstOrDefault(s => s.Id == id);
+                        if (subscriberGroup != null)
+                        {
+                            AvailableSubscriberGroups.Remove(subscriberGroup);
+                        }
+                    });
+    }
+
     private static void InitializeCommandHandlers(IServiceCollection services)
     {
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
@@ -453,6 +521,11 @@ public class QalaCliBaseFixture : IDisposable
         services.AddTransient<IRequestHandler<GetSourceRequest, Either<GetSourceErrorResponse, GetSourceSuccessResponse>>, GetSourceHandler>();
         services.AddTransient<IRequestHandler<UpdateSourceRequest, Either<UpdateSourceErrorResponse, UpdateSourceSuccessResponse>>, UpdateSourceHandler>();
         services.AddTransient<IRequestHandler<DeleteSourceRequest, Either<DeleteSourceErrorResponse, DeleteSourceSuccessResponse>>, DeleteSourceHandler>();
+        services.AddTransient<IRequestHandler<ListSubscriberGroupsRequest, Either<ListSubscriberGroupsErrorResponse, ListSubscriberGroupsSuccessResponse>>, ListSubscriberGroupsHandler>();
+        services.AddTransient<IRequestHandler<CreateSubscriberGroupRequest, Either<CreateSubscriberGroupErrorResponse, CreateSubscriberGroupSuccessResponse>>, CreateSubscriberGroupHandler>();
+        services.AddTransient<IRequestHandler<UpdateSubscriberGroupRequest, Either<UpdateSubscriberGroupErrorResponse, UpdateSubscriberGroupSuccessResponse>>, UpdateSubscriberGroupHandler>();
+        services.AddTransient<IRequestHandler<DeleteSubscriberGroupRequest, Either<DeleteSubscriberGroupErrorResponse, DeleteSubscriberGroupSuccessResponse>>, DeleteSubscriberGroupHandler>();
+        services.AddTransient<IRequestHandler<GetSubscriberGroupRequest, Either<GetSubscriberGroupErrorResponse, GetSubscriberGroupSuccessResponse>>, GetSubscriberGroupHandler>();
     }
 
     private static void InitializeServices(IServiceCollection services)
@@ -464,6 +537,7 @@ public class QalaCliBaseFixture : IDisposable
         services.AddTransient<ITopicService, TopicService>();
         services.AddTransient<ISubscriptionService, SubscriptionService>();
         services.AddTransient<ISourceService, SourceService>();
+        services.AddTransient<ISubscriberGroupService, SubscriberGroupService>();
     }
 
     private void InitializeDataServices(IServiceCollection services)
@@ -475,6 +549,7 @@ public class QalaCliBaseFixture : IDisposable
         services.AddSingleton<ITopicGateway>(TopicGatewayMock.Object);
         services.AddSingleton<ISubscriptionGateway>(SubscriptionGatewayMock.Object);
         services.AddSingleton<ISourceGateway>(SourceGatewayMock.Object);
+        services.AddSingleton<ISubscriberGroupGateway>(SubscriberGroupGatewayMock.Object);
     }
 
     private static void SetEnvironmentVariableNonWindows(string variable, string value)
