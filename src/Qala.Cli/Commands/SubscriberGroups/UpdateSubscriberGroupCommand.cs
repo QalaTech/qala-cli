@@ -25,14 +25,14 @@ public class UpdateSubscriberGroupCommand(IMediator mediator, IAnsiConsole conso
                             var grid = new Grid()
                                 .AddColumns(5)
                                 .AddRow(
-                                    new Text("Id", new Style(decoration: Decoration.Bold)),
+                                    new Text("Key", new Style(decoration: Decoration.Bold)),
                                     new Text("Name", new Style(decoration: Decoration.Bold)),
                                     new Text("Description", new Style(decoration: Decoration.Bold)),
                                     new Text("Topics", new Style(decoration: Decoration.Bold)),
                                     new Text("Audience", new Style(decoration: Decoration.Bold))
                                 )
                                 .AddRow(
-                                    new Text(success.SubscriberGroup.Id.ToString()),
+                                    new Text(success.SubscriberGroup.Key.ToString()),
                                     new Text(success.SubscriberGroup.Name),
                                     new Text(success.SubscriberGroup.Description),
                                     new Text(string.Join(", ", success.SubscriberGroup.AvailablePermissions.Select(p => p.ResourceId))),

@@ -68,7 +68,7 @@ public class ListSubscriberGroupsCommandShould(QalaCliBaseFixture fixture) : ICl
         foreach (var subscriberGroup in fixture.AvailableSubscriberGroups)
         {
             grid.AddRow(
-                new Text(subscriberGroup.Id.ToString()),
+                new Text(subscriberGroup.Key.ToString()),
                 new Text(subscriberGroup.Name),
                 new Text(subscriberGroup.Description),
                 new Text(string.Join(", ", subscriberGroup.AvailablePermissions.Select(p => p.ResourceId))),

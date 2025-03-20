@@ -82,7 +82,7 @@ public class SubscriberGroupService(ISubscriberGroupGateway subscriberGroupGatew
 
         try
         {
-            await subscriberGroupGateway.DeleteSubscriberGroupAsync(subscriberGroup.Id);
+            await subscriberGroupGateway.DeleteSubscriberGroupAsync(subscriberGroup.Key);
             return await Task.FromResult<Either<DeleteSubscriberGroupErrorResponse, DeleteSubscriberGroupSuccessResponse>>(new DeleteSubscriberGroupSuccessResponse());
         }
         catch (Exception ex)
@@ -175,7 +175,7 @@ public class SubscriberGroupService(ISubscriberGroupGateway subscriberGroupGatew
 
         try
         {
-            var response = await subscriberGroupGateway.UpdateSubscriberGroupAsync(subscriberGroup.Id, subscriberGroup.Name, subscriberGroup.Description, subscriberGroup.AvailablePermissions, subscriberGroup.Audience);
+            var response = await subscriberGroupGateway.UpdateSubscriberGroupAsync(subscriberGroup.Key, subscriberGroup.Name, subscriberGroup.Description, subscriberGroup.AvailablePermissions, subscriberGroup.Audience);
             if (response == null)
             {
                 return await Task.FromResult<Either<UpdateSubscriberGroupErrorResponse, UpdateSubscriberGroupSuccessResponse>>(new UpdateSubscriberGroupErrorResponse("Failed to update Subscriber Group"));

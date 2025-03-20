@@ -24,7 +24,7 @@ public class ListSubscriberGroupsCommand(IMediator mediator, IAnsiConsole consol
                             var grid = new Grid()
                                 .AddColumns(5)
                                 .AddRow(
-                                    new Text("Id", new Style(decoration: Decoration.Bold)),
+                                    new Text("Key", new Style(decoration: Decoration.Bold)),
                                     new Text("Name", new Style(decoration: Decoration.Bold)),
                                     new Text("Description", new Style(decoration: Decoration.Bold)),
                                     new Text("Topics", new Style(decoration: Decoration.Bold)),
@@ -34,7 +34,7 @@ public class ListSubscriberGroupsCommand(IMediator mediator, IAnsiConsole consol
                             foreach (var subscriberGroup in success.SubscriberGroups)
                             {
                                 grid.AddRow(
-                                    new Text(subscriberGroup.Id.ToString()),
+                                    new Text(subscriberGroup.Key.ToString()),
                                     new Text(subscriberGroup.Name),
                                     new Text(subscriberGroup.Description),
                                     new Text(string.Join(", ", subscriberGroup.AvailablePermissions.Select(p => p.ResourceId))),

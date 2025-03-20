@@ -84,7 +84,7 @@ public class GetSubscriberGroupCommandShould(QalaCliBaseFixture fixture) : IClas
                 new Text("Audience", new Style(decoration: Decoration.Bold))
             )
             .AddRow(
-                new Text(subscriberGroup.Id.ToString()),
+                new Text(subscriberGroup.Key.ToString()),
                 new Text(subscriberGroup.Name),
                 new Text(subscriberGroup.Description),
                 new Text(string.Join(", ", subscriberGroup.AvailablePermissions.Select(p => p.ResourceId))),

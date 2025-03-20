@@ -112,7 +112,7 @@ public class CreateSubscriberGroupCommandShould(QalaCliBaseFixture fixture) : IC
 
         var expectedSubscriberGroup = new SubscriberGroupPrincipal()
         {
-            Id = Guid.Parse(expectedOutput[0]),
+            Key = Guid.Parse(expectedOutput[0]),
             Name = expectedOutput[1],
             Description = expectedOutput[2],
             AvailablePermissions = expectedPermissions,
@@ -131,7 +131,7 @@ public class CreateSubscriberGroupCommandShould(QalaCliBaseFixture fixture) : IC
                 new Text("Audience", new Style(decoration: Decoration.Bold))
             )
             .AddRow(
-                new Text(expectedSubscriberGroup.Id.ToString()),
+                new Text(expectedSubscriberGroup.Key.ToString()),
                 new Text(expectedSubscriberGroup.Name),
                 new Text(expectedSubscriberGroup.Description),
                 new Text(string.Join(", ", expectedSubscriberGroup.AvailablePermissions.Select(p => p.ResourceId))),

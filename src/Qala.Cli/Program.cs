@@ -124,10 +124,10 @@ app.Configure(config =>
             .WithAlias("i");
         s.AddCommand<CreateSubscriptionCommand>("create")
             .WithDescription("this command creates a new subscription for the Qala CLI.")
-            .WithExample("qala sub create -n <SUBSCRIPTION_NAME> --topic <TOPIC_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>");
+            .WithExample("qala sub create -n <SUBSCRIPTION_NAME> --topic <TOPIC_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS> -a <AUDIENCE>");
         s.AddCommand<UpdateSubscriptionCommand>("update")
             .WithDescription("this command updates an existing subscription for the Qala CLI.")
-            .WithExample("qala sub update <SUBSCRIPTION_NAME> --topic <TOPIC_NAME> -n <NEW_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS>");
+            .WithExample("qala sub update <SUBSCRIPTION_NAME> --topic <TOPIC_NAME> -n <NEW_NAME> -d <DESCRIPTION> -e <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m <MAX_DELIVERY_ATTEMPTS> -a <AUDIENCE>");
         s.AddCommand<DeleteSubscriptionCommand>("delete")
             .WithDescription("this command deletes the subscription with the specified ID.")
             .WithExample("qala sub delete --topic <TOPIC_NAME> --subscription <SUBSCRIPTION_NAME>");

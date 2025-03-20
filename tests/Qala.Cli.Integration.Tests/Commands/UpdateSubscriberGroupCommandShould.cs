@@ -114,7 +114,7 @@ public class UpdateSubscriberGroupCommandShould(QalaCliBaseFixture fixture) : IC
 
         var expectedSubscriberGroup = new SubscriberGroupPrincipal()
         {
-            Id = string.IsNullOrWhiteSpace(expectedOutput[1]) ? currentSubscriberGroup.Id : Guid.Parse(expectedOutput[1]),
+            Key = string.IsNullOrWhiteSpace(expectedOutput[1]) ? currentSubscriberGroup.Key : Guid.Parse(expectedOutput[1]),
             Name = string.IsNullOrEmpty(expectedOutput[2]) ? currentSubscriberGroup.Name : expectedOutput[2],
             Description = string.IsNullOrEmpty(expectedOutput[3]) ? currentSubscriberGroup.Description : expectedOutput[3],
             AvailablePermissions = string.IsNullOrEmpty(expectedOutput[4]) ? currentSubscriberGroup.AvailablePermissions : expectedOutput[4].Split(',').Select(p => new Permission() { ResourceId = p, PermissionType = "Topic:Subscribe", ResourceType = "Topic", }).ToList(),
@@ -133,7 +133,7 @@ public class UpdateSubscriberGroupCommandShould(QalaCliBaseFixture fixture) : IC
                 new Text("Audience", new Style(decoration: Decoration.Bold))
             )
             .AddRow(
-                new Text(expectedSubscriberGroup.Id.ToString()),
+                new Text(expectedSubscriberGroup.Key.ToString()),
                 new Text(expectedSubscriberGroup.Name),
                 new Text(expectedSubscriberGroup.Description),
                 new Text(string.Join(", ", expectedSubscriberGroup.AvailablePermissions.Select(p => p.ResourceId))),

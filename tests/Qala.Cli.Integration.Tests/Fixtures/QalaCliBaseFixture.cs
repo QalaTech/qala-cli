@@ -106,16 +106,16 @@ public class QalaCliBaseFixture : IDisposable
 
     public List<SubscriberGroupPrincipal> AvailableSubscriberGroups =
     [
-        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup", Description = "Test Subscriber Group Description", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic" } }, Audience = "audience" },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup2", Description = "Test Subscriber Group Description 2", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic2" } }, Audience = "audience2" },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup3", Description = "Test Subscriber Group Description 3", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic3" } }, Audience = "audience3" },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup4", Description = "Test Subscriber Group Description 4", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic4" } }, Audience = "audience4" },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup5", Description = "Test Subscriber Group Description 5", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic5" } }, Audience = "audience5" },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup6", Description = "Test Subscriber Group Description 6", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic6" } }, Audience = "audience6" },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup7", Description = "Test Subscriber Group Description 7", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic7" } }, Audience = "audience7" },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup8", Description = "Test Subscriber Group Description 8", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic8" } }, Audience = "audience8" },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup9", Description = "Test Subscriber Group Description 9", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic9" } }, Audience = "audience9" },
-        new() { Id = Guid.NewGuid(), Name = "TestSubscriberGroup10", Description = "Test Subscriber Group Description 10", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic10" } }, Audience = "audience10" },
+        new() { Key = Guid.NewGuid(), Name = "TestSubscriberGroup", Description = "Test Subscriber Group Description", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic" } }, Audience = "audience" },
+        new() { Key = Guid.NewGuid(), Name = "TestSubscriberGroup2", Description = "Test Subscriber Group Description 2", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic2" } }, Audience = "audience2" },
+        new() { Key = Guid.NewGuid(), Name = "TestSubscriberGroup3", Description = "Test Subscriber Group Description 3", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic3" } }, Audience = "audience3" },
+        new() { Key = Guid.NewGuid(), Name = "TestSubscriberGroup4", Description = "Test Subscriber Group Description 4", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic4" } }, Audience = "audience4" },
+        new() { Key = Guid.NewGuid(), Name = "TestSubscriberGroup5", Description = "Test Subscriber Group Description 5", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic5" } }, Audience = "audience5" },
+        new() { Key = Guid.NewGuid(), Name = "TestSubscriberGroup6", Description = "Test Subscriber Group Description 6", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic6" } }, Audience = "audience6" },
+        new() { Key = Guid.NewGuid(), Name = "TestSubscriberGroup7", Description = "Test Subscriber Group Description 7", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic7" } }, Audience = "audience7" },
+        new() { Key = Guid.NewGuid(), Name = "TestSubscriberGroup8", Description = "Test Subscriber Group Description 8", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic8" } }, Audience = "audience8" },
+        new() { Key = Guid.NewGuid(), Name = "TestSubscriberGroup9", Description = "Test Subscriber Group Description 9", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic9" } }, Audience = "audience9" },
+        new() { Key = Guid.NewGuid(), Name = "TestSubscriberGroup10", Description = "Test Subscriber Group Description 10", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic10" } }, Audience = "audience10" },
     ];
 
     public Mock<IOrganizationGateway> OrganizationServiceMock = new();
@@ -455,7 +455,7 @@ public class QalaCliBaseFixture : IDisposable
                     {
                         var newSubscriberGroup = new SubscriberGroupPrincipal
                         {
-                            Id = new Guid("60ef03bb-f5a7-4c81-addf-38e2b360bff5"),
+                            Key = new Guid("60ef03bb-f5a7-4c81-addf-38e2b360bff5"),
                             Name = name,
                             Description = description,
                             AvailablePermissions = permissions,
@@ -471,7 +471,7 @@ public class QalaCliBaseFixture : IDisposable
             s => s.UpdateSubscriberGroupAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Permission>>(), It.IsAny<string>()))
                     .ReturnsAsync((Guid id, string name, string description, List<Permission> permissions, string audience) =>
                     {
-                        var subscriberGroup = AvailableSubscriberGroups.FirstOrDefault(s => s.Id == id);
+                        var subscriberGroup = AvailableSubscriberGroups.FirstOrDefault(s => s.Key == id);
                         if (subscriberGroup != null)
                         {
                             subscriberGroup.Name = name;
@@ -487,7 +487,7 @@ public class QalaCliBaseFixture : IDisposable
             s => s.DeleteSubscriberGroupAsync(It.IsAny<Guid>()))
                     .Callback((Guid id) =>
                     {
-                        var subscriberGroup = AvailableSubscriberGroups.FirstOrDefault(s => s.Id == id);
+                        var subscriberGroup = AvailableSubscriberGroups.FirstOrDefault(s => s.Key == id);
                         if (subscriberGroup != null)
                         {
                             AvailableSubscriberGroups.Remove(subscriberGroup);
