@@ -119,7 +119,7 @@ public class UpdateSubscriberGroupCommandShould(QalaCliBaseFixture fixture) : IC
             Name = string.IsNullOrEmpty(expectedOutput[2]) ? currentSubscriberGroup.Name : expectedOutput[2],
             Description = string.IsNullOrEmpty(expectedOutput[3]) ? currentSubscriberGroup.Description : expectedOutput[3],
             AvailablePermissions = string.IsNullOrEmpty(expectedOutput[4]) ? currentSubscriberGroup.AvailablePermissions : expectedOutput[4].Split(',').Select(p => new Permission() { ResourceId = p, PermissionType = "Topic:Subscribe", ResourceType = "Topic", }).ToList(),
-            Audience = string.IsNullOrEmpty(expectedOutput[5]) ? currentSubscriberGroup.Audience : expectedOutput[5]
+            Audience = expectedOutput[5] == null ? currentSubscriberGroup.Audience : expectedOutput[5]
         };
 
         expectedConsole.MarkupLine("Processing request...");

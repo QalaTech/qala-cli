@@ -469,8 +469,12 @@ public class QalaCliBaseFixture : IDisposable
                     });
 
         SubscriberGroupGatewayMock.Setup(
+            s => s.GetSubscriberGroupAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync((Guid id) => AvailableSubscriberGroups.FirstOrDefault(s => s.Key == id));
+
+        SubscriberGroupGatewayMock.Setup(
             s => s.UpdateSubscriberGroupAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<List<Permission>>(), It.IsAny<string>()))
-                    .ReturnsAsync((Guid id, string name, string description, List<Permission> permissions, string audience) =>
+                    .Callback((Guid id, string name, string description, List<Permission> permissions, string audience) =>
                     {
                         var subscriberGroup = AvailableSubscriberGroups.FirstOrDefault(s => s.Key == id);
                         if (subscriberGroup != null)
@@ -481,7 +485,8 @@ public class QalaCliBaseFixture : IDisposable
                             subscriberGroup.Audience = audience;
                         }
 
-                        return subscriberGroup;
+                        AvailableSubscriberGroups.RemoveAll(s => s.Key == id);
+                        AvailableSubscriberGroups.Add(subscriberGroup);
                     });
 
         SubscriberGroupGatewayMock.Setup(
