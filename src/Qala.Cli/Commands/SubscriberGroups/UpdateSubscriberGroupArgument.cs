@@ -25,5 +25,5 @@ public class UpdateSubscriberGroupArgument : CommandSettings
 
     [CommandOption("-a|--audience <AUDIENCE>")]
     [Description("The audience to scope the subscriber group.")]
-    public string? Audience { get; set; } = string.Empty;
+    public string? Audience { get; set; } = null;
 }

@@ -175,7 +175,7 @@ public class SubscriberGroupService(ISubscriberGroupGateway subscriberGroupGatew
             subscriberGroup.Description = description;
         }
 
-        if (!string.IsNullOrEmpty(audience))
+        if (audience != null)
         {
             subscriberGroup.Audience = audience;
         }
