@@ -77,7 +77,7 @@ public class GetSubscriberGroupCommandShould(QalaCliBaseFixture fixture) : IClas
         var grid = new Grid()
             .AddColumns(5)
             .AddRow(
-                new Text("Id", new Style(decoration: Decoration.Bold)),
+                new Text("Key", new Style(decoration: Decoration.Bold)),
                 new Text("Name", new Style(decoration: Decoration.Bold)),
                 new Text("Description", new Style(decoration: Decoration.Bold)),
                 new Text("Topics", new Style(decoration: Decoration.Bold)),

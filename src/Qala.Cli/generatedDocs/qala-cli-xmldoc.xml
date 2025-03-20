@@ -552,7 +552,7 @@ Kind="scalar" ClrType="System.String">
         <Example commandLine="qala sub create -n &lt;SUBSCRIPTION_NAME&gt; 
 --topic &lt;TOPIC_NAME&gt; -d &lt;DESCRIPTION&gt; -e 
 &lt;EVENTS_COMMA_SEPERATED_NAMES&gt; -u &lt;WEBHOOK_URL&gt; -m 
-&lt;MAX_DELIVERY_ATTEMPTS&gt;" />
+&lt;MAX_DELIVERY_ATTEMPTS&gt; -a &lt;AUDIENCE&gt;" />
       </Examples>
     </Command>
     <!--UPDATE-->
@@ -611,7 +611,7 @@ Kind="scalar" ClrType="System.String">
         <Example commandLine="qala sub update &lt;SUBSCRIPTION_NAME&gt; --topic 
 &lt;TOPIC_NAME&gt; -n &lt;NEW_NAME&gt; -d &lt;DESCRIPTION&gt; -e 
 &lt;EVENTS_COMMA_SEPERATED_NAMES&gt; -u &lt;WEBHOOK_URL&gt; -m 
-&lt;MAX_DELIVERY_ATTEMPTS&gt;" />
+&lt;MAX_DELIVERY_ATTEMPTS&gt; -a &lt;AUDIENCE&gt;" />
       </Examples>
     </Command>
     <!--DELETE-->

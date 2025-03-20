@@ -98,7 +98,7 @@ subscription.</td></tr>
 </table>
 **Examples:**
 ```sh
-qala sub create -n <SUBSCRIPTION_NAME>  --topic <TOPIC_NAME> -d <DESCRIPTION> -e  <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m  <MAX_DELIVERY_ATTEMPTS>
+qala sub create -n <SUBSCRIPTION_NAME>  --topic <TOPIC_NAME> -d <DESCRIPTION> -e  <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m  <MAX_DELIVERY_ATTEMPTS> -a <AUDIENCE>
 ```
 
 
@@ -123,7 +123,7 @@ subscription.</td></tr>
 </table>
 **Examples:**
 ```sh
-qala sub update <SUBSCRIPTION_NAME> --topic  <TOPIC_NAME> -n <NEW_NAME> -d <DESCRIPTION> -e  <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m  <MAX_DELIVERY_ATTEMPTS>
+qala sub update <SUBSCRIPTION_NAME> --topic  <TOPIC_NAME> -n <NEW_NAME> -d <DESCRIPTION> -e  <EVENTS_COMMA_SEPERATED_NAMES> -u <WEBHOOK_URL> -m  <MAX_DELIVERY_ATTEMPTS> -a <AUDIENCE>
 ```
 
 

@@ -116,6 +116,7 @@ public class QalaCliBaseFixture : IDisposable
         new() { Key = Guid.NewGuid(), Name = "TestSubscriberGroup8", Description = "Test Subscriber Group Description 8", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic8" } }, Audience = "audience8" },
         new() { Key = Guid.NewGuid(), Name = "TestSubscriberGroup9", Description = "Test Subscriber Group Description 9", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic9" } }, Audience = "audience9" },
         new() { Key = Guid.NewGuid(), Name = "TestSubscriberGroup10", Description = "Test Subscriber Group Description 10", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic10" } }, Audience = "audience10" },
+        new() { Key = Guid.NewGuid(), Name = "TestSubscriberGroup11", Description = "Test Subscriber Group Description 11", AvailablePermissions = new List<Permission> { new() { PermissionType = "Topic:Subscribe", ResourceType = "Topic", ResourceId = "TestTopic11" } }, Audience = "audience11" },
     ];
 
     public Mock<IOrganizationGateway> OrganizationServiceMock = new();

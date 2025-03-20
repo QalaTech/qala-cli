@@ -24,6 +24,7 @@ public class UpdateSubscriberGroupCommandShould(QalaCliBaseFixture fixture) : IC
     [InlineData("sgp update --name TestSubscriberGroupUpdated8 --description TestSubscriberGroupDescriptionUpdated", false, new string[] { "Subscriber Group name is required." }, new string[] { "Subscriber Group name is required" })]
     [InlineData("sgp update NonExistingSubscriberGroup -n TestSubscriberGroupUpdated9 -d TestSubscriberGroupDescriptionUpdated", false, null, new string[] { "Subscriber Group not found" })]
     [InlineData("sgp update NonExistingSubscriberGroup --name TestSubscriberGroupUpdated10 --description TestSubscriberGroupDescriptionUpdated", false, null, new string[] { "Subscriber Group not found" })]
+    [InlineData("sgp update TestSubscriberGroup11 --name TestSubscriberGroupUpdated11 --description TestSubscriberGroupDescriptionUpdated --topics TestTopic1,TestTopic2 --audience ", true, null, new string[] { "TestSubscriberGroup11", "", "TestSubscriberGroupUpdated11", "TestSubscriberGroupDescriptionUpdated", "TestTopic1,TestTopic2", "" })]
     public async Task Execute(string input, bool expectedSuccess, string[] expectedValidationResult, string[] expectedOutput)
     {
         // Arrange
@@ -126,7 +127,7 @@ public class UpdateSubscriberGroupCommandShould(QalaCliBaseFixture fixture) : IC
         var grid = new Grid()
             .AddColumns(5)
             .AddRow(
-                new Text("Id", new Style(decoration: Decoration.Bold)),
+                new Text("Key", new Style(decoration: Decoration.Bold)),
                 new Text("Name", new Style(decoration: Decoration.Bold)),
                 new Text("Description", new Style(decoration: Decoration.Bold)),
                 new Text("Topics", new Style(decoration: Decoration.Bold)),
