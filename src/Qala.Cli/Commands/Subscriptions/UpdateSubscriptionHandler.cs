@@ -20,7 +20,7 @@ public class UpdateSubscriptionHandler(ISubscriptionService subscriptionService)
 
         var topicName = string.IsNullOrWhiteSpace(request.TopicName) ? request.SourceName : request.TopicName;
 
-        var topicType = string.IsNullOrWhiteSpace(request.TopicName) ? "Source" : "Topic";
+        var topicType = string.IsNullOrWhiteSpace(request.TopicName) ? "Source" : "Publisher";
 
         return await subscriptionService.UpdateSubscriptionAsync(topicType, topicName!, request.SubscriptionName, request.NewName, request.Description, request.WebhookUrl, request.EventTypeNames, request.MaxDeliveryAttempts, request.Audience)
                 .ToAsync()

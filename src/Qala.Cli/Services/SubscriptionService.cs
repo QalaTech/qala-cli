@@ -30,7 +30,7 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEven
             return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Webhook url is required"));
         }
 
-        if (topicType == "Topic" && (eventTypeNames == null || eventTypeNames.Count == 0))
+        if (topicType == "Publisher" && (eventTypeNames == null || eventTypeNames.Count == 0))
         {
             return await Task.FromResult<Either<CreateSubscriptionErrorResponse, CreateSubscriptionSuccessResponse>>(new CreateSubscriptionErrorResponse("Event type ids are required"));
         }
@@ -46,7 +46,7 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEven
         }
 
         List<Guid> eventTypeIds = [];
-        if (topicType == "Topic")
+        if (topicType == "Publisher")
         {
             var eventTypes = await eventTypeGateway.ListEventTypesAsync();
             if (eventTypes == null || !eventTypes.Any())
