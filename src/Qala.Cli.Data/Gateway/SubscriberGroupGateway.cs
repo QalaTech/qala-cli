@@ -49,6 +49,26 @@ public class SubscriberGroupGateway(HttpClient httpClient) : ISubscriberGroupGat
         }
     }
 
+    public async Task<SubscriberGroupPrincipal> GetSubscriberGroupAsync(Guid subscriberGroupId)
+    {
+        try
+        {
+            var response = await httpClient.GetAsync($"security/subscriber-groups/{subscriberGroupId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Failed to get subscriber group");
+            }
+
+            var content = await response.Content.ReadFromJsonAsync<SubscriberGroupPrincipal>() ?? throw new Exception("Failed to get subscriber group");
+            return content;
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Failed to get subscriber group", e);
+        }
+    }
+
     public async Task<List<SubscriberGroupPrincipal>> ListSubscriberGroupsAsync()
     {
         try
@@ -69,7 +89,7 @@ public class SubscriberGroupGateway(HttpClient httpClient) : ISubscriberGroupGat
         }
     }
 
-    public async Task<SubscriberGroupPrincipal?> UpdateSubscriberGroupAsync(Guid subscriberGroupId, string? name, string? description, List<Permission>? permissions, string? audience)
+    public async Task UpdateSubscriberGroupAsync(Guid subscriberGroupId, string? name, string? description, List<Permission>? permissions, string? audience)
     {
         try
         {
@@ -85,9 +105,6 @@ public class SubscriberGroupGateway(HttpClient httpClient) : ISubscriberGroupGat
             {
                 throw new Exception("Failed to update subscriber group");
             }
-
-            var content = await response.Content.ReadFromJsonAsync<SubscriberGroupPrincipal>() ?? throw new Exception("Failed to update subscriber group");
-            return content;
         }
         catch (Exception e)
         {

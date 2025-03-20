@@ -46,6 +46,11 @@ public class SubscriberGroupService(ISubscriberGroupGateway subscriberGroupGatew
             }
 
             var response = await subscriberGroupGateway.CreateSubscriberGroupAsync(name, description, permissions, audience);
+            if (response != null && response.AvailablePermissions != null && response.AvailablePermissions.Count > 0)
+            {
+                response.AvailablePermissions = response.AvailablePermissions.Where(p => p.ResourceType == "Topic").ToList();
+            }
+
             if (response == null)
             {
                 return await Task.FromResult<Either<CreateSubscriberGroupErrorResponse, CreateSubscriberGroupSuccessResponse>>(new CreateSubscriberGroupErrorResponse("Failed to create Subscriber Group"));
@@ -110,12 +115,28 @@ public class SubscriberGroupService(ISubscriberGroupGateway subscriberGroupGatew
             return await Task.FromResult<Either<GetSubscriberGroupErrorResponse, GetSubscriberGroupSuccessResponse>>(new GetSubscriberGroupErrorResponse("Subscriber Group not found"));
         }
 
+        if (subscriberGroup.AvailablePermissions != null && subscriberGroup.AvailablePermissions.Count > 0)
+        {
+            subscriberGroup.AvailablePermissions = subscriberGroup.AvailablePermissions.Where(p => p.ResourceType == "Topic").ToList();
+        }
+
         return await Task.FromResult<Either<GetSubscriberGroupErrorResponse, GetSubscriberGroupSuccessResponse>>(new GetSubscriberGroupSuccessResponse(subscriberGroup));
     }
 
     public async Task<Either<ListSubscriberGroupsErrorResponse, ListSubscriberGroupsSuccessResponse>> ListSubscriberGroupsAsync()
     {
         var subscriberGroups = await subscriberGroupGateway.ListSubscriberGroupsAsync();
+
+        if (subscriberGroups != null && subscriberGroups.Count > 0)
+        {
+            foreach (var subscriberGroup in subscriberGroups)
+            {
+                if (subscriberGroup.AvailablePermissions != null && subscriberGroup.AvailablePermissions.Count > 0)
+                {
+                    subscriberGroup.AvailablePermissions = subscriberGroup.AvailablePermissions.Where(p => p.ResourceType == "Topic").ToList();
+                }
+            }
+        }
 
         return await Task.FromResult<Either<ListSubscriberGroupsErrorResponse, ListSubscriberGroupsSuccessResponse>>(new ListSubscriberGroupsSuccessResponse(subscriberGroups));
     }
@@ -172,16 +193,24 @@ public class SubscriberGroupService(ISubscriberGroupGateway subscriberGroupGatew
                 });
             }
         }
+        else
+        {
+            subscriberGroup.AvailablePermissions = [.. subscriberGroup.AvailablePermissions.Where(p => p.ResourceType == "Topic")];
+        }
 
         try
         {
-            var response = await subscriberGroupGateway.UpdateSubscriberGroupAsync(subscriberGroup.Key, subscriberGroup.Name, subscriberGroup.Description, subscriberGroup.AvailablePermissions, subscriberGroup.Audience);
-            if (response == null)
+            await subscriberGroupGateway.UpdateSubscriberGroupAsync(subscriberGroup.Key, subscriberGroup.Name, subscriberGroup.Description, subscriberGroup.AvailablePermissions, subscriberGroup.Audience);
+
+            var updatedSubscriberGroup = await subscriberGroupGateway.GetSubscriberGroupAsync(subscriberGroup.Key);
+            updatedSubscriberGroup.AvailablePermissions = updatedSubscriberGroup.AvailablePermissions.Where(p => p.ResourceType == "Topic").ToList();
+
+            if (updatedSubscriberGroup == null)
             {
                 return await Task.FromResult<Either<UpdateSubscriberGroupErrorResponse, UpdateSubscriberGroupSuccessResponse>>(new UpdateSubscriberGroupErrorResponse("Failed to update Subscriber Group"));
             }
 
-            return await Task.FromResult<Either<UpdateSubscriberGroupErrorResponse, UpdateSubscriberGroupSuccessResponse>>(new UpdateSubscriberGroupSuccessResponse(response));
+            return await Task.FromResult<Either<UpdateSubscriberGroupErrorResponse, UpdateSubscriberGroupSuccessResponse>>(new UpdateSubscriberGroupSuccessResponse(updatedSubscriberGroup));
         }
         catch (Exception ex)
         {
