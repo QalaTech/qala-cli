@@ -134,6 +134,23 @@ Kind="scalar" ClrType="System.String">
         <Example commandLine="events inspect &lt;EVENT_TYPE_NAME&gt;" />
       </Examples>
     </Command>
+    <!--CREATE-->
+    <Command Name="create" IsBranch="false" 
+ClrType="Qala.Cli.Commands.EventTypes.CreateEventTypesCommand" 
+Settings="Qala.Cli.Commands.EventTypes.CreateEventTypeArgument">
+      <Description>this command creates a new event type for the Qala 
+CLI.</Description>
+      <Parameters>
+        <Option Short="i" Long="import" Value="IMPORT_FILE_PATH" 
+Required="false" Kind="scalar" ClrType="System.String">
+          <Description>The path to the file containing the event type 
+definition.</Description>
+        </Option>
+      </Parameters>
+      <Examples>
+        <Example commandLine="events create -i &lt;IMPORT_FILE_PATH&gt;" />
+      </Examples>
+    </Command>
   </Command>
   <!--TOPICS-->
   <Command Name="topics" IsBranch="true" 

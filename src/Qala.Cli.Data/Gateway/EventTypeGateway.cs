@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Text.Json;
 using Qala.Cli.Data.Gateway.Interfaces;
 using Qala.Cli.Data.Models;
 
@@ -23,6 +24,35 @@ public class EventTypeGateway(HttpClient client) : IEventTypeGateway
         catch (Exception e)
         {
             throw new Exception("Failed to get event type", e);
+        }
+    }
+
+    public async Task<int> ImportOpenApiSpecAsync(string specFilePath)
+    {
+        try
+        {
+            using var formData = new MultipartFormDataContent();
+
+            var fileContent = new StreamContent(File.OpenRead(specFilePath));
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("multipart/form-data");
+            formData.Add(fileContent, "file", Path.GetFileName(specFilePath));
+
+            var response = await client.PostAsync("events/import", formData);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception("Failed to import OpenAPI spec");
+            }
+
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            using var jsonDocument = JsonDocument.Parse(jsonResponse);
+            var totalImported = jsonDocument.RootElement.GetProperty("TotalImported").GetInt32();
+
+            return totalImported;
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Failed to import OpenAPI spec", e);
         }
     }
 
