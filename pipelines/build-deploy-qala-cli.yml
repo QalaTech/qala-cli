@@ -273,6 +273,8 @@ stages:
               $packageJson = Get-Content -Path $packageJsonPath -Raw | ConvertFrom-Json
               $packageJson.version = "$(releaseVersion)"
               $packageJson | ConvertTo-Json -Depth 32 | Set-Content -Path $packageJsonPath
+              Write-Host "Updated package.json content:"
+              $packageJson | ConvertTo-Json -Depth 32
 
         # Authenticate npm
         - task: npmAuthenticate@0
@@ -356,6 +358,8 @@ stages:
               $packageJson = Get-Content -Path $packageJsonPath -Raw | ConvertFrom-Json
               $packageJson.version = "$(releaseVersion)"
               $packageJson | ConvertTo-Json -Depth 32 | Set-Content -Path $packageJsonPath
+              Write-Host "Updated package.json content:"
+              $packageJson | ConvertTo-Json -Depth 32
 
         # Authenticate npm
         - task: npmAuthenticate@0
