@@ -12,5 +12,5 @@ public class Subscription
     public string TopicName { get; set; } = string.Empty;
     public int DeadletterCount { get; set; }
     public string? WebhookSecret { get; set; }
-    public string? Audience { get; set; }
+    public string Audience { get; set; } = string.Empty;
 }

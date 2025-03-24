@@ -283,7 +283,7 @@ public class SubscriptionService(ISubscriptionGateway subscriptionGateway, IEven
             subscription.MaxDeliveryAttempts = (int)maxDeliveryAttempts;
         }
 
-        if (!string.IsNullOrWhiteSpace(audience))
+        if (audience != null)
         {
             subscription.Audience = audience;
         }
