@@ -46,7 +46,7 @@ public class EventTypeGateway(HttpClient client) : IEventTypeGateway
 
             var jsonResponse = await response.Content.ReadAsStringAsync();
             using var jsonDocument = JsonDocument.Parse(jsonResponse);
-            var totalImported = jsonDocument.RootElement.GetProperty("TotalImported").GetInt32();
+            var totalImported = jsonDocument.RootElement.GetProperty("totalImported").GetInt32();
 
             return totalImported;
         }

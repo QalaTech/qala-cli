@@ -345,7 +345,7 @@ stages:
           displayName: 'Move the README.md file into the npm folder'
           inputs:
             SourceFolder: '$(Build.SourcesDirectory)'
-            Contents: 'README.md'
+            Contents: 'README.MD'
             TargetFolder: '$(Build.SourcesDirectory)/build/npm/linux'
 
         # Update the version in the package.json file
