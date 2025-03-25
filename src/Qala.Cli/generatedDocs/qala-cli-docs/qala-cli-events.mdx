@@ -34,6 +34,8 @@ import HeroBanner from '../../../src/components/HeroBanner/HeroBanner';
 environment.</td></tr>
 <tr><td><a href="#inspect" title="Learn about inspect">inspect</a></td><td>this command retrieves the event type with the specified 
 ID.</td></tr>
+<tr><td><a href="#create" title="Learn about create">create</a></td><td>this command creates a new event type for the Qala 
+CLI.</td></tr>
 </table>
 ### `list`
 this command lists all the event types available in your 
@@ -56,6 +58,22 @@ ID.
 **Examples:**
 ```sh
 events inspect <EVENT_TYPE_NAME>
+```
+
+
+### `create`
+this command creates a new event type for the Qala 
+CLI.
+
+**Options:**
+<table>
+<tr><th>Option</th><th>Description</th></tr>
+<tr><td>`i` / `import`</td><td>The path to the file containing the event type 
+definition.</td></tr>
+</table>
+**Examples:**
+```sh
+events create -i <IMPORT_FILE_PATH>
 ```
 
 

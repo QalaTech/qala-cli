@@ -7,6 +7,11 @@ trigger:
     include:
       - releases/*
 
+pr:
+  branches:
+    exclude:
+      - '*'
+
 variables:
   pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj' 
   pathToTheProjectTestFile: '$(Build.SourcesDirectory)/tests/Qala.Cli.Integration.Tests/Qala.Cli.Integration.Tests.csproj' 
@@ -345,7 +350,7 @@ stages:
           displayName: 'Move the README.md file into the npm folder'
           inputs:
             SourceFolder: '$(Build.SourcesDirectory)'
-            Contents: 'README.md'
+            Contents: 'README.MD'
             TargetFolder: '$(Build.SourcesDirectory)/build/npm/linux'
 
         # Update the version in the package.json file

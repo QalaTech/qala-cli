@@ -66,6 +66,9 @@ app.Configure(config =>
             .WithDescription("this command retrieves the event type with the specified ID.")
             .WithExample("events inspect <EVENT_TYPE_NAME>")
             .WithAlias("i");
+        et.AddCommand<CreateEventTypesCommand>("create")
+            .WithDescription("this command creates a new event type for the Qala CLI.")
+            .WithExample("events create -i <IMPORT_FILE_PATH>");
     })
     .WithAlias("ev");
 

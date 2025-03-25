@@ -6,4 +6,5 @@ public interface IEventTypeGateway
 {
     Task<IEnumerable<EventType>> ListEventTypesAsync();
     Task<EventType?> GetEventTypeAsync(Guid id);
+    Task<int> ImportOpenApiSpecAsync(string specFilePath);
 }
