@@ -7,6 +7,11 @@ trigger:
     include:
       - releases/*
 
+pr:
+  branches:
+    exclude:
+      - '*'
+
 variables:
   pathToTheProjectFile: '$(Build.SourcesDirectory)/src/Qala.Cli/Qala.Cli.csproj' 
   pathToTheProjectTestFile: '$(Build.SourcesDirectory)/tests/Qala.Cli.Integration.Tests/Qala.Cli.Integration.Tests.csproj' 
